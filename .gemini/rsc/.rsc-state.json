@@ -1,0 +1,244 @@
+{
+  "skills": {
+    "analyze": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\analyze"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\analyze"
+    },
+    "automation-strategy": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\automation-strategy"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\automation-strategy"
+    },
+    "clarify": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\clarify"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\clarify"
+    },
+    "constitution": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\constitution"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\constitution"
+    },
+    "debug": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\debug"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\debug"
+    },
+    "decision-challenge": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\decision-challenge"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\decision-challenge"
+    },
+    "deprecation": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\deprecation"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\deprecation"
+    },
+    "fable-operator": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\fable-operator"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\fable-operator"
+    },
+    "ftd": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\ftd"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\ftd"
+    },
+    "harness": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\harness"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\harness"
+    },
+    "idea-refinement": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\idea-refinement"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\idea-refinement"
+    },
+    "implement": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\implement"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\implement"
+    },
+    "init": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\init"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\init"
+    },
+    "orient": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\orient"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\orient"
+    },
+    "parallel": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\parallel"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\parallel"
+    },
+    "plan": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\plan"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\plan"
+    },
+    "review": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\review"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\review"
+    },
+    "sdd": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\sdd"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\sdd"
+    },
+    "sdd-init": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\sdd-init"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\sdd-init"
+    },
+    "ship": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\ship"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\ship"
+    },
+    "simplify-code": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\simplify-code"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\simplify-code"
+    },
+    "source-grounded-development": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\source-grounded-development"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\source-grounded-development"
+    },
+    "specify": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\specify"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\specify"
+    },
+    "suggest": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\suggest"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\suggest"
+    },
+    "tasks": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\tasks"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\tasks"
+    },
+    "ui-engineering": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\ui-engineering"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\ui-engineering"
+    },
+    "unslop": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\unslop"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\unslop"
+    },
+    "verify": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\verify"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\verify"
+    },
+    "worktrees": {
+      "files": [
+        "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\rsc\\worktrees"
+      ],
+      "base": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\skills\\worktrees"
+    }
+  },
+  "agents": [
+    "developer",
+    "finding-verifier",
+    "refuter-correctness",
+    "refuter-security",
+    "refuter-tests"
+  ],
+  "agentCollisions": [],
+  "agentsKept": [],
+  "explicitAgents": [],
+  "memory": {
+    "mode": "full",
+    "reason": "wired",
+    "paths": [
+      "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\session-memory-core.mjs",
+      "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\session-memory-adapter.mjs",
+      "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\session-memory.mjs",
+      "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\settings.json"
+    ]
+  },
+  "update": {
+    "mode": "hook"
+  },
+  "knowledge": {
+    "mode": "wired",
+    "reason": null,
+    "paths": [
+      "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\knowledge-sync.mjs",
+      "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.rsc\\trunk-policy.mjs",
+      "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\settings.json"
+    ]
+  },
+  "gitPermissions": {
+    "mode": "wired",
+    "path": "G:\\Mi unidad\\GitHub\\Tiandy Tech\\.gemini\\settings.json"
+  },
+  "policy": {
+    "baseAgents": true,
+    "alwaysOn": true,
+    "codeHooks": true,
+    "dangerGuard": true,
+    "laneGate": true,
+    "gitmojiGuard": false,
+    "memory": true,
+    "context7": false
+  },
+  "commands": [
+    "analyze",
+    "checkpoint",
+    "clarify",
+    "debug",
+    "harness-audit",
+    "implement",
+    "learn",
+    "plan",
+    "refactor-clean",
+    "resume-session",
+    "review",
+    "save-session",
+    "ship",
+    "specify",
+    "tasks",
+    "verify"
+  ],
+  "commandCollisions": [],
+  "version": "3.0.12"
+}

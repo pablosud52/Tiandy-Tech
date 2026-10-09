@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  tiandy-tech:
+    container_name: tiandy-tech
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tiandy-tech:latest
+    restart: unless-stopped
+    ports:
+      - "1030:1030"
+    environment:
+      - PORT=1030
+      - NODE_ENV=production
+    volumes:
+      # Persistencia de base de datos SQLite y datasheets PDF
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:1030/api/stats"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
