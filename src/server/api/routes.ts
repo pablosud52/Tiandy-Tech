@@ -41,9 +41,9 @@ apiRouter.get('/productos', (req, res) => {
       serie: serie as string,
       solo_visibles: todos !== 'true'
     });
-    res.json(productos);
+    res.json({ success: true, data: productos });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 

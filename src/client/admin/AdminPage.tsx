@@ -45,9 +45,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToCatalog }) => {
     try {
       const res = await fetch('/api/productos?limit=500');
       const data = await res.json();
-      if (data.success) {
-        setProductos(data.data);
-      }
+      const list = Array.isArray(data) ? data : data.data || [];
+      setProductos(list);
     } catch (err) {
       console.error('Error al cargar productos:', err);
     } finally {

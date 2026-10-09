@@ -79,10 +79,8 @@ export default function App() {
     try {
       const res = await fetch('/api/productos?limit=500');
       const data = await res.json();
-      if (data.success) {
-        setProductos(data.data);
-      } else {
-        setError(data.error || 'Error al obtener productos');
+      const list = Array.isArray(data) ? data : data.data || [];
+      setProductos(list);
       }
     } catch (err: any) {
       setError(`Error de conexión con el servidor: ${err.message}`);
