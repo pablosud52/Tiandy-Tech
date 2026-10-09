@@ -31,7 +31,7 @@ desktop.ini
 .rsc/backups/
 
 # Base de datos y documentos en runtime
-data/*.db
+data/*.db*
 data/docs/*
 !data/docs/.gitkeep
 data/img/*
