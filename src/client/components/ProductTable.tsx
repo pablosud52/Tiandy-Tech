@@ -1,8 +1,8 @@
 import React from 'react';
 import { Producto } from '../../shared/types.js';
-import { getProductSpecs } from '../../shared/helpers.js';
+import { getProductSpecs, formatCurrency, parseModelAndSpec } from '../../shared/helpers.js';
 import { BadgeOverlay } from './Badges.js';
-import { Eye, Plus, Check, FileText, Zap } from 'lucide-react';
+import { Eye, Plus, Check, FileText, Zap, ShoppingCart } from 'lucide-react';
 
 interface ProductTableProps {
   productos: Producto[];
@@ -10,6 +10,8 @@ interface ProductTableProps {
   comparedIds: string[];
   onToggleCompare: (producto: Producto) => void;
   canCompare: boolean;
+  onAddToCotizacion?: (producto: Producto) => void;
+  cotizacionIds?: string[];
 }
 
 export const ProductTable: React.FC<ProductTableProps> = ({
@@ -17,7 +19,9 @@ export const ProductTable: React.FC<ProductTableProps> = ({
   onSelect,
   comparedIds,
   onToggleCompare,
-  canCompare
+  canCompare,
+  onAddToCotizacion,
+  cotizacionIds = []
 }) => {
   const stockStyles: Record<string, { label: string; bg: string; text: string; border: string }> = {
     ENTREGA_INMEDIATA: {
@@ -87,7 +91,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
         </thead>
         <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono text-[11px]">
           {productos.map((prod) => {
-            const isCompared = comparedIds.includes(prod.id);
+            const isCompared = comparedIds.includes(String(prod.id));
             const stockInfo = stockStyles[prod.estado_stock] || stockStyles.CONSULTAR;
             const serieInfo = serieBadges[prod.serie] || { label: prod.serie, bg: 'bg-slate-600', text: 'text-white' };
             const specs = getProductSpecs(prod);
@@ -118,22 +122,34 @@ export const ProductTable: React.FC<ProductTableProps> = ({
 
                 {/* Modelo & Serie */}
                 <td className="py-2.5 px-3 font-sans">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="font-bold text-slate-900 group-hover:text-emerald-600 transition-colors dark:text-slate-100 dark:group-hover:text-emerald-400">
-                      {prod.modelo}
-                    </span>
-                    <span className={`rounded px-1.5 py-0.5 text-[9px] font-semibold tracking-wide ${serieInfo.bg} ${serieInfo.text}`}>
-                      {serieInfo.label}
-                    </span>
-                    {prod.badge_nuevo && (
-                      <span className="rounded bg-amber-500 px-1 py-0.2 text-[8px] font-bold text-white uppercase">
-                        Nuevo
-                      </span>
-                    )}
-                  </div>
-                  <p className="line-clamp-1 text-[10px] text-slate-500 dark:text-slate-400 font-sans mt-0.5">
-                    {prod.subtipo || prod.especificacion_completa}
-                  </p>
+                  {(() => {
+                    const { baseModel, variantSpec } = parseModelAndSpec(prod.modelo, prod.subtipo, prod.especificacion_completa);
+                    return (
+                      <div>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="font-bold font-mono text-slate-900 group-hover:text-emerald-600 transition-colors dark:text-slate-100 dark:group-hover:text-emerald-400">
+                            {baseModel}
+                          </span>
+                          <span className={`rounded px-1.5 py-0.5 text-[9px] font-semibold tracking-wide ${serieInfo.bg} ${serieInfo.text}`}>
+                            {serieInfo.label}
+                          </span>
+                          {prod.badge_nuevo && (
+                            <span className="rounded bg-amber-500 px-1 py-0.2 text-[8px] font-bold text-white uppercase">
+                              Nuevo
+                            </span>
+                          )}
+                        </div>
+                        {variantSpec && (
+                          <div className="text-xs font-normal text-slate-500 dark:text-slate-400 mt-0.5 tracking-tight">
+                            {variantSpec}
+                          </div>
+                        )}
+                        <p className="line-clamp-1 text-[10px] text-slate-500 dark:text-slate-400 font-sans mt-0.5">
+                          {prod.subtipo || prod.especificacion_completa}
+                        </p>
+                      </div>
+                    );
+                  })()}
                 </td>
 
                 {/* Formato / Tipo */}
@@ -187,11 +203,13 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                 <td className="py-2.5 px-3">
                   <div className="flex flex-wrap gap-1 max-w-[160px]">
                     {prod.badges_detectados?.slice(0, 3).map((b) => (
-                      <BadgeOverlay key={b} badgeType={b} />
+                      <span key={b} className="rounded bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                        {b}
+                      </span>
                     ))}
                     {(prod.badges_detectados?.length || 0) > 3 && (
                       <span className="text-[10px] text-slate-400 font-sans">
-                        +{prod.badges_detectados.length - 3} más
+                        +{(prod.badges_detectados?.length || 0) - 3} más
                       </span>
                     )}
                   </div>
@@ -215,23 +233,43 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                   </span>
                 </td>
 
-                {/* Precio Neto USD */}
+                {/* Precio Neto U$S */}
                 <td className="py-2.5 px-3 text-right">
                   <div className="font-mono text-sm font-bold text-slate-900 dark:text-white">
-                    ${prod.precio_usd.toFixed(2)}
+                    {formatCurrency(prod.precio_usd)}
                   </div>
-                  <div className="text-[8px] text-slate-400 font-sans">USD neto s/IVA</div>
+                  <div className="text-[8px] text-slate-400 font-sans">Neto oficial s/IVA</div>
                 </td>
 
-                {/* Ficha Button */}
+                {/* Acciones: Cotizar y Ficha */}
                 <td className="py-2.5 px-3 text-center" onClick={(e) => e.stopPropagation()}>
-                  <button
-                    onClick={() => onSelect(prod)}
-                    className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-emerald-600 hover:text-white transition-colors dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-emerald-600 dark:hover:text-white"
-                    title="Ver ficha técnica completa"
-                  >
-                    <Eye className="h-3.5 w-3.5" />
-                  </button>
+                  <div className="flex items-center justify-center gap-1.5">
+                    {onAddToCotizacion && (
+                      <button
+                        onClick={() => onAddToCotizacion(prod)}
+                        className={`inline-flex h-7 w-7 items-center justify-center rounded-lg transition-colors ${
+                          cotizacionIds.includes(String(prod.id))
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300'
+                        }`}
+                        title="Añadir a la cotización"
+                      >
+                        {cotizacionIds.includes(String(prod.id)) ? (
+                          <Check className="h-3.5 w-3.5" />
+                        ) : (
+                          <ShoppingCart className="h-3.5 w-3.5" />
+                        )}
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => onSelect(prod)}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-emerald-600 hover:text-white transition-colors dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-emerald-600 dark:hover:text-white"
+                      title="Ver ficha técnica completa"
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             );

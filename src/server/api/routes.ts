@@ -5,29 +5,55 @@ import fs from 'fs';
 import { 
   getProductos, 
   getProductoById, 
+  getProductoByModelo,
   saveProducto, 
   deleteProducto, 
   batchUpdatePreciosStock, 
-  getBadgesConfig 
+  getBadgesConfig,
+  authenticateUser,
+  validateSession,
+  deleteSession,
+  getAdminUsers,
+  createAdminUser,
+  updateAdminUser,
+  deleteAdminUser,
+  validateProductCodes
 } from '../db/index.js';
 import { extractFromPdf } from '../services/pdf-extractor.js';
 import { Producto, TipoDispositivo, EstadoStock } from '../../shared/types.js';
 
 const uploadDir = path.resolve(process.cwd(), 'data/uploads');
 const docsDir = path.resolve(process.cwd(), 'data/docs');
+const imagesDir = path.resolve(process.cwd(), 'data/images');
 
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 if (!fs.existsSync(docsDir)) fs.mkdirSync(docsDir, { recursive: true });
+if (!fs.existsSync(imagesDir)) fs.mkdirSync(imagesDir, { recursive: true });
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
+// Almacenamiento en memoria para PDFs (evita problemas de bloqueo de archivos en Google Drive / Windows)
+const memoryUpload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 35 * 1024 * 1024 }
+});
+
+// Almacenamiento en disco para imágenes de productos en data/images
+const imageStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, imagesDir),
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
+    let cleanExt = path.extname(file.originalname).toLowerCase();
+    if (!cleanExt || cleanExt === '.blob') {
+      cleanExt = file.mimetype === 'image/webp' ? '.webp' : (file.mimetype === 'image/png' ? '.png' : '.jpg');
+    }
+    const cleanBase = path.basename(file.originalname, path.extname(file.originalname)).replace(/[^a-zA-Z0-9_-]/g, '_') || 'producto';
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E6);
+    cb(null, `${cleanBase}-${uniqueSuffix}${cleanExt}`);
   }
 });
 
-const upload = multer({ storage });
+const imageUpload = multer({ 
+  storage: imageStorage,
+  limits: { fileSize: 15 * 1024 * 1024 }
+});
 
 export const apiRouter = Router();
 
@@ -44,6 +70,39 @@ apiRouter.get('/productos', (req, res) => {
     res.json({ success: true, data: productos });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 1b. Verificar existencia de modelo
+apiRouter.get('/productos/check-model', (req, res) => {
+  try {
+    const modelo = req.query.modelo as string;
+    if (!modelo || !modelo.trim()) {
+      return res.json({ exists: false });
+    }
+    const clean = modelo.trim().toUpperCase();
+    const existing = getProductoByModelo(clean);
+    res.json({ exists: Boolean(existing), producto: existing });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 1c. Verificar disponibilidad de código 1 o código 2
+apiRouter.get('/productos/check-code', (req, res) => {
+  try {
+    const { codigo, excludeId, campo } = req.query;
+    if (!codigo || !String(codigo).trim()) {
+      return res.json({ available: true });
+    }
+    const cleanCod = String(codigo).trim();
+    const idNum = excludeId ? parseInt(String(excludeId), 10) : undefined;
+    const validation = campo === 'codigo_2'
+      ? validateProductCodes(null, cleanCod, idNum)
+      : validateProductCodes(cleanCod, null, idNum);
+    res.json({ available: validation.valid, error: validation.error });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -72,7 +131,7 @@ apiRouter.post('/productos', (req, res) => {
     const saved = getProductoById(id);
     res.json(saved);
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -90,35 +149,42 @@ apiRouter.delete('/productos/:id', (req, res) => {
 // 5. Actualización masiva rápida de precios y stock (Quick Batch Editor)
 apiRouter.post('/batch-update', (req, res) => {
   try {
-    const { items } = req.body as { items: Array<{ id: number; precio_usd?: number; estado_stock?: EstadoStock; visible?: boolean }> };
+    const { items } = req.body as { items: Array<any> };
     if (!Array.isArray(items)) {
       return res.status(400).json({ error: 'Formato inválido: se espera un array de items' });
     }
-    batchUpdatePreciosStock(items);
-    res.json({ success: true, count: items.length });
+    const normalized = items.map(it => ({
+      ...it,
+      id: Number(it.id),
+      visible: it.visible !== undefined ? it.visible : (it.activo !== undefined ? it.activo : undefined)
+    }));
+    batchUpdatePreciosStock(normalized);
+    res.json({ success: true, count: normalized.length });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// 6. Extracción de Datasheet PDF
-apiRouter.post('/extract-pdf', upload.single('datasheet'), async (req, res) => {
+// 6. Extracción de Datasheet PDF (Usa memoria para cero bloqueo de archivos)
+apiRouter.post('/extract-pdf', memoryUpload.any(), async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No se subió ningún archivo PDF' });
+    const files = req.files as Express.Multer.File[];
+    const file = files && files.length > 0 ? files[0] : req.file;
+    if (!file || !file.buffer) {
+      return res.status(400).json({ error: 'No se subió ningún archivo PDF válido' });
     }
 
-    const filePath = req.file.path;
-    const fileBuffer = fs.readFileSync(filePath);
+    const fileBuffer = file.buffer;
     
-    // Copiar también a data/docs para persistencia
-    const destPdf = path.join(docsDir, req.file.originalname);
-    fs.copyFileSync(filePath, destPdf);
+    // Guardar copia de respaldo en data/docs de manera asíncrona segura
+    try {
+      const destPdf = path.join(docsDir, file.originalname);
+      fs.writeFileSync(destPdf, fileBuffer);
+    } catch (e) {
+      console.warn('Aviso: no se pudo persistir copia en docs:', e);
+    }
 
-    const parsedData = await extractFromPdf(fileBuffer, req.file.originalname);
-    
-    // Limpiar archivo temporal de upload
-    fs.unlinkSync(filePath);
+    const parsedData = await extractFromPdf(fileBuffer, file.originalname);
 
     res.json({
       success: true,
@@ -126,6 +192,25 @@ apiRouter.post('/extract-pdf', upload.single('datasheet'), async (req, res) => {
     });
   } catch (error: any) {
     res.status(500).json({ error: `Error procesando PDF: ${error.message}` });
+  }
+});
+
+// 7. Subida de Imagen de Producto (para admin)
+apiRouter.post('/upload-image', imageUpload.single('image'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'No se subió ningún archivo de imagen' });
+    }
+    const imageUrl = `/data/images/${req.file.filename}`;
+    res.json({ 
+      success: true, 
+      url: imageUrl, 
+      filename: req.file.filename,
+      size: req.file.size,
+      mimetype: req.file.mimetype
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -157,5 +242,102 @@ apiRouter.get('/stats', (req, res) => {
     res.json(stats);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// ==========================================
+// RUTAS DE AUTENTICACIÓN Y USUARIOS ADMIN
+// ==========================================
+
+// Login de administrador
+apiRouter.post('/auth/login', (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ success: false, error: 'Usuario y contraseña requeridos' });
+    }
+    const result = authenticateUser(username, password);
+    if (!result) {
+      return res.status(401).json({ success: false, error: 'Credenciales inválidas o cuenta deshabilitada' });
+    }
+    res.json({ success: true, token: result.token, user: result.user });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Validar sesión actual
+apiRouter.get('/auth/me', (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+    if (!token) {
+      return res.status(401).json({ success: false, error: 'No autorizado' });
+    }
+    const user = validateSession(token);
+    if (!user) {
+      return res.status(401).json({ success: false, error: 'Sesión expirada o inválida' });
+    }
+    res.json({ success: true, user });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Cerrar sesión
+apiRouter.post('/auth/logout', (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+    if (token) deleteSession(token);
+    res.json({ success: true, message: 'Sesión cerrada correctamente' });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Listar usuarios administradores
+apiRouter.get('/auth/users', (req, res) => {
+  try {
+    const users = getAdminUsers();
+    res.json({ success: true, data: users });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Crear nuevo usuario administrador
+apiRouter.post('/auth/users', (req, res) => {
+  try {
+    const { username, password, nombre, email, rol } = req.body;
+    if (!username || !password || !nombre) {
+      return res.status(400).json({ success: false, error: 'Usuario, contraseña y nombre son obligatorios' });
+    }
+    const id = createAdminUser({ username, password, nombre, email, rol });
+    res.json({ success: true, id, message: 'Usuario creado con éxito' });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// Modificar usuario administrador
+apiRouter.put('/auth/users/:id', (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    updateAdminUser(id, req.body);
+    res.json({ success: true, message: 'Usuario actualizado con éxito' });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// Eliminar usuario administrador
+apiRouter.delete('/auth/users/:id', (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    deleteAdminUser(id);
+    res.json({ success: true, message: 'Usuario eliminado' });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
   }
 });

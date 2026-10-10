@@ -110,7 +110,7 @@ export type DatosTecnicos = {
 };
 
 export interface Producto {
-  id?: number;
+  id?: any;
   modelo: string;
   especificacion_completa: string;
   serie: string;
@@ -121,6 +121,8 @@ export interface Producto {
   precio_usd: number | null;
   estado_stock: EstadoStock;
   fecha_arribo_estimada?: string | null;
+  codigo_1?: string | null;
+  codigo_2?: string | null;
   codigo_interno?: string | null;
   codigo_barras_ean?: string | null;
   imagen_principal: string;
@@ -155,4 +157,25 @@ export interface FilterOptions {
   puertos_poe?: number;
   estado_stock?: EstadoStock;
   solo_stock?: boolean;
+}
+
+export interface FiltrosBusqueda {
+  serie: string[];
+  estado_stock: string[];
+  formato: string[];
+  resolucion_mp: string[];
+  badges: string[];
+  canales: string[];
+  bahias: string[];
+  puertos_poe: string[];
+  microfono_incorporado: boolean;
+  altavoz_incorporado: boolean;
+  slot_sd: boolean;
+  poe_integrado: boolean;
+  modo_extendido: boolean;
+}
+
+export interface ItemCotizacion {
+  producto: Producto;
+  cantidad: number;
 }

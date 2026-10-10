@@ -6,7 +6,7 @@
   "main": "src/server/index.ts",
   "scripts": {
     "dev": "tsx watch src/server/index.ts",
-    "build": "vite build && tsc -p tsconfig.server.json",
+    "build": "tsc -p tsconfig.json --noEmit && vite build && tsc -p tsconfig.server.json",
     "start": "node dist/server/index.js",
     "seed": "tsx src/server/db/seed.ts"
   },

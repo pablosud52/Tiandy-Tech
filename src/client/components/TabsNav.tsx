@@ -46,7 +46,7 @@ export const TabsNav: React.FC<TabsNavProps> = ({ activeTab, setActiveTab, count
 
   return (
     <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         <nav className="flex space-x-2 sm:space-x-8 overflow-x-auto py-2.5" aria-label="Secciones">
           {tabs.map((tab) => {
             const Icon = tab.icon;

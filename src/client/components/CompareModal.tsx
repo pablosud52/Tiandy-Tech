@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Producto } from '../../shared/types.js';
-import { getProductSpecs } from '../../shared/helpers.js';
+import { getProductSpecs, formatCurrency, parseModelAndSpec } from '../../shared/helpers.js';
 import { BadgeOverlay } from './Badges.js';
 import { X, ArrowRight, Check, Minus, Shield, Zap, Eye, Trash2 } from 'lucide-react';
 
@@ -139,11 +139,23 @@ export const CompareModal: React.FC<CompareModalProps> = ({
                         <span className="rounded bg-emerald-600 px-1.5 py-0.5 text-[9px] font-bold text-white uppercase">
                           {prod.serie}
                         </span>
-                        <h3 className="font-mono text-base font-black text-slate-900 dark:text-white mt-1">
-                          {prod.modelo}
-                        </h3>
-                        <div className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
-                          ${(prod.precio_usd || 0).toFixed(2)} USD <span className="text-[9px] font-normal text-slate-400">s/IVA</span>
+                        {(() => {
+                          const { baseModel, variantSpec } = parseModelAndSpec(prod.modelo, prod.subtipo);
+                          return (
+                            <div>
+                              <h3 className="font-mono text-base font-black text-slate-900 dark:text-white mt-1">
+                                {baseModel}
+                              </h3>
+                              {variantSpec && (
+                                <span className="text-xs font-normal text-slate-500 dark:text-slate-400 block mt-0.5 tracking-tight">
+                                  {variantSpec}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })()}
+                        <div className="text-xs font-mono font-bold text-slate-900 dark:text-white mt-1">
+                          {formatCurrency(prod.precio_usd)} <span className="text-[9px] font-normal text-slate-400">s/IVA</span>
                         </div>
                       </div>
                       <button
@@ -273,7 +285,7 @@ export const CompareModal: React.FC<CompareModalProps> = ({
                 <td className="py-2.5 px-3 font-semibold text-slate-500">WDR Dinámico</td>
                 {productos.map((p) => (
                   <td key={p.id} className="py-2.5 px-4 font-semibold">
-                    {p.datos_tecnicos?.wdr_db || '-'}
+                    {p.datos_tecnicos?.camara?.wdr || (p.datos_tecnicos as any)?.wdr_db || '-'}
                   </td>
                 ))}
               </tr>
@@ -354,11 +366,11 @@ export const CompareModal: React.FC<CompareModalProps> = ({
                 {productos.map((p) => (
                   <td key={p.id} className="py-2.5 px-4">
                     <div className="flex flex-wrap gap-1">
-                      {p.datos_tecnicos?.analiticas_ia?.map((ia, i) => (
+                      {((p.datos_tecnicos?.camara?.analiticas_ia?.clasificacion_objetos || p.datos_tecnicos?.nvr?.ia_propia_nvr || (p.datos_tecnicos as any)?.analiticas_ia || []) as string[]).map((ia: string, i: number) => (
                         <span key={i} className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 text-[10px]">
                           {ia}
                         </span>
-                      )) || '-'}
+                      ))}
                     </div>
                   </td>
                 ))}

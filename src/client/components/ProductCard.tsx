@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Producto } from '../../shared/types.js';
 import { BadgeOverlay } from './Badges.js';
-import { Eye, Plus, Check, FileText, Zap, Shield, HardDrive, Wifi, Radio } from 'lucide-react';
+import { formatCurrency, parseModelAndSpec } from '../../shared/helpers.js';
+import { Eye, Plus, Check, FileText, Zap, Shield, HardDrive, Wifi, Radio, ShoppingCart } from 'lucide-react';
 
 interface ProductCardProps {
   producto: Producto;
@@ -9,6 +10,8 @@ interface ProductCardProps {
   isCompared: boolean;
   onToggleCompare: (producto: Producto) => void;
   canCompare: boolean;
+  onAddToCotizacion?: (producto: Producto) => void;
+  isEnCotizacion?: boolean;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -16,9 +19,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onSelect,
   isCompared,
   onToggleCompare,
-  canCompare
+  canCompare,
+  onAddToCotizacion,
+  isEnCotizacion = false,
 }) => {
-  const { modelo, serie, tipo_dispositivo, precio_usd, estado_stock, badge_nuevo, badges_detectados, datos_tecnicos } = producto;
+  const { modelo, serie, tipo_dispositivo, precio_usd, estado_stock, badge_nuevo, badges_detectados, datos_tecnicos, imagen_principal } = producto;
+  const [imgError, setImgError] = useState(false);
 
   const stockStyles: Record<string, { label: string; bg: string; text: string; border: string }> = {
     ENTREGA_INMEDIATA: {
@@ -73,21 +79,39 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       <div className="relative aspect-[16/10] bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-center p-4 overflow-hidden">
         <BadgeOverlay badges={badges_detectados} isNew={badge_nuevo} />
 
-        {/* Imagen del producto o placeholder vectorial técnico */}
-        <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-600 group-hover:scale-105 transition-transform duration-300">
-          <div className="w-20 h-20 rounded-2xl bg-white dark:bg-slate-800 shadow-inner flex items-center justify-center border border-slate-100 dark:border-slate-700">
-            {tipo_dispositivo === 'CAMARA' ? (
-              <span className="text-2xl font-black text-tiandy-700 dark:text-tiandy-400">IPC</span>
-            ) : tipo_dispositivo === 'NVR' ? (
-              <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">NVR</span>
-            ) : (
-              <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400">PoE</span>
-            )}
+        {/* Imagen real del producto o placeholder vectorial técnico */}
+        {imagen_principal && !imgError ? (
+          <div 
+            onClick={() => onSelect(producto)}
+            className="w-full h-full flex items-center justify-center p-3 cursor-pointer"
+          >
+            <img
+              src={imagen_principal}
+              alt={modelo}
+              className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm"
+              loading="lazy"
+              onError={() => setImgError(true)}
+            />
           </div>
-          <span className="text-[10px] uppercase font-mono tracking-wider mt-2 font-bold text-slate-400 dark:text-slate-500">
-            {cam?.formato || (tipo_dispositivo === 'NVR' ? `${nvr?.canales_ip} Canales` : `${sw?.puertos_poe_totales}P PoE`)}
-          </span>
-        </div>
+        ) : (
+          <div 
+            onClick={() => onSelect(producto)}
+            className="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-600 group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+          >
+            <div className="w-20 h-20 rounded-2xl bg-white dark:bg-slate-800 shadow-inner flex items-center justify-center border border-slate-100 dark:border-slate-700">
+              {tipo_dispositivo === 'CAMARA' ? (
+                <span className="text-2xl font-black text-tiandy-700 dark:text-tiandy-400">IPC</span>
+              ) : tipo_dispositivo === 'NVR' ? (
+                <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">NVR</span>
+              ) : (
+                <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400">PoE</span>
+              )}
+            </div>
+            <span className="text-[10px] uppercase font-mono tracking-wider mt-2 font-bold text-slate-400 dark:text-slate-500">
+              {cam?.formato || (tipo_dispositivo === 'NVR' ? `${nvr?.canales_ip} Canales` : `${sw?.puertos_poe_totales}P PoE`)}
+            </span>
+          </div>
+        )}
 
         {/* Botón flotante para comparar */}
         <button
@@ -120,14 +144,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </span>
           </div>
 
-          {/* Modelo */}
-          <h3 
-            onClick={() => onSelect(producto)}
-            className="text-base font-bold text-slate-900 dark:text-white hover:text-tiandy-600 dark:hover:text-tiandy-400 cursor-pointer transition line-clamp-1"
-            title={producto.especificacion_completa}
-          >
-            {modelo}
-          </h3>
+          {/* Modelo y Sub-especificación */}
+          {(() => {
+            const { baseModel, variantSpec } = parseModelAndSpec(modelo, producto.subtipo, producto.especificacion_completa);
+            return (
+              <div className="mb-2">
+                <h3 
+                  onClick={() => onSelect(producto)}
+                  className="text-base font-bold text-slate-900 dark:text-white hover:text-tiandy-600 dark:hover:text-tiandy-400 cursor-pointer transition line-clamp-1 font-mono"
+                  title={producto.especificacion_completa}
+                >
+                  {baseModel}
+                </h3>
+                {variantSpec && (
+                  <span className="text-xs font-normal text-slate-500 dark:text-slate-400 block mt-0.5 tracking-tight">
+                    {variantSpec}
+                  </span>
+                )}
+              </div>
+            );
+          })()}
 
           <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mb-3">
             {producto.subtipo || producto.especificacion_completa}
@@ -216,34 +252,42 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           )}
         </div>
 
-        {/* Pie Comercial: Precio USD y Estado de Stock */}
-        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        {/* Pie Comercial: Precio U$S, Cotizador y Estado de Stock */}
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
           <div>
             <div className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
-              Precio Mayorista
+              Precio Neto
             </div>
-            <div className="text-lg font-black text-tiandy-800 dark:text-tiandy-300 font-mono">
-              {precio_usd !== null && precio_usd !== undefined ? (
-                <>
-                  <span className="text-xs text-slate-500 font-normal mr-1">USD</span>
-                  ${precio_usd.toFixed(2)}
-                </>
-              ) : (
-                <span className="text-xs text-slate-400 font-sans italic">Consultar</span>
-              )}
+            <div className="text-base font-black text-slate-900 dark:text-white font-mono">
+              {formatCurrency(precio_usd)}
             </div>
           </div>
 
-          <div className="flex flex-col items-end">
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${stockBadge.bg} ${stockBadge.text} ${stockBadge.border}`}>
-              {stockBadge.label}
-            </span>
+          <div className="flex items-center gap-2">
+            {onAddToCotizacion && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onAddToCotizacion(producto);
+                }}
+                className={`rounded-xl px-2.5 py-1.5 text-xs font-bold flex items-center gap-1 transition-all ${
+                  isEnCotizacion
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:bg-emerald-900/60'
+                }`}
+                title="Añadir a la cotización"
+              >
+                {isEnCotizacion ? <Check className="w-3.5 h-3.5" /> : <ShoppingCart className="w-3.5 h-3.5" />}
+                <span className="text-[11px]">{isEnCotizacion ? 'Cotizando' : '+ Cotizar'}</span>
+              </button>
+            )}
+
             <button
               onClick={() => onSelect(producto)}
-              className="mt-1 text-xs font-semibold text-tiandy-700 dark:text-tiandy-400 hover:underline flex items-center gap-0.5"
+              className="rounded-xl border border-slate-200 p-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
+              title="Ver especificaciones completas"
             >
-              <span>Ver ficha</span>
-              <Eye className="w-3 h-3" />
+              <Eye className="w-4 h-4" />
             </button>
           </div>
         </div>

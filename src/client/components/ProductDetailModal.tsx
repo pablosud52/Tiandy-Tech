@@ -2,6 +2,7 @@ import React from 'react';
 import { Producto } from '../../shared/types.js';
 import { getProductSpecs } from '../../shared/helpers.js';
 import { BadgeOverlay } from './Badges.js';
+import { formatCurrency, parseModelAndSpec } from '../../shared/helpers.js';
 import {
   X,
   FileText,
@@ -17,7 +18,9 @@ import {
   Zap,
   CheckCircle2,
   Plus,
-  Check
+  Minus,
+  Check,
+  ShoppingCart
 } from 'lucide-react';
 
 interface ProductDetailModalProps {
@@ -26,6 +29,7 @@ interface ProductDetailModalProps {
   isCompared: boolean;
   onToggleCompare: (producto: Producto) => void;
   canCompare: boolean;
+  onAddToCotizacion?: (producto: Producto, cantidad?: number) => void;
 }
 
 export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
@@ -33,9 +37,17 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   onClose,
   isCompared,
   onToggleCompare,
-  canCompare
+  canCompare,
+  onAddToCotizacion
 }) => {
   if (!producto) return null;
+
+  const [quoteQty, setQuoteQty] = React.useState(1);
+  const [modalImgError, setModalImgError] = React.useState(false);
+
+  React.useEffect(() => {
+    setModalImgError(false);
+  }, [producto.id, producto.modelo, producto.imagen_principal]);
 
   const dt = producto.datos_tecnicos || {};
   const specs = getProductSpecs(producto);
@@ -108,9 +120,21 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 {currentStock.label}
               </span>
             </div>
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white font-mono">
-              {producto.modelo}
-            </h2>
+            {(() => {
+              const { baseModel, variantSpec } = parseModelAndSpec(producto.modelo, producto.subtipo, producto.especificacion_completa);
+              return (
+                <div>
+                  <h2 className="text-2xl font-black text-slate-900 dark:text-white font-mono">
+                    {baseModel}
+                  </h2>
+                  {variantSpec && (
+                    <span className="text-sm font-normal text-slate-500 dark:text-slate-400 block mt-0.5 tracking-tight">
+                      {variantSpec}
+                    </span>
+                  )}
+                </div>
+              );
+            })()}
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-2xl">
               {producto.subtipo || producto.especificacion_completa}
             </p>
@@ -142,27 +166,84 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
         {/* Content Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {/* Top Price & Badges Banner */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl bg-slate-50 p-4 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800">
-            <div>
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Precio Especial Gremio / Instalador
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-mono text-3xl font-black text-slate-900 dark:text-white">
-                  ${(producto.precio_usd || 0).toFixed(2)}
-                </span>
-                <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
-                  USD neto (s/IVA)
-                </span>
-              </div>
+          {/* Top Showcase: Imagen destacada + Precios & Cotizador */}
+          <div className="flex flex-col md:flex-row items-center gap-6 rounded-2xl bg-slate-50 p-6 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800">
+            {/* Foto del Producto */}
+            <div className="w-44 h-44 sm:w-52 sm:h-52 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 p-3 flex items-center justify-center shrink-0 shadow-sm relative group overflow-hidden">
+              {producto.imagen_principal && !modalImgError ? (
+                <img
+                  src={producto.imagen_principal}
+                  alt={producto.modelo}
+                  className="max-h-full max-w-full object-contain drop-shadow-md group-hover:scale-105 transition-transform duration-300"
+                  onError={() => setModalImgError(true)}
+                />
+              ) : (
+                <div className="text-center text-slate-300 dark:text-slate-600">
+                  <div className="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800 mx-auto flex items-center justify-center border border-slate-200 dark:border-slate-700 mb-2">
+                    <span className="text-xl font-black text-tiandy-700 dark:text-tiandy-400">
+                      {producto.tipo_dispositivo === 'CAMARA' ? 'IPC' : producto.tipo_dispositivo === 'NVR' ? 'NVR' : 'PoE'}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                    {specs.formato || 'Hardware Tiandy'}
+                  </span>
+                </div>
+              )}
             </div>
 
-            {/* Badges */}
-            <div className="flex flex-wrap gap-2 items-center">
-              {producto.badges_detectados?.map((b) => (
-                <BadgeOverlay key={b} badgeType={b} />
-              ))}
+            {/* Datos Comerciales y Cotizador */}
+            <div className="flex-1 w-full flex flex-col justify-between space-y-4">
+              <div>
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Precio Especial Gremio / Integrador
+                </div>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className="font-mono text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+                    {formatCurrency(producto.precio_usd)}
+                  </span>
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                    neto oficial (s/IVA)
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                  Stock garantizado para integradores y gremio de seguridad electrónica.
+                </p>
+              </div>
+
+              {/* Cotizador Action */}
+              {onAddToCotizacion && (
+                <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-slate-200/60 dark:border-slate-700/60">
+                  <div className="flex items-center rounded-xl border border-slate-300 bg-white p-1 dark:border-slate-700 dark:bg-slate-900 shadow-sm">
+                    <button
+                      onClick={() => setQuoteQty(Math.max(1, quoteQty - 1))}
+                      disabled={quoteQty <= 1}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 disabled:opacity-30 dark:hover:bg-slate-800"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
+                    <span className="w-10 text-center font-mono font-bold text-xs text-slate-900 dark:text-white">
+                      {quoteQty}
+                    </span>
+                    <button
+                      onClick={() => setQuoteQty(quoteQty + 1)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      onAddToCotizacion(producto, quoteQty);
+                      onClose();
+                    }}
+                    className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-emerald-500 shadow-md shadow-emerald-600/20 active:scale-95 transition-all"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    Añadir {quoteQty} {quoteQty === 1 ? 'unidad' : 'unidades'} a Cotización
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -365,13 +446,13 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           </div>
 
           {/* AI Analytics and Features */}
-          {dt.analiticas_ia && dt.analiticas_ia.length > 0 && (
+          {specs.analiticas_ia && specs.analiticas_ia.length > 0 && (
             <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-800 bg-white dark:bg-slate-900">
               <h4 className="font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
                 Analíticas de Inteligencia Artificial VCA
               </h4>
               <div className="flex flex-wrap gap-2">
-                {dt.analiticas_ia.map((ia, idx) => (
+                {specs.analiticas_ia.map((ia: string, idx: number) => (
                   <span
                     key={idx}
                     className="flex items-center gap-1 rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300"

@@ -139,47 +139,15 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
             )}
           </div>
 
-          {/* Estado de Stock */}
-          <div className="pt-3">
-            {renderSectionHeader('Disponibilidad', 'stock')}
-            {openSections.stock && (
-              <div className="mt-2 space-y-1.5">
-                {[
-                  { id: 'ENTREGA_INMEDIATA', label: 'Entrega Inmediata', dot: 'bg-emerald-500' },
-                  { id: 'POCAS_UNIDADES', label: 'Pocas Unidades', dot: 'bg-amber-500' },
-                  { id: 'PROXIMO_ARRIBO', label: 'Próximo Arribo', dot: 'bg-sky-500' },
-                  { id: 'AGOTADO', label: 'Agotado', dot: 'bg-slate-400' }
-                ].map((st) => {
-                  const checked = filtros.estado_stock?.includes(st.id) || false;
-                  return (
-                    <label
-                      key={st.id}
-                      className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={() => handleCheckboxToggle('estado_stock', st.id)}
-                        className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
-                      />
-                      <span className={`h-2 w-2 rounded-full ${st.dot}`} />
-                      <span>{st.label}</span>
-                    </label>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
           {/* FILTROS ESPECÍFICOS: CÁMARAS */}
           {tipo === 'CAMARA' && (
             <>
               {/* Formato */}
               <div className="pt-3">
-                {renderSectionHeader('Formato / Cuerpo', 'formato')}
+                {renderSectionHeader('Formato', 'formato')}
                 {openSections.formato && (
                   <div className="mt-2 space-y-1.5">
-                    {['Bullet', 'Torret', 'Eyeball', 'Domo', 'PTZ', 'Fisheye'].map((fmt) => {
+                    {['Bullet', 'Turret', 'Domo', 'PTZ', 'Fisheye'].map((fmt) => {
                       const checked = filtros.formato?.includes(fmt) || false;
                       return (
                         <label

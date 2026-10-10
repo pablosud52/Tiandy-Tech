@@ -27,7 +27,7 @@ export const WikiPage: React.FC = () => {
   const doriIdentificar = Math.round(doriDetectar * 0.10);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-12">
+    <div className="w-full max-w-[1920px] mx-auto px-4 py-8 sm:px-6 lg:px-8 xl:px-10 space-y-12">
       {/* Page Header */}
       <div className="border-b border-slate-200 pb-6 dark:border-slate-800">
         <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider mb-2">

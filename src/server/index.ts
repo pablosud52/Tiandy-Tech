@@ -34,7 +34,7 @@ async function startServer() {
       server: {
         middlewareMode: true,
         watch: {
-          ignored: ['**/data/**', '**/*.db*', '**/*.db-journal*', '**/.git/**']
+          ignored: ['**/data/**', '**/*.db*', '**/*.db-journal*', '**/.git/**', '**/scratch/**', '**/dist/**', '**/02-DOCS/**']
         }
       },
       appType: 'spa',

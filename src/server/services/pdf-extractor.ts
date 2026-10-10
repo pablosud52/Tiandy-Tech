@@ -7,8 +7,20 @@ const require = createRequire(import.meta.url);
 const pdfParse = require('pdf-parse');
 
 export async function extractFromPdf(pdfBuffer: Buffer, fileName: string): Promise<Producto> {
-  const data = await pdfParse(pdfBuffer);
-  const text = data.text;
+  let data: any;
+  try {
+    data = await pdfParse(pdfBuffer, { max: 0 });
+  } catch (err: any) {
+    // Reintento con buffer slice o parse estándar si hubo issue de stream
+    try {
+      const cloned = Buffer.from(pdfBuffer);
+      data = await pdfParse(cloned);
+    } catch (err2: any) {
+      throw new Error(`Error procesando PDF: ${err2.message || err.message}`);
+    }
+  }
+
+  const text = data?.text || '';
 
   // 1. Clasificación de tipo
   let tipo: TipoDispositivo = 'CAMARA';
@@ -22,14 +34,65 @@ export async function extractFromPdf(pdfBuffer: Buffer, fileName: string): Promi
     tipo = 'CAMARA';
   }
 
-  // 2. Extraer modelo y especificación
-  // Buscamos patrones típicos de Tiandy: TC-C..., TC-R..., TC-P..., TC-H...
-  const modelMatch = text.match(/\b(TC-[A-Z0-9]+(?:\s+[^\r\n]+)?)/i);
-  let modeloCompleto = modelMatch ? modelMatch[1].trim() : path.basename(fileName, '.pdf').replace(/_/g, ' ');
+  // 2. Extraer modelo base y especificación (Spec)
+  // En datasheets oficiales Tiandy se presentan dos formatos:
+  // Formato 1: "TC-C320N 1ANB-28" (separado por espacio: Modelo Base + Spec)
+  // Formato 2: "TC-C34XN Spec:I3W/E/Y/2.8mm/V4.2" (con prefijo Spec: -> debe extraerse sin "Spec:")
+  let modeloBase = '';
+  let variantSpec = '';
+
+  const lines = text.split(/\r?\n/).map((l: string) => l.trim()).filter((l: string) => l.length > 0);
   
-  // Limpiar modelo corto (ej: TC-C32QV)
-  const baseModelMatch = modeloCompleto.match(/\b(TC-[A-Z0-9]+)/i);
-  const modeloBase = baseModelMatch ? baseModelMatch[1].toUpperCase() : modeloCompleto.split(' ')[0];
+  // Buscar en las líneas iniciales donde figura el modelo del datasheet
+  for (const line of lines.slice(0, 50)) {
+    const match = line.match(/\b(TC-[A-Z0-9]+)\b/i);
+    if (match) {
+      modeloBase = match[1].toUpperCase();
+      const idx = line.indexOf(match[0]);
+      let rest = line.substring(idx + match[0].length).trim();
+      
+      // Limpiar prefijo 'Spec:' o 'Spec' o ': '
+      rest = rest.replace(/^Spec[:.\s-]*/i, '').trim();
+      
+      if (rest) {
+        variantSpec = rest;
+        break;
+      }
+    }
+  }
+
+  // Fallback si no se encontró en el cuerpo del texto: examinar nombre de archivo
+  if (!modeloBase) {
+    const fileBase = path.basename(fileName, '.pdf').replace(/_/g, ' ');
+    const match = fileBase.match(/\b(TC-[A-Z0-9]+)\b/i);
+    if (match) {
+      modeloBase = match[1].toUpperCase();
+      const idx = fileBase.indexOf(match[0]);
+      let rest = fileBase.substring(idx + match[0].length).trim();
+      rest = rest.replace(/^Spec[:.\s-]*/i, '').trim();
+      if (rest) variantSpec = rest;
+    } else {
+      modeloBase = fileBase;
+    }
+  }
+
+  // Si tenemos modelo base pero no encontramos variantSpec en el texto del PDF,
+  // verificar si el nombre del archivo contiene la especificación/variante
+  if (modeloBase && !variantSpec) {
+    const fileBase = path.basename(fileName, '.pdf').replace(/_/g, ' ');
+    if (fileBase.toUpperCase().includes(modeloBase)) {
+      const idx = fileBase.toUpperCase().indexOf(modeloBase);
+      let rest = fileBase.substring(idx + modeloBase.length).trim();
+      rest = rest.replace(/^Spec[:.\s-]*/i, '').trim();
+      if (rest) variantSpec = rest;
+    }
+  }
+
+  // Limpiar cualquier residuo de "Spec:" en la variante
+  variantSpec = variantSpec.replace(/\bSpec[:.\s-]*/gi, '').trim();
+
+  // El modelo exacto resultante: ambos conforman el modelo exacto
+  const modeloExacto = variantSpec ? `${modeloBase} ${variantSpec}` : modeloBase;
 
   // 3. Extraer serie comercial
   let serie = 'General Series';
@@ -254,8 +317,8 @@ export async function extractFromPdf(pdfBuffer: Buffer, fileName: string): Promi
   }
 
   return {
-    modelo: modeloBase,
-    especificacion_completa: modeloCompleto,
+    modelo: modeloExacto,
+    especificacion_completa: modeloExacto,
     serie,
     tipo_dispositivo: tipo,
     subtipo,

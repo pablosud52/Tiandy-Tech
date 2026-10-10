@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Producto, TipoDispositivo, FiltrosBusqueda } from '../shared/types.js';
+import { Producto, TipoDispositivo, FiltrosBusqueda, ItemCotizacion } from '../shared/types.js';
 import { getProductSpecs } from '../shared/helpers.js';
 import { Navbar } from './components/Navbar.js';
 import { TabsNav } from './components/TabsNav.js';
@@ -8,9 +8,11 @@ import { ProductTable } from './components/ProductTable.js';
 import { FilterSidebar } from './components/FilterSidebar.js';
 import { ProductDetailModal } from './components/ProductDetailModal.js';
 import { CompareFloatingBar, CompareModal } from './components/CompareModal.js';
+import { QuotationModal } from './components/QuotationModal.js';
 import { WikiPage } from './pages/WikiPage.js';
 import { AdminPage } from './admin/AdminPage.js';
-import { Filter, SlidersHorizontal, Loader2, AlertCircle } from 'lucide-react';
+import { AdminLogin } from './admin/AdminLogin.js';
+import { Filter, SlidersHorizontal, Loader2, AlertCircle, ArrowUpDown, Barcode, X } from 'lucide-react';
 
 export default function App() {
   // Navigation State
@@ -18,6 +20,41 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<TipoDispositivo | 'WIKI'>('CAMARA');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [busqueda, setBusqueda] = useState<string>('');
+  const [busquedaCodigo, setBusquedaCodigo] = useState<string>('');
+
+  // Admin Authentication State
+  const [adminUser, setAdminUser] = useState<any>(() => {
+    try {
+      const saved = localStorage.getItem('tiandy_admin_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [adminToken, setAdminToken] = useState<string | null>(() => {
+    return localStorage.getItem('tiandy_admin_token') || null;
+  });
+
+  // Validar sesión activa en el backend al montar o cambiar token
+  useEffect(() => {
+    if (adminToken) {
+      fetch('/api/auth/me', {
+        headers: { Authorization: `Bearer ${adminToken}` }
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.success) {
+            localStorage.removeItem('tiandy_admin_token');
+            localStorage.removeItem('tiandy_admin_user');
+            setAdminUser(null);
+            setAdminToken(null);
+          } else {
+            setAdminUser(data.user);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [adminToken]);
 
   // Dark Mode
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -62,6 +99,67 @@ export default function App() {
   const [comparedProducts, setComparedProducts] = useState<Producto[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState<boolean>(false);
 
+  // Sorting State
+  const [ordenarPor, setOrdenarPor] = useState<'default' | 'precio_asc' | 'precio_desc' | 'modelo_asc'>('default');
+
+  // Quotation State
+  const [cotizacion, setCotizacion] = useState<ItemCotizacion[]>(() => {
+    try {
+      const saved = localStorage.getItem('tiandy_cotizacion');
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.filter((item) => item && item.producto && item.producto.id != null);
+    } catch {
+      return [];
+    }
+  });
+  const [isCotizacionOpen, setIsCotizacionOpen] = useState<boolean>(false);
+
+  // Persist quotation in localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('tiandy_cotizacion', JSON.stringify(cotizacion));
+    } catch {}
+  }, [cotizacion]);
+
+  // Quotation Handlers
+  const handleAddToCotizacion = (producto: Producto, cantidad: number = 1) => {
+    setCotizacion((prev) => {
+      const exists = prev.find((item) => String(item.producto.id) === String(producto.id));
+      if (exists) {
+        return prev.map((item) =>
+          String(item.producto.id) === String(producto.id)
+            ? { ...item, cantidad: item.cantidad + cantidad }
+            : item
+        );
+      }
+      return [...prev, { producto, cantidad }];
+    });
+  };
+
+  const handleUpdateCotizacionQty = (productId: any, newQty: number) => {
+    if (newQty <= 0) {
+      handleRemoveFromCotizacion(productId);
+      return;
+    }
+    setCotizacion((prev) =>
+      prev.map((item) =>
+        String(item.producto.id) === String(productId)
+          ? { ...item, cantidad: newQty }
+          : item
+      )
+    );
+  };
+
+  const handleRemoveFromCotizacion = (productId: any) => {
+    setCotizacion((prev) => prev.filter((item) => String(item.producto.id) !== String(productId)));
+  };
+
+  const handleClearCotizacion = () => {
+    setCotizacion([]);
+  };
+
   // Sync TabsNav WIKI click with activeView
   const handleTabChange = (tab: TipoDispositivo | 'WIKI') => {
     if (tab === 'WIKI') {
@@ -81,7 +179,6 @@ export default function App() {
       const data = await res.json();
       const list = Array.isArray(data) ? data : data.data || [];
       setProductos(list);
-      }
     } catch (err: any) {
       setError(`Error de conexión con el servidor: ${err.message}`);
     } finally {
@@ -102,8 +199,8 @@ export default function App() {
     }
   };
 
-  const handleRemoveCompare = (id: string) => {
-    setComparedProducts((prev) => prev.filter((p) => p.id !== id));
+  const handleRemoveCompare = (id: any) => {
+    setComparedProducts((prev) => prev.filter((p) => String(p.id) !== String(id)));
   };
 
   const handleClearCompare = () => {
@@ -129,6 +226,7 @@ export default function App() {
       modo_extendido: false
     });
     setBusqueda('');
+    setBusquedaCodigo('');
   };
 
   // Filtered Products
@@ -137,18 +235,28 @@ export default function App() {
 
     return productos.filter((prod) => {
       // 1. Tab Tipo Dispositivo
-      if (prod.tipo_dispositivo !== activeTab) return false;
+      if ((prod.tipo_dispositivo as string) !== activeTab) return false;
 
       const specs = getProductSpecs(prod);
 
-      // 2. Buscador
+      // 2. Buscador Exclusivo por Códigos (Código 1 y Código 2)
+      if (busquedaCodigo.trim()) {
+        const codQuery = busquedaCodigo.toLowerCase().trim();
+        const matchCod1 = prod.codigo_1 ? prod.codigo_1.toLowerCase().includes(codQuery) : false;
+        const matchCod2 = prod.codigo_2 ? prod.codigo_2.toLowerCase().includes(codQuery) : false;
+        if (!matchCod1 && !matchCod2) {
+          return false;
+        }
+      }
+
+      // 3. Buscador General de Catálogo (Modelo, Serie, Descripción y Especificaciones)
       if (busqueda.trim()) {
         const query = busqueda.toLowerCase().trim();
         const matchModelo = prod.modelo.toLowerCase().includes(query);
-        const matchSerie = prod.serie.toLowerCase().includes(query);
+        const matchSerie = (prod.serie || '').toLowerCase().includes(query);
         const matchDesc = (prod.subtipo || prod.especificacion_completa || '').toLowerCase().includes(query);
-        const matchFormato = specs.formato.toLowerCase().includes(query);
-        const matchRes = specs.resolucion.toLowerCase().includes(query);
+        const matchFormato = (specs.formato || '').toLowerCase().includes(query);
+        const matchRes = (specs.resolucion || '').toLowerCase().includes(query);
         if (!matchModelo && !matchSerie && !matchDesc && !matchFormato && !matchRes) {
           return false;
         }
@@ -156,7 +264,7 @@ export default function App() {
 
       // 3. Serie Tiandy
       if (filtros.serie && filtros.serie.length > 0) {
-        if (!filtros.serie.some((s) => prod.serie.toLowerCase().includes(s.toLowerCase()))) return false;
+        if (!filtros.serie.some((s: string) => prod.serie.toLowerCase().includes(s.toLowerCase()))) return false;
       }
 
       // 4. Estado Stock
@@ -166,21 +274,21 @@ export default function App() {
 
       // 5. Formato
       if (filtros.formato && filtros.formato.length > 0) {
-        if (!filtros.formato.some((f) => specs.formato.toLowerCase().includes(f.toLowerCase()))) {
+        if (!filtros.formato.some((f: string) => specs.formato.toLowerCase().includes(f.toLowerCase()))) {
           return false;
         }
       }
 
       // 6. Resolución
       if (filtros.resolucion_mp && filtros.resolucion_mp.length > 0) {
-        if (!filtros.resolucion_mp.some((r) => specs.resolucion.toUpperCase().includes(r.toUpperCase()))) {
+        if (!filtros.resolucion_mp.some((r: string) => specs.resolucion.toUpperCase().includes(r.toUpperCase()))) {
           return false;
         }
       }
 
       // 7. Badges de tecnología
       if (filtros.badges && filtros.badges.length > 0) {
-        const hasAnyBadge = filtros.badges.some((b) => prod.badges_detectados?.includes(b as any));
+        const hasAnyBadge = filtros.badges.some((b: string) => prod.badges_detectados?.includes(b as any));
         if (!hasAnyBadge) return false;
       }
 
@@ -213,6 +321,45 @@ export default function App() {
     });
   }, [productos, activeView, activeTab, busqueda, filtros]);
 
+  // Sorted Products
+  const sortedProducts = useMemo(() => {
+    const list = [...filteredProducts];
+    if (ordenarPor === 'precio_asc') {
+      return list.sort((a, b) => {
+        const pA = a.precio_usd ?? Infinity;
+        const pB = b.precio_usd ?? Infinity;
+        return pA - pB;
+      });
+    }
+    if (ordenarPor === 'precio_desc') {
+      return list.sort((a, b) => {
+        const pA = a.precio_usd ?? -Infinity;
+        const pB = b.precio_usd ?? -Infinity;
+        return pB - pA;
+      });
+    }
+    if (ordenarPor === 'modelo_asc') {
+      return list.sort((a, b) => a.modelo.localeCompare(b.modelo));
+    }
+    return list;
+  }, [filteredProducts, ordenarPor]);
+
+  // Totals for Quotation
+  const totalCotizacionItems = useMemo(
+    () => cotizacion.reduce((acc, item) => acc + (item?.cantidad || 0), 0),
+    [cotizacion]
+  );
+
+  const totalCotizacionMonto = useMemo(
+    () => cotizacion.reduce((acc, item) => acc + (item?.producto?.precio_usd || 0) * (item?.cantidad || 0), 0),
+    [cotizacion]
+  );
+
+  const cotizacionIds = useMemo(
+    () => cotizacion.filter((item) => item?.producto?.id != null).map((item) => String(item.producto.id)),
+    [cotizacion]
+  );
+
   // Counts for Tabs
   const counts = useMemo(() => {
     return {
@@ -222,7 +369,7 @@ export default function App() {
     };
   }, [productos]);
 
-  const comparedIds = useMemo(() => comparedProducts.map((p) => p.id), [comparedProducts]);
+  const comparedIds = useMemo(() => comparedProducts.map((p) => String(p.id)), [comparedProducts]);
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100 flex flex-col font-sans">
@@ -230,6 +377,8 @@ export default function App() {
       <Navbar
         busqueda={busqueda}
         setBusqueda={setBusqueda}
+        busquedaCodigo={busquedaCodigo}
+        setBusquedaCodigo={setBusquedaCodigo}
         viewMode={viewMode}
         setViewMode={setViewMode}
         darkMode={darkMode}
@@ -237,12 +386,41 @@ export default function App() {
         activeView={activeView}
         setActiveView={setActiveView}
         totalProductos={productos.length}
+        onOpenCotizacion={() => setIsCotizacionOpen(true)}
+        totalCotizacionItems={totalCotizacionItems}
+        totalCotizacionMonto={totalCotizacionMonto}
       />
 
       {/* Main Content Area */}
       {activeView === 'admin' ? (
         <main className="flex-1">
-          <AdminPage onBackToCatalog={() => setActiveView('catalog')} />
+          {!adminUser || !adminToken ? (
+            <AdminLogin
+              onLoginSuccess={(user, token) => {
+                setAdminUser(user);
+                setAdminToken(token);
+              }}
+              onBackToCatalog={() => setActiveView('catalog')}
+            />
+          ) : (
+            <AdminPage
+              currentUser={adminUser}
+              onLogout={() => {
+                if (adminToken) {
+                  fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${adminToken}` }
+                  }).catch(() => {});
+                }
+                localStorage.removeItem('tiandy_admin_token');
+                localStorage.removeItem('tiandy_admin_user');
+                setAdminUser(null);
+                setAdminToken(null);
+                setActiveView('catalog');
+              }}
+              onBackToCatalog={() => setActiveView('catalog')}
+            />
+          )}
         </main>
       ) : activeView === 'wiki' ? (
         <main className="flex-1">
@@ -257,7 +435,7 @@ export default function App() {
             counts={counts}
           />
 
-          <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <main className="flex-1 w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-6">
             <div className="flex gap-6">
               {/* Desktop Filter Sidebar */}
               <FilterSidebar
@@ -265,16 +443,16 @@ export default function App() {
                 filtros={filtros}
                 onChange={setFiltros}
                 onReset={handleResetFilters}
-                conteoResultados={filteredProducts.length}
+                conteoResultados={sortedProducts.length}
                 isOpenMobile={isMobileFiltersOpen}
                 onCloseMobile={() => setIsMobileFiltersOpen(false)}
               />
 
               {/* Products Area */}
               <div className="flex-1 min-w-0">
-                {/* Top Bar: Mobile Filter Toggle + Status Count */}
-                <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
-                  <div className="flex items-center gap-3">
+                {/* Top Bar: Mobile Filter Toggle + Status Count + Sort Pills */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
+                  <div className="flex flex-wrap items-center gap-3">
                     <button
                       onClick={() => setIsMobileFiltersOpen(true)}
                       className="lg:hidden flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
@@ -283,12 +461,77 @@ export default function App() {
                       Filtros
                     </button>
                     <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                      Mostrando <strong className="text-slate-900 dark:text-white">{filteredProducts.length}</strong> de {counts[activeTab === 'CAMARA' ? 'camaras' : activeTab === 'NVR' ? 'nvrs' : 'switches']} modelos
+                      Mostrando <strong className="text-slate-900 dark:text-white">{sortedProducts.length}</strong> de {counts[activeTab === 'CAMARA' ? 'camaras' : activeTab === 'NVR' ? 'nvrs' : 'switches']} modelos
                     </span>
+
+                    {/* Indicador de filtro exclusivo por código */}
+                    {busquedaCodigo && (
+                      <span className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 text-xs font-mono font-medium text-amber-700 dark:text-amber-400">
+                        <Barcode className="w-3.5 h-3.5" />
+                        <span>Código: <strong>{busquedaCodigo}</strong></span>
+                        <button
+                          onClick={() => setBusquedaCodigo('')}
+                          className="ml-1 text-amber-600 hover:text-amber-900 dark:hover:text-white"
+                          title="Quitar filtro de código"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    )}
                   </div>
 
-                  <div className="text-[11px] font-medium text-slate-400 hidden sm:block">
-                    Precios expresados en USD neto oficial sin IVA
+                  <div className="flex flex-wrap items-center gap-3">
+                    {/* Pastillas de ordenamiento */}
+                    <div className="flex items-center gap-1 bg-slate-200/60 dark:bg-slate-800/80 p-1 rounded-xl">
+                      <span className="text-slate-500 dark:text-slate-400 text-[11px] font-bold px-1.5 flex items-center gap-1">
+                        <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                        Ordenar:
+                      </span>
+                      <button
+                        onClick={() => setOrdenarPor('default')}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                          ordenarPor === 'default'
+                            ? 'bg-tiandy-700 text-white shadow-sm'
+                            : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        Defecto
+                      </button>
+                      <button
+                        onClick={() => setOrdenarPor('precio_asc')}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                          ordenarPor === 'precio_asc'
+                            ? 'bg-tiandy-700 text-white shadow-sm'
+                            : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        Precio: Menor
+                      </button>
+                      <button
+                        onClick={() => setOrdenarPor('precio_desc')}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                          ordenarPor === 'precio_desc'
+                            ? 'bg-tiandy-700 text-white shadow-sm'
+                            : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        Precio: Mayor
+                      </button>
+                      <button
+                        onClick={() => setOrdenarPor('modelo_asc')}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                          ordenarPor === 'modelo_asc'
+                            ? 'bg-tiandy-700 text-white shadow-sm'
+                            : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        Modelo A-Z
+                      </button>
+                    </div>
+
+                    <div className="text-[11px] font-medium text-slate-400 hidden xl:block">
+                      Precios expresados en U$S neto oficial sin IVA
+                    </div>
                   </div>
                 </div>
 
@@ -317,7 +560,7 @@ export default function App() {
                 {/* Products Grid / Table View */}
                 {!isLoading && !error && (
                   <>
-                    {filteredProducts.length === 0 ? (
+                    {sortedProducts.length === 0 ? (
                       <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm dark:border-slate-800 dark:bg-slate-900">
                         <Filter className="mx-auto h-10 w-10 text-slate-300 mb-3" />
                         <h3 className="text-base font-bold text-slate-800 dark:text-slate-200">
@@ -334,25 +577,29 @@ export default function App() {
                         </button>
                       </div>
                     ) : viewMode === 'grid' ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                        {filteredProducts.map((prod) => (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 min-[1900px]:grid-cols-5 gap-5">
+                        {sortedProducts.map((prod) => (
                           <ProductCard
                             key={prod.id}
                             producto={prod}
                             onSelect={setSelectedProduct}
-                            isCompared={comparedIds.includes(prod.id)}
+                            isCompared={comparedIds.includes(String(prod.id))}
                             onToggleCompare={handleToggleCompare}
                             canCompare={comparedProducts.length < 3}
+                            onAddToCotizacion={handleAddToCotizacion}
+                            isEnCotizacion={cotizacionIds.includes(String(prod.id))}
                           />
                         ))}
                       </div>
                     ) : (
                       <ProductTable
-                        productos={filteredProducts}
+                        productos={sortedProducts}
                         onSelect={setSelectedProduct}
                         comparedIds={comparedIds}
                         onToggleCompare={handleToggleCompare}
                         canCompare={comparedProducts.length < 3}
+                        onAddToCotizacion={handleAddToCotizacion}
+                        cotizacionIds={cotizacionIds}
                       />
                     )}
                   </>
@@ -375,9 +622,20 @@ export default function App() {
       <ProductDetailModal
         producto={selectedProduct}
         onClose={() => setSelectedProduct(null)}
-        isCompared={selectedProduct ? comparedIds.includes(selectedProduct.id) : false}
+        isCompared={selectedProduct ? comparedIds.includes(String(selectedProduct.id)) : false}
         onToggleCompare={handleToggleCompare}
         canCompare={comparedProducts.length < 3}
+        onAddToCotizacion={handleAddToCotizacion}
+      />
+
+      {/* Quotation Cart Modal */}
+      <QuotationModal
+        isOpen={isCotizacionOpen}
+        onClose={() => setIsCotizacionOpen(false)}
+        items={cotizacion}
+        onUpdateQuantity={handleUpdateCotizacionQty}
+        onRemoveItem={handleRemoveFromCotizacion}
+        onClear={handleClearCotizacion}
       />
 
       {/* Side-by-Side Compare Modal */}
@@ -392,7 +650,7 @@ export default function App() {
 
       {/* Clean Footer */}
       <footer className="mt-auto border-t border-slate-200 bg-white py-6 dark:border-slate-800 dark:bg-slate-900 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
           <div className="flex items-center gap-2">
             <span className="font-bold text-slate-700 dark:text-slate-200">Tiandy Tech</span>
             <span>•</span>

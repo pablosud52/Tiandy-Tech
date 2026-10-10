@@ -36,3 +36,7 @@ data/docs/*
 !data/docs/.gitkeep
 data/img/*
 !data/img/.gitkeep
+data/uploads/*
+!data/uploads/.gitkeep
+data/images/*
+!data/images/.gitkeep
