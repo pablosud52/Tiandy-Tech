@@ -77,6 +77,11 @@ db.exec(`
     expires_at DATETIME NOT NULL,
     FOREIGN KEY(usuario_id) REFERENCES usuarios_admin(id) ON DELETE CASCADE
   );
+
+  CREATE TABLE IF NOT EXISTS configuracion (
+    clave TEXT PRIMARY KEY,
+    valor TEXT NOT NULL
+  );
 `);
 
 // Migración retrocompatible para columnas codigo_1 y codigo_2 e índices
@@ -126,9 +131,13 @@ export function getProductos(filters?: {
     params.push(filters.tipo_dispositivo);
   }
 
-  if (filters?.serie) {
-    query += ' AND serie = ?';
-    params.push(filters.serie);
+  if (filters?.serie !== undefined && filters.serie !== null && filters.serie !== '') {
+    if (filters.serie === 'SIN_SERIE') {
+      query += ` AND (serie IS NULL OR serie = '' OR LOWER(TRIM(serie)) = 'general series')`;
+    } else {
+      query += ' AND serie = ?';
+      params.push(filters.serie);
+    }
   }
 
   if (filters?.busqueda) {
@@ -284,7 +293,7 @@ export function saveProducto(prod: Producto): number {
     `).run(
       prod.modelo,
       prod.especificacion_completa,
-      prod.serie,
+      prod.serie || '',
       prod.tipo_dispositivo,
       prod.subtipo || null,
       prod.badge_nuevo ? 1 : 0,
@@ -315,7 +324,7 @@ export function saveProducto(prod: Producto): number {
     `).run(
       prod.modelo,
       prod.especificacion_completa,
-      prod.serie,
+      prod.serie || '',
       prod.tipo_dispositivo,
       prod.subtipo || null,
       prod.badge_nuevo ? 1 : 0,
@@ -420,9 +429,9 @@ export function authenticateUser(username: string, password: string) {
   // Actualizar último login
   db.prepare('UPDATE usuarios_admin SET ultimo_login = CURRENT_TIMESTAMP WHERE id = ?').run(user.id);
 
-  // Crear sesión (duración: 7 días)
+  // Crear sesión (duración: 4 horas para exigir re-autenticación)
   const token = crypto.randomBytes(32).toString('hex');
-  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const expires = new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString();
   db.prepare('INSERT INTO sesiones_admin (token, usuario_id, expires_at) VALUES (?, ?, ?)').run(token, user.id, expires);
 
   return {
@@ -504,4 +513,22 @@ export function deleteAdminUser(id: number) {
   db.prepare('DELETE FROM sesiones_admin WHERE usuario_id = ?').run(id);
   db.prepare('DELETE FROM usuarios_admin WHERE id = ?').run(id);
 }
+
+export function getConfiguracion(clave: string, valorPorDefecto: string = ''): string {
+  try {
+    const row = db.prepare('SELECT valor FROM configuracion WHERE clave = ?').get(clave) as any;
+    return row ? row.valor : valorPorDefecto;
+  } catch {
+    return valorPorDefecto;
+  }
+}
+
+export function setConfiguracion(clave: string, valor: string): void {
+  db.prepare(`
+    INSERT INTO configuracion (clave, valor)
+    VALUES (?, ?)
+    ON CONFLICT(clave) DO UPDATE SET valor = excluded.valor
+  `).run(clave, valor);
+}
+
 

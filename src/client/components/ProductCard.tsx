@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Producto } from '../../shared/types.js';
-import { BadgeOverlay } from './Badges.js';
+import React, { useState, useMemo } from 'react';
+import { Producto, BadgeGlobalConfig } from '../../shared/types.js';
+import { BadgeOverlay, SellosGraficosOverlay, getProductSellos } from './Badges.js';
 import { formatCurrency, parseModelAndSpec } from '../../shared/helpers.js';
-import { Eye, Plus, Check, FileText, Zap, Shield, HardDrive, Wifi, Radio, ShoppingCart } from 'lucide-react';
+import { Check, Calculator, ArrowLeftRight } from 'lucide-react';
 
 interface ProductCardProps {
   producto: Producto;
@@ -12,6 +12,7 @@ interface ProductCardProps {
   canCompare: boolean;
   onAddToCotizacion?: (producto: Producto) => void;
   isEnCotizacion?: boolean;
+  globalBadges?: BadgeGlobalConfig[];
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -22,68 +23,125 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   canCompare,
   onAddToCotizacion,
   isEnCotizacion = false,
+  globalBadges,
 }) => {
   const { modelo, serie, tipo_dispositivo, precio_usd, estado_stock, badge_nuevo, badges_detectados, datos_tecnicos, imagen_principal } = producto;
   const [imgError, setImgError] = useState(false);
+  const sellosGraficos = useMemo(() => getProductSellos(producto, globalBadges), [producto, globalBadges]);
+  const hasTopRightSello = useMemo(() => sellosGraficos.some((s) => s.posicion === 'top-right'), [sellosGraficos]);
 
   const stockStyles: Record<string, { label: string; bg: string; text: string; border: string }> = {
     ENTREGA_INMEDIATA: {
       label: 'ENTREGA INMEDIATA',
-      bg: 'bg-emerald-50 dark:bg-emerald-950/50',
-      text: 'text-emerald-700 dark:text-emerald-400',
-      border: 'border-emerald-200 dark:border-emerald-800'
+      bg: 'bg-emerald-50 dark:bg-emerald-950/70',
+      text: 'text-emerald-700 dark:text-emerald-300',
+      border: 'border-emerald-300 dark:border-emerald-700'
     },
     POCAS_UNIDADES: {
       label: 'POCAS UNIDADES',
-      bg: 'bg-amber-50 dark:bg-amber-950/50',
-      text: 'text-amber-700 dark:text-amber-400',
-      border: 'border-amber-200 dark:border-amber-800'
+      bg: 'bg-amber-50 dark:bg-amber-950/70',
+      text: 'text-amber-700 dark:text-amber-300',
+      border: 'border-amber-300 dark:border-amber-700'
     },
     ULTIMA_UNIDAD: {
       label: 'ÚLTIMA EN STOCK',
-      bg: 'bg-amber-100 dark:bg-amber-900/60',
-      text: 'text-amber-800 dark:text-amber-300',
-      border: 'border-amber-300 dark:border-amber-700'
+      bg: 'bg-amber-100 dark:bg-amber-900/70',
+      text: 'text-amber-800 dark:text-amber-200',
+      border: 'border-amber-400 dark:border-amber-600'
     },
     PROXIMO_ARRIBO: {
       label: 'PRÓXIMO ARRIBO',
-      bg: 'bg-sky-50 dark:bg-sky-950/50',
-      text: 'text-sky-700 dark:text-sky-400',
-      border: 'border-sky-200 dark:border-sky-800'
+      bg: 'bg-sky-50 dark:bg-sky-950/70',
+      text: 'text-sky-700 dark:text-sky-300',
+      border: 'border-sky-300 dark:border-sky-700'
     },
     AGOTADO: {
       label: 'AGOTADO',
-      bg: 'bg-slate-100 dark:bg-slate-800',
-      text: 'text-slate-500 dark:text-slate-400',
-      border: 'border-slate-200 dark:border-slate-700'
+      bg: 'bg-slate-100 dark:bg-slate-800/80',
+      text: 'text-slate-600 dark:text-slate-300',
+      border: 'border-slate-300 dark:border-slate-600'
     },
     CONSULTAR: {
       label: 'CONSULTAR STOCK',
-      bg: 'bg-purple-50 dark:bg-purple-950/50',
-      text: 'text-purple-700 dark:text-purple-400',
-      border: 'border-purple-200 dark:border-purple-800'
+      bg: 'bg-purple-50 dark:bg-purple-950/70',
+      text: 'text-purple-700 dark:text-purple-300',
+      border: 'border-purple-300 dark:border-purple-700'
     }
   };
 
   const stockBadge = stockStyles[estado_stock] || stockStyles.ENTREGA_INMEDIATA;
 
-  // Resumen de specs según tipo
+  // Extracción de datos y características técnicas
   const cam = datos_tecnicos?.camara;
   const nvr = datos_tecnicos?.nvr;
   const sw = datos_tecnicos?.switch;
+  const cp = (datos_tecnicos as any)?.caracteristicas_principales;
+
+  const { baseModel, variantSpec } = parseModelAndSpec(modelo, producto.subtipo, producto.especificacion_completa);
+
+  // Formato del equipo
+  const formatoLabel = (() => {
+    if (tipo_dispositivo === 'CAMARA') {
+      return cam?.formato || cp?.formato || 'Cámara';
+    }
+    if (tipo_dispositivo === 'NVR') {
+      return 'NVR';
+    }
+    if (tipo_dispositivo === 'SWITCH') {
+      return 'Switch PoE';
+    }
+    return tipo_dispositivo;
+  })();
+
+  // Sensor
+  const sensorRaw = cp?.sensor || cam?.sensor_imagen;
+  const sensor = sensorRaw ? sensorRaw.replace(/([0-9/.]+")([A-Za-z])/i, '$1 $2') : null;
+
+  // Min. Iluminación
+  const minIlumRaw = cp?.min_iluminacion || cam?.iluminacion_minima_color;
+  const minIlum = (() => {
+    if (!minIlumRaw) return null;
+    const match = minIlumRaw.match(/([\d.]+)\s*Lux/i);
+    if (match) return `${match[1]} Lux`;
+    return minIlumRaw.replace(/@\s*\(?F[\d.]+/i, '').replace(/Color:\s*/i, '').trim();
+  })();
+
+  // Visión Nocturna
+  const visionRaw = cp?.vision_nocturna || (cam?.alcance_ir_metros ? `IR ${cam.alcance_ir_metros}m` : null);
+  const vision = visionRaw ? visionRaw.replace(/LED\s*/i, '').trim() : null;
+
+  // SMD o VCA
+  const smdOrVca = (() => {
+    // 1. SMD prioritario si tiene versión especificada
+    const smdVal = cp?.smd || cam?.analiticas_ia?.version_smd || (producto.badges_detectados?.find((b: string) => /SMD/i.test(b)));
+    if (smdVal && smdVal !== '-') {
+      const cleanSmd = typeof smdVal === 'string' && smdVal.toUpperCase().startsWith('SMD') ? smdVal : `SMD ${smdVal}`;
+      return { label: cleanSmd, title: 'Smart Motion Detection' };
+    }
+    // 2. VCA si tiene analíticas VCA
+    const vcaVal = cp?.vca || cam?.analiticas_ia?.vca_funciones;
+    if (vcaVal && (Array.isArray(vcaVal) ? vcaVal.length > 0 : String(vcaVal).trim() !== '' && vcaVal !== '-')) {
+      const details = Array.isArray(vcaVal) ? vcaVal.join('; ') : String(vcaVal);
+      return { label: 'VCA', title: `Analíticas VCA: ${details}` };
+    }
+    return null;
+  })();
 
   return (
     <div className="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-tiandy-400 dark:hover:border-tiandy-600 shadow-sm hover:shadow-md transition-all flex flex-col overflow-hidden relative">
       
-      {/* Contenedor Visual con Badges */}
+      {/* Contenedor Visual de Imagen con Sellos Gráficos, Badges y Estado de Stock */}
       <div className="relative aspect-[16/10] bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-center p-4 overflow-hidden">
-        <BadgeOverlay badges={badges_detectados} isNew={badge_nuevo} />
+        {/* Sellos de fondo (detrás del producto) */}
+        <SellosGraficosOverlay sellos={sellosGraficos} capaFiltro="back" />
+
+        <BadgeOverlay badges={badges_detectados} hasTopRightSello={hasTopRightSello} />
 
         {/* Imagen real del producto o placeholder vectorial técnico */}
         {imagen_principal && !imgError ? (
           <div 
             onClick={() => onSelect(producto)}
-            className="w-full h-full flex items-center justify-center p-3 cursor-pointer"
+            className="w-full h-full flex items-center justify-center p-3 cursor-pointer relative z-10"
           >
             <img
               src={imagen_principal}
@@ -96,7 +154,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         ) : (
           <div 
             onClick={() => onSelect(producto)}
-            className="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-600 group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+            className="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-600 group-hover:scale-105 transition-transform duration-300 cursor-pointer relative z-10"
           >
             <div className="w-20 h-20 rounded-2xl bg-white dark:bg-slate-800 shadow-inner flex items-center justify-center border border-slate-100 dark:border-slate-700">
               {tipo_dispositivo === 'CAMARA' ? (
@@ -108,110 +166,135 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               )}
             </div>
             <span className="text-[10px] uppercase font-mono tracking-wider mt-2 font-bold text-slate-400 dark:text-slate-500">
-              {cam?.formato || (tipo_dispositivo === 'NVR' ? `${nvr?.canales_ip} Canales` : `${sw?.puertos_poe_totales}P PoE`)}
+              {formatoLabel}
             </span>
           </div>
         )}
 
-        {/* Botón flotante para comparar */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleCompare(producto);
-          }}
-          disabled={!isCompared && !canCompare}
-          className={`absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition shadow-sm ${
-            isCompared
-              ? 'bg-tiandy-700 text-white'
-              : 'bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-tiandy-50 dark:hover:bg-slate-700'
-          }`}
-        >
-          {isCompared ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
-          <span>{isCompared ? 'Comparando' : 'Comparar'}</span>
-        </button>
+        {/* Sellos frontales (delante del producto) */}
+        <SellosGraficosOverlay sellos={sellosGraficos} capaFiltro="front" />
+
+        {/* Estado de Stock (+50% tamaño en modo Ficha para máxima visibilidad) */}
+        <span className={`absolute bottom-2 left-2 px-3 py-1 rounded-lg text-xs sm:text-[13px] font-extrabold tracking-wide border shadow-md backdrop-blur-sm z-30 ${stockBadge.bg} ${stockBadge.text} ${stockBadge.border}`}>
+          {stockBadge.label}
+        </span>
       </div>
 
       {/* Contenido Principal */}
       <div className="p-4 flex-1 flex flex-col justify-between">
         <div>
-          {/* Serie y Subtipo */}
-          <div className="flex items-center justify-between gap-2 text-xs mb-1">
-            <span className="font-semibold text-tiandy-700 dark:text-tiandy-400 uppercase tracking-wider text-[11px]">
-              {serie || 'Tiandy Series'}
-            </span>
-            <span className="text-slate-400 text-[11px] font-mono">
-              {tipo_dispositivo}
-            </span>
+          {/* Cabecera: Modelo a la izquierda | Serie al centro | Precio destacado a la derecha */}
+          <div className="flex items-start justify-between gap-2.5 mb-2.5">
+            {/* Izquierda: Modelo y Sub-especificación */}
+            <div className="min-w-0 flex-1">
+              <h3 
+                onClick={() => onSelect(producto)}
+                className="text-base font-bold text-slate-900 dark:text-white hover:text-tiandy-600 dark:hover:text-tiandy-400 cursor-pointer transition line-clamp-1 font-mono tracking-tight"
+                title={producto.especificacion_completa || modelo}
+              >
+                {baseModel}
+              </h3>
+              {variantSpec && (
+                <span className="text-xs font-normal text-slate-500 dark:text-slate-400 block mt-0.5 tracking-tight font-mono">
+                  {variantSpec}
+                </span>
+              )}
+            </div>
+
+            {/* Centro: Insignia de Serie (bajada levemente con mt-1.5 para equilibrar el centro sin tapar la spec) */}
+            {serie && serie.trim() && serie.trim().toLowerCase() !== 'general series' && (
+              <div className="shrink-0 mt-1.5 flex justify-center">
+                <span className="rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase border border-slate-200/90 dark:border-slate-700">
+                  {serie.trim()}
+                </span>
+              </div>
+            )}
+
+            {/* Derecha: Precio protagónico (U$S estándar, dígitos numéricos grandes en negrita gruesa) */}
+            <div className="text-right shrink-0 pl-1">
+              {precio_usd && precio_usd > 0 ? (
+                <div className="flex items-baseline justify-end">
+                  <span className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 mr-1 font-mono">
+                    U$S
+                  </span>
+                  <span className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white tracking-tight">
+                    {precio_usd.toFixed(2)}
+                  </span>
+                </div>
+              ) : (
+                <div className="text-right">
+                  <span className="text-base sm:text-lg font-semibold font-mono text-slate-400 dark:text-slate-500">
+                    Consultar
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Modelo y Sub-especificación */}
-          {(() => {
-            const { baseModel, variantSpec } = parseModelAndSpec(modelo, producto.subtipo, producto.especificacion_completa);
-            return (
-              <div className="mb-2">
-                <h3 
-                  onClick={() => onSelect(producto)}
-                  className="text-base font-bold text-slate-900 dark:text-white hover:text-tiandy-600 dark:hover:text-tiandy-400 cursor-pointer transition line-clamp-1 font-mono"
-                  title={producto.especificacion_completa}
-                >
-                  {baseModel}
-                </h3>
-                {variantSpec && (
-                  <span className="text-xs font-normal text-slate-500 dark:text-slate-400 block mt-0.5 tracking-tight">
-                    {variantSpec}
+          {/* Chips técnicos con Formato en la misma línea para reducir altura */}
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {formatoLabel && (
+              <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 uppercase" title="Formato">
+                {formatoLabel}
+              </span>
+            )}
+            {tipo_dispositivo === 'CAMARA' && cam && (
+              <>
+                {cam.resolucion_mp && (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" title="Resolución">
+                    {cam.resolucion_mp}
                   </span>
                 )}
-              </div>
-            );
-          })()}
-
-          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mb-3">
-            {producto.subtipo || producto.especificacion_completa}
-          </p>
-
-          {/* Chips técnicos */}
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            {cam && (
-              <>
-                <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                  {cam.resolucion_mp}
-                </span>
-                <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                  {cam.distancia_focal}
-                </span>
+                {cam.distancia_focal && (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" title="Distancia focal">
+                    {cam.distancia_focal}
+                  </span>
+                )}
                 {cam.apertura_iris && (
-                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" title="Apertura de iris">
                     {cam.apertura_iris}
                   </span>
                 )}
-                {cam.alcance_ir_metros ? (
-                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                    IR {cam.alcance_ir_metros}m
+                {sensor && (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" title="Sensor de imagen">
+                    {sensor}
                   </span>
-                ) : null}
-                {cam.alcance_luz_blanca_metros ? (
-                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
-                    Luz {cam.alcance_luz_blanca_metros}m
+                )}
+                {minIlum && (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" title="Iluminación mínima">
+                    {minIlum}
                   </span>
-                ) : null}
+                )}
+                {vision && (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" title="Visión nocturna">
+                    {vision}
+                  </span>
+                )}
+                {smdOrVca && (
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 text-white shadow-2xs border border-slate-700/80" title={smdOrVca.title}>
+                    {smdOrVca.label}
+                  </span>
+                )}
               </>
             )}
 
-            {nvr && (
+            {tipo_dispositivo === 'NVR' && nvr && (
               <>
-                <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400">
-                  {nvr.canales_ip} Canales IP
-                </span>
                 <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                  {nvr.ancho_banda_ingreso_mbps} Mbps
+                  {nvr.canales_ip || (nvr as any).canales_video || 8} Canales IP {nvr.puertos_poe_integrados ? `(${nvr.puertos_poe_integrados} PoE)` : ''}
                 </span>
+                {nvr.ancho_banda_ingreso_mbps && (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                    {nvr.ancho_banda_ingreso_mbps} Mbps
+                  </span>
+                )}
                 <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                  {nvr.bahias_sata} SATA (hasta {nvr.capacidad_max_por_disco_tb}TB)
+                  {nvr.bahias_sata || (nvr as any).bahias_hdd || 1} SATA (hasta {nvr.capacidad_max_por_disco_tb || 10}TB)
                 </span>
               </>
             )}
 
-            {sw && (
+            {tipo_dispositivo === 'SWITCH' && sw && (
               <>
                 <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400">
                   {sw.puertos_poe_totales} Puertos PoE
@@ -222,74 +305,44 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </>
             )}
           </div>
-
-          {/* Resumen DORI (si aplica a cámara) */}
-          {cam?.dori_metros?.detectar && (
-            <div className="bg-slate-50 dark:bg-slate-800/40 rounded-lg p-2 mb-3 border border-slate-100 dark:border-slate-800">
-              <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1 flex justify-between">
-                <span>Alcance DORI (Metros)</span>
-                <span className="font-mono text-tiandy-600 dark:text-tiandy-400">EN 62676-4</span>
-              </div>
-              <div className="grid grid-cols-4 gap-1 text-center font-mono text-[11px]">
-                <div className="bg-white dark:bg-slate-700 py-0.5 rounded border border-slate-200/60 dark:border-slate-600">
-                  <span className="text-[9px] text-slate-400 block">D</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">{cam.dori_metros.detectar}m</span>
-                </div>
-                <div className="bg-white dark:bg-slate-700 py-0.5 rounded border border-slate-200/60 dark:border-slate-600">
-                  <span className="text-[9px] text-slate-400 block">O</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">{cam.dori_metros.observar}m</span>
-                </div>
-                <div className="bg-white dark:bg-slate-700 py-0.5 rounded border border-slate-200/60 dark:border-slate-600">
-                  <span className="text-[9px] text-slate-400 block">R</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">{cam.dori_metros.reconocer}m</span>
-                </div>
-                <div className="bg-white dark:bg-slate-700 py-0.5 rounded border border-slate-200/60 dark:border-slate-600">
-                  <span className="text-[9px] text-slate-400 block">I</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">{cam.dori_metros.identificar}m</span>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Pie Comercial: Precio U$S, Cotizador y Estado de Stock */}
-        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-          <div>
-            <div className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
-              Precio Neto
-            </div>
-            <div className="text-base font-black text-slate-900 dark:text-white font-mono">
-              {formatCurrency(precio_usd)}
-            </div>
-          </div>
+        {/* Pie: Botones de Acción (Comparar + Cotizar en estilo neutro sin color verde) */}
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2 mt-auto">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleCompare(producto);
+            }}
+            disabled={!isCompared && !canCompare}
+            className={`rounded-xl px-2.5 py-1.5 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm ${
+              isCompared
+                ? 'bg-tiandy-700 text-white shadow-tiandy-700/20'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700'
+            }`}
+            title={isCompared ? 'Quitar de la comparativa' : 'Comparar con otros modelos'}
+          >
+            {isCompared ? <Check className="w-3.5 h-3.5" /> : <ArrowLeftRight className="w-3.5 h-3.5" />}
+            <span className="text-[11px]">{isCompared ? 'Comparando' : 'Comparar'}</span>
+          </button>
 
-          <div className="flex items-center gap-2">
-            {onAddToCotizacion && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onAddToCotizacion(producto);
-                }}
-                className={`rounded-xl px-2.5 py-1.5 text-xs font-bold flex items-center gap-1 transition-all ${
-                  isEnCotizacion
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:bg-emerald-900/60'
-                }`}
-                title="Añadir a la cotización"
-              >
-                {isEnCotizacion ? <Check className="w-3.5 h-3.5" /> : <ShoppingCart className="w-3.5 h-3.5" />}
-                <span className="text-[11px]">{isEnCotizacion ? 'Cotizando' : '+ Cotizar'}</span>
-              </button>
-            )}
-
+          {onAddToCotizacion && (
             <button
-              onClick={() => onSelect(producto)}
-              className="rounded-xl border border-slate-200 p-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
-              title="Ver especificaciones completas"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddToCotizacion(producto);
+              }}
+              className={`rounded-xl px-2.5 py-1.5 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm ${
+                isEnCotizacion
+                  ? 'bg-tiandy-700 text-white shadow-tiandy-700/20'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700'
+              }`}
+              title="Añadir a la cotización"
             >
-              <Eye className="w-4 h-4" />
+              {isEnCotizacion ? <Check className="w-3.5 h-3.5" /> : <Calculator className="w-3.5 h-3.5" />}
+              <span className="text-[11px]">{isEnCotizacion ? 'Cotizando' : '+ Cotizar'}</span>
             </button>
-          </div>
+          )}
         </div>
 
       </div>

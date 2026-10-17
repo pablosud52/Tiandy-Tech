@@ -72,7 +72,13 @@ export const AdminExtractorModule: React.FC<AdminExtractorModuleProps> = ({
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        setExtractedData(data.data);
+        const prodData = data.data;
+        if (prodData && prodData.tipo_dispositivo === 'CAMARA') {
+          prodData.datos_tecnicos = prodData.datos_tecnicos || {};
+          prodData.datos_tecnicos.camara = prodData.datos_tecnicos.camara || {};
+          prodData.datos_tecnicos.camara.microfono_incorporado = true;
+        }
+        setExtractedData(prodData);
       } else {
         setExtractorError(data.error || 'Error al analizar el archivo PDF');
       }

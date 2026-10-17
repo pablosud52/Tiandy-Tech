@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Producto } from '../../shared/types.js';
 import { getProductSpecs, formatCurrency, parseModelAndSpec } from '../../shared/helpers.js';
 import { BadgeOverlay } from './Badges.js';
-import { X, ArrowRight, Check, Minus, Shield, Zap, Eye, Trash2 } from 'lucide-react';
+import { X, ArrowRight, Check, Minus, Shield, Zap, Eye, Trash2, ArrowLeftRight } from 'lucide-react';
 
 interface CompareModalProps {
   productos: Producto[];
@@ -25,11 +25,12 @@ export const CompareFloatingBar: React.FC<{
     <div className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2 transform animate-in slide-in-from-bottom duration-300">
       <div className="flex items-center gap-3 rounded-2xl border border-slate-700/80 bg-slate-900/95 px-5 py-3 shadow-2xl backdrop-blur-md text-white">
         <div className="flex items-center gap-2 pr-2 border-r border-slate-700">
+          <ArrowLeftRight className="h-4 w-4 text-emerald-400" />
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-xs font-black text-slate-950">
             {productos.length}
           </span>
           <span className="text-xs font-bold uppercase tracking-wider text-slate-300 hidden sm:inline">
-            Comparando (máx 3)
+            Comparativa ({productos.length}/4)
           </span>
         </div>
 
@@ -100,6 +101,7 @@ export const CompareModal: React.FC<CompareModalProps> = ({
         <div className="flex items-center justify-between border-b border-slate-200 p-5 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
           <div>
             <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <ArrowLeftRight className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               Comparador Técnico Cara a Cara
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -136,9 +138,11 @@ export const CompareModal: React.FC<CompareModalProps> = ({
                   <th key={prod.id} className="py-3 px-4 min-w-[240px] max-w-[320px]">
                     <div className="flex items-start justify-between">
                       <div>
-                        <span className="rounded bg-emerald-600 px-1.5 py-0.5 text-[9px] font-bold text-white uppercase">
-                          {prod.serie}
-                        </span>
+                        {prod.serie && prod.serie.trim() && prod.serie.trim().toLowerCase() !== 'general series' && (
+                          <span className="rounded bg-tiandy-700 px-1.5 py-0.5 text-[9px] font-bold text-white uppercase">
+                            {prod.serie.trim()}
+                          </span>
+                        )}
                         {(() => {
                           const { baseModel, variantSpec } = parseModelAndSpec(prod.modelo, prod.subtipo);
                           return (

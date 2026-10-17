@@ -105,39 +105,46 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         </div>
 
         <div className="space-y-4 pt-4 divide-y divide-slate-100 dark:divide-slate-800/60">
-          {/* Series Tiandy */}
-          <div>
-            {renderSectionHeader('Serie Tiandy', 'serie')}
-            {openSections.serie && (
-              <div className="mt-2 space-y-1.5">
-                {[
-                  { id: 'AK', label: 'AK Series (Entry Level)' },
-                  { id: 'Spark', label: 'Spark Lite' },
-                  { id: 'Lite', label: 'Lite Series' },
-                  { id: 'Pro', label: 'Pro Series' },
-                  { id: 'Ultra', label: 'Ultra Series' },
-                  { id: 'Panoramic', label: 'Panoramic Series' },
-                  { id: 'Expert', label: 'Expert Series' }
-                ].map((s) => {
-                  const checked = filtros.serie?.includes(s.id) || false;
-                  return (
-                    <label
-                      key={s.id}
-                      className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={() => handleCheckboxToggle('serie', s.id)}
-                        className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
-                      />
-                      <span>{s.label}</span>
-                    </label>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          {/* Series Tiandy (Específicas para Cámaras y NVRs, oculto para Switches y Accesorios) */}
+          {(tipo === 'CAMARA' || tipo === 'NVR') && (
+            <div>
+              {renderSectionHeader('Series Tiandy', 'serie')}
+              {openSections.serie && (
+                <div className="mt-2 space-y-1.5">
+                  {(tipo === 'CAMARA'
+                    ? [
+                        { id: 'AK', label: 'AK Series' },
+                        { id: 'SK', label: 'SK Series' },
+                        { id: 'LK', label: 'LK Series' },
+                        { id: 'WIFI_4G', label: 'WIFI / 4G Solar' },
+                        { id: 'PTZ', label: 'PTZ' }
+                      ]
+                    : [
+                        { id: 'AK', label: 'AK Series' },
+                        { id: 'SK', label: 'SK Series' },
+                        { id: 'LK', label: 'LK Series' }
+                      ]
+                  ).map((s) => {
+                    const checked = filtros.serie?.includes(s.id) || false;
+                    return (
+                      <label
+                        key={s.id}
+                        className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => handleCheckboxToggle('serie', s.id)}
+                          className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                        />
+                        <span>{s.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* FILTROS ESPECÍFICOS: CÁMARAS */}
           {tipo === 'CAMARA' && (
@@ -266,6 +273,36 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   </div>
                 )}
               </div>
+
+              {/* Interfaces E/S (Alarmas y Audio) */}
+              <div className="pt-3">
+                {renderSectionHeader('Interfaces E/S', 'interfaces_es')}
+                {openSections.interfaces_es !== false && (
+                  <div className="mt-2 space-y-1.5">
+                    {[
+                      { id: 'ENTRADA_ALARMA', label: 'Entrada Alarma' },
+                      { id: 'SALIDA_ALARMA', label: 'Salida Alarma' },
+                      { id: 'SALIDA_AUDIO', label: 'Salida Audio / 2 Vías' }
+                    ].map((item) => {
+                      const checked = filtros.interfaces_es?.includes(item.id) || false;
+                      return (
+                        <label
+                          key={item.id}
+                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => handleCheckboxToggle('interfaces_es', item.id)}
+                            className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                          />
+                          <span>{item.label}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </>
           )}
 
@@ -320,15 +357,62 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                         </label>
                       );
                     })}
-                    <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer pt-1">
-                      <input
-                        type="checkbox"
-                        checked={filtros.poe_integrado || false}
-                        onChange={() => handleBooleanToggle('poe_integrado')}
-                        className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
-                      />
-                      <span>Con Puertos PoE Integrados</span>
-                    </label>
+                  </div>
+                )}
+              </div>
+
+              {/* Puertos PoE Integrados en NVR (Independiente) */}
+              <div className="pt-3">
+                {renderSectionHeader('Puertos PoE', 'poe_nvr')}
+                {openSections.poe_nvr !== false && (
+                  <div className="mt-2 space-y-1.5">
+                    {['4 Puertos PoE', '8 Puertos PoE'].map((opt) => {
+                      const checked = filtros.puertos_poe_nvr?.includes(opt) || false;
+                      return (
+                        <label
+                          key={opt}
+                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => handleCheckboxToggle('puertos_poe_nvr', opt)}
+                            className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                          />
+                          <span>{opt}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Interfaces E/S en NVR (Alarmas y Audio) */}
+              <div className="pt-3">
+                {renderSectionHeader('Interfaces E/S', 'interfaces_es_nvr')}
+                {openSections.interfaces_es_nvr !== false && (
+                  <div className="mt-2 space-y-1.5">
+                    {[
+                      { id: 'ENTRADA_ALARMA', label: 'Entrada Alarma' },
+                      { id: 'SALIDA_ALARMA', label: 'Salida Alarma' },
+                      { id: 'SALIDA_AUDIO', label: 'Salida Audio / 2 Vías' }
+                    ].map((item) => {
+                      const checked = filtros.interfaces_es?.includes(item.id) || false;
+                      return (
+                        <label
+                          key={item.id}
+                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => handleCheckboxToggle('interfaces_es', item.id)}
+                            className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                          />
+                          <span>{item.label}</span>
+                        </label>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -363,15 +447,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       </label>
                     );
                   })}
-                  <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer pt-1">
-                    <input
-                      type="checkbox"
-                      checked={filtros.modo_extendido || false}
-                      onChange={() => handleBooleanToggle('modo_extendido')}
-                      className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
-                    />
-                    <span>Modo Extendido 250m CCTV</span>
-                  </label>
                 </div>
               )}
             </div>

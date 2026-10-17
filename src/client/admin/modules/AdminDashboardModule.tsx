@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Producto } from '../../../shared/types.js';
 import { 
   BarChart3, 
-  Camera, 
+  Cctv, 
   HardDrive, 
   Network, 
   Package, 
@@ -16,7 +16,13 @@ import {
   Users, 
   Server, 
   Database, 
-  DollarSign
+  DollarSign,
+  Trash2,
+  Sparkles,
+  Loader2,
+  FileText,
+  Image as ImageIcon,
+  Check
 } from 'lucide-react';
 
 interface AdminDashboardModuleProps {
@@ -38,6 +44,46 @@ export const AdminDashboardModule: React.FC<AdminDashboardModuleProps> = ({
   const proximoArribo = productos.filter((p) => p.estado_stock === 'PROXIMO_ARRIBO').length;
   const agotados = productos.filter((p) => p.estado_stock === 'AGOTADO').length;
   const sinPrecio = productos.filter((p) => !p.precio_usd || p.precio_usd <= 0).length;
+
+  // Estado del almacenamiento de adjuntos y huérfanos
+  const [storageStatus, setStorageStatus] = useState<any>(null);
+  const [isCleaningStorage, setIsCleaningStorage] = useState(false);
+  const [storageToast, setStorageToast] = useState<string | null>(null);
+
+  const fetchStorageStatus = async () => {
+    try {
+      const res = await fetch('/api/storage/status');
+      const data = await res.json();
+      if (data.success) {
+        setStorageStatus(data);
+      }
+    } catch {}
+  };
+
+  useEffect(() => {
+    fetchStorageStatus();
+  }, []);
+
+  const handleCleanStorage = async () => {
+    if (!window.confirm('¿Deseas eliminar definitivamente todos los PDFs, imágenes y archivos temporales huérfanos sin producto asignado?')) {
+      return;
+    }
+    setIsCleaningStorage(true);
+    try {
+      const res = await fetch('/api/storage/clean', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        const mb = (data.totalBytesFreed / (1024 * 1024)).toFixed(2);
+        setStorageToast(`✓ Limpieza exitosa: ${data.totalFilesDeleted} archivos huérfanos eliminados (${mb} MB liberados).`);
+        fetchStorageStatus();
+        setTimeout(() => setStorageToast(null), 5000);
+      }
+    } catch (err: any) {
+      setStorageToast(`Error: ${err.message}`);
+    } finally {
+      setIsCleaningStorage(false);
+    }
+  };
 
   const handleExportJSON = () => {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(productos, null, 2));
@@ -75,7 +121,7 @@ export const AdminDashboardModule: React.FC<AdminDashboardModuleProps> = ({
             Exportar JSON
           </button>
           <button
-            onClick={() => onNavigateTab('extractor')}
+            onClick={() => onNavigateTab('catalog')}
             className="flex items-center gap-2 rounded-2xl bg-emerald-500/30 border border-white/20 px-4 py-2.5 text-xs font-bold text-white hover:bg-emerald-500/40 active:scale-95 transition-all backdrop-blur-md"
           >
             <UploadCloud className="h-4 w-4" />
@@ -114,7 +160,7 @@ export const AdminDashboardModule: React.FC<AdminDashboardModuleProps> = ({
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Cámaras IP</span>
             <div className="rounded-2xl bg-sky-50 p-2.5 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400">
-              <Camera className="h-5 w-5" />
+              <Cctv className="h-5 w-5" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
@@ -181,11 +227,11 @@ export const AdminDashboardModule: React.FC<AdminDashboardModuleProps> = ({
               </p>
             </div>
             <button
-              onClick={() => onNavigateTab('batch')}
+              onClick={() => onNavigateTab('catalog')}
               className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400"
             >
               <DollarSign className="h-4 w-4" />
-              Editar en Lote
+              Modificar Precios
             </button>
           </div>
 
@@ -309,6 +355,155 @@ export const AdminDashboardModule: React.FC<AdminDashboardModuleProps> = ({
           </div>
         </div>
       </div>
+
+      {/* FILA 3: Gestión de Archivos Adjuntos y Almacenamiento Huérfano */}
+      <div className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+              <Sparkles className="h-4 w-4" />
+              Mantenimiento de Almacenamiento
+            </div>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              Archivos Adjuntos (PDFs, Imágenes y Temporales)
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Control de integridad: detecta y elimina archivos huérfanos que ya no pertenecen a ningún producto activo.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {storageStatus && storageStatus.totalOrphanedCount > 0 ? (
+              <button
+                onClick={handleCleanStorage}
+                disabled={isCleaningStorage}
+                className="flex items-center gap-2 rounded-2xl bg-rose-600 hover:bg-rose-500 px-4 py-2.5 text-xs font-bold text-white transition-all shadow-md shadow-rose-900/20 active:scale-95 disabled:opacity-50"
+              >
+                {isCleaningStorage ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
+                <span>
+                  {isCleaningStorage
+                    ? 'Limpiando...'
+                    : `Limpiar ${storageStatus.totalOrphanedCount} Archivos Huérfanos (${(storageStatus.totalOrphanedBytes / (1024 * 1024)).toFixed(2)} MB)`}
+                </span>
+              </button>
+            ) : (
+              <div className="inline-flex items-center gap-1.5 rounded-2xl bg-emerald-50 border border-emerald-200 px-3.5 py-2 text-xs font-bold text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300">
+                <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                Almacenamiento 100% Optimizado
+              </div>
+            )}
+          </div>
+        </div>
+
+        {storageStatus && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Tarjeta PDFs en data/docs */}
+            <div className={`p-4 rounded-2xl border transition-all ${
+              storageStatus.docs.orphanedFiles > 0 
+                ? 'bg-amber-50/40 border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/40' 
+                : 'bg-slate-50/50 border-slate-200 dark:bg-slate-800/40 dark:border-slate-800'
+            }`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 font-bold text-xs text-slate-800 dark:text-slate-200">
+                  <FileText className="h-4 w-4 text-tiandy-600" />
+                  Datasheets PDF (`data/docs`)
+                </div>
+                <span className="text-[10px] font-mono font-bold text-slate-500">
+                  {storageStatus.docs.totalFiles} archivos
+                </span>
+              </div>
+              <div className="mt-3 flex items-baseline justify-between text-xs">
+                <span className="text-slate-500">Espacio total:</span>
+                <span className="font-mono font-bold text-slate-700 dark:text-slate-300">
+                  {(storageStatus.docs.totalSizeBytes / (1024 * 1024)).toFixed(2)} MB
+                </span>
+              </div>
+              <div className="mt-1 flex items-baseline justify-between text-xs">
+                <span className="text-slate-500">PDFs huérfanos:</span>
+                <span className={`font-mono font-bold ${
+                  storageStatus.docs.orphanedFiles > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600'
+                }`}>
+                  {storageStatus.docs.orphanedFiles} ({(storageStatus.docs.orphanedSizeBytes / (1024 * 1024)).toFixed(2)} MB)
+                </span>
+              </div>
+            </div>
+
+            {/* Tarjeta Imágenes en data/images */}
+            <div className={`p-4 rounded-2xl border transition-all ${
+              storageStatus.images.orphanedFiles > 0 
+                ? 'bg-amber-50/40 border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/40' 
+                : 'bg-slate-50/50 border-slate-200 dark:bg-slate-800/40 dark:border-slate-800'
+            }`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 font-bold text-xs text-slate-800 dark:text-slate-200">
+                  <ImageIcon className="h-4 w-4 text-emerald-600" />
+                  Imágenes Catálogo (`data/images`)
+                </div>
+                <span className="text-[10px] font-mono font-bold text-slate-500">
+                  {storageStatus.images.totalFiles} archivos
+                </span>
+              </div>
+              <div className="mt-3 flex items-baseline justify-between text-xs">
+                <span className="text-slate-500">Espacio total:</span>
+                <span className="font-mono font-bold text-slate-700 dark:text-slate-300">
+                  {(storageStatus.images.totalSizeBytes / (1024 * 1024)).toFixed(2)} MB
+                </span>
+              </div>
+              <div className="mt-1 flex items-baseline justify-between text-xs">
+                <span className="text-slate-500">Imágenes huérfanas:</span>
+                <span className={`font-mono font-bold ${
+                  storageStatus.images.orphanedFiles > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600'
+                }`}>
+                  {storageStatus.images.orphanedFiles} ({(storageStatus.images.orphanedSizeBytes / (1024 * 1024)).toFixed(2)} MB)
+                </span>
+              </div>
+            </div>
+
+            {/* Tarjeta Uploads residuales */}
+            <div className={`p-4 rounded-2xl border transition-all ${
+              storageStatus.uploads.orphanedFiles > 0 
+                ? 'bg-rose-50/40 border-rose-200 dark:bg-rose-950/20 dark:border-rose-900/40' 
+                : 'bg-slate-50/50 border-slate-200 dark:bg-slate-800/40 dark:border-slate-800'
+            }`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 font-bold text-xs text-slate-800 dark:text-slate-200">
+                  <UploadCloud className="h-4 w-4 text-purple-600" />
+                  Temporales (`data/uploads`)
+                </div>
+                <span className="text-[10px] font-mono font-bold text-slate-500">
+                  {storageStatus.uploads.totalFiles} archivos
+                </span>
+              </div>
+              <div className="mt-3 flex items-baseline justify-between text-xs">
+                <span className="text-slate-500">Espacio residual:</span>
+                <span className="font-mono font-bold text-slate-700 dark:text-slate-300">
+                  {(storageStatus.uploads.totalSizeBytes / (1024 * 1024)).toFixed(2)} MB
+                </span>
+              </div>
+              <div className="mt-1 flex items-baseline justify-between text-xs">
+                <span className="text-slate-500">Estado:</span>
+                <span className={`font-mono font-bold ${
+                  storageStatus.uploads.orphanedFiles > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600'
+                }`}>
+                  {storageStatus.uploads.orphanedFiles > 0 ? `${storageStatus.uploads.orphanedFiles} residuales` : 'Limpio'}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Toast Notificación de Almacenamiento */}
+      {storageToast && (
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl bg-slate-900 text-white px-5 py-3 shadow-2xl border border-slate-700 text-xs font-bold flex items-center gap-2 animate-in slide-in-from-bottom-3">
+          <Check className="h-4 w-4 text-emerald-400" />
+          <span>{storageToast}</span>
+        </div>
+      )}
     </div>
   );
 };

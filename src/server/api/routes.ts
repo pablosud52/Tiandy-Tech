@@ -17,9 +17,17 @@ import {
   createAdminUser,
   updateAdminUser,
   deleteAdminUser,
-  validateProductCodes
+  validateProductCodes,
+  getConfiguracion,
+  setConfiguracion
 } from '../db/index.js';
 import { extractFromPdf } from '../services/pdf-extractor.js';
+import { 
+  getStorageAudit, 
+  cleanOrphanedFiles, 
+  cleanupProductFilesOnDelete, 
+  cleanupReplacedImage 
+} from '../services/storage-cleaner.js';
 import { Producto, TipoDispositivo, EstadoStock } from '../../shared/types.js';
 
 const uploadDir = path.resolve(process.cwd(), 'data/uploads');
@@ -56,6 +64,14 @@ const imageUpload = multer({
 });
 
 export const apiRouter = Router();
+
+// Middleware para asegurar que las respuestas nunca se almacenen en caché (precios y catálogo en tiempo real)
+apiRouter.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
 
 // 1. Obtener productos con filtros
 apiRouter.get('/productos', (req, res) => {
@@ -120,14 +136,27 @@ apiRouter.get('/productos/:id', (req, res) => {
   }
 });
 
-// 3. Crear o actualizar producto
+// 3. Crear o actualizar producto (con limpieza de imagen reemplazada)
 apiRouter.post('/productos', (req, res) => {
   try {
     const prodData: Producto = req.body;
     if (!prodData.modelo || !prodData.tipo_dispositivo) {
       return res.status(400).json({ error: 'Modelo y tipo de dispositivo son obligatorios' });
     }
+
+    const targetId = prodData.id || (getProductoByModelo(prodData.modelo)?.id);
+    let oldProduct: Producto | null = null;
+    if (targetId) {
+      oldProduct = getProductoById(targetId);
+    }
+
     const id = saveProducto(prodData);
+
+    // Si se reemplazó la imagen principal de un producto existente, borrar la imagen anterior huérfana
+    if (oldProduct && oldProduct.imagen_principal && oldProduct.imagen_principal !== prodData.imagen_principal) {
+      cleanupReplacedImage(oldProduct.imagen_principal, prodData.imagen_principal, id);
+    }
+
     const saved = getProductoById(id);
     res.json(saved);
   } catch (error: any) {
@@ -135,12 +164,16 @@ apiRouter.post('/productos', (req, res) => {
   }
 });
 
-// 4. Eliminar producto
+// 4. Eliminar producto (con eliminación en cascada de PDF e imagen física si no son compartidos)
 apiRouter.delete('/productos/:id', (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
+    const prod = getProductoById(id);
+    if (prod) {
+      cleanupProductFilesOnDelete(prod);
+    }
     deleteProducto(id);
-    res.json({ success: true, message: 'Producto eliminado correctamente' });
+    res.json({ success: true, message: 'Producto y archivos asociados eliminados correctamente' });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -156,6 +189,9 @@ apiRouter.post('/batch-update', (req, res) => {
     const normalized = items.map(it => ({
       ...it,
       id: Number(it.id),
+      precio_usd: it.precio_usd !== undefined && it.precio_usd !== null 
+        ? Math.round(Number(it.precio_usd) * 100) / 100 
+        : undefined,
       visible: it.visible !== undefined ? it.visible : (it.activo !== undefined ? it.activo : undefined)
     }));
     batchUpdatePreciosStock(normalized);
@@ -195,7 +231,58 @@ apiRouter.post('/extract-pdf', memoryUpload.any(), async (req, res) => {
   }
 });
 
-// 7. Subida de Imagen de Producto (para admin)
+// 6b. Re-procesar en lote todos los datasheets PDF presentes en data/docs
+apiRouter.post('/reprocess-all', async (req, res) => {
+  try {
+    if (!fs.existsSync(docsDir)) {
+      return res.status(400).json({ success: false, error: 'No existe el directorio data/docs' });
+    }
+    const files = fs.readdirSync(docsDir).filter(f => f.toLowerCase().endsWith('.pdf'));
+    const existingImages = fs.existsSync(imagesDir) ? fs.readdirSync(imagesDir) : [];
+    let countOk = 0;
+    let countErr = 0;
+
+    for (const file of files) {
+      try {
+        const fullPath = path.join(docsDir, file);
+        const buf = fs.readFileSync(fullPath);
+        const prod = await extractFromPdf(buf, file);
+        const modeloBase = prod.modelo.split(' ')[0].toUpperCase();
+
+        // Si el producto ya existe en la base de datos, preservar la serie manual y datos ya configurados
+        const existing = getProductoByModelo(prod.modelo) || getProductos().find(p => p.modelo.toUpperCase().startsWith(modeloBase));
+        if (existing) {
+          prod.id = existing.id;
+          if (existing.serie && existing.serie.trim() && existing.serie.trim().toLowerCase() !== 'general series') {
+            prod.serie = existing.serie;
+          }
+          if (existing.precio_usd !== null && existing.precio_usd !== undefined && existing.precio_usd > 0) {
+            prod.precio_usd = existing.precio_usd;
+          }
+          if (existing.codigo_1) prod.codigo_1 = existing.codigo_1;
+          if (existing.codigo_2) prod.codigo_2 = existing.codigo_2;
+          if (existing.imagen_principal) prod.imagen_principal = existing.imagen_principal;
+          if (existing.estado_stock) prod.estado_stock = existing.estado_stock;
+        }
+
+        const matchedImg = existingImages.find(img => img.toUpperCase().includes(modeloBase));
+        if (matchedImg && !prod.imagen_principal) {
+          prod.imagen_principal = `/data/images/${matchedImg}`;
+        }
+        saveProducto(prod);
+        countOk++;
+      } catch (e: any) {
+        countErr++;
+      }
+    }
+
+    res.json({ success: true, countOk, countErr, totalFiles: files.length });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 7. Subida de Imagen de Producto o Etiqueta (para admin)
 apiRouter.post('/upload-image', imageUpload.single('image'), (req, res) => {
   try {
     if (!req.file) {
@@ -205,6 +292,7 @@ apiRouter.post('/upload-image', imageUpload.single('image'), (req, res) => {
     res.json({ 
       success: true, 
       url: imageUrl, 
+      imageUrl: imageUrl, 
       filename: req.file.filename,
       size: req.file.size,
       mimetype: req.file.mimetype
@@ -214,13 +302,215 @@ apiRouter.post('/upload-image', imageUpload.single('image'), (req, res) => {
   }
 });
 
-// 7. Configuración de badges
+// 7. Configuración de badges (legacy y compatibilidad)
 apiRouter.get('/badges', (req, res) => {
   try {
     const badges = getBadgesConfig();
     res.json(badges);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// 7b. Configuración Global de Etiquetas Centralizadas (ubicación, tamaño, anclaje, imagen opcional y activación)
+const defaultGlobalBadges = [
+  {
+    id: 'NUEVO_MODELO',
+    nombre: 'Nuevo Modelo',
+    descripcion: 'Sello para destacar lanzamientos y novedades',
+    imagen_url: '/data/badges/nuevo-modelo.png',
+    posicion: 'top-left',
+    capa: 'front',
+    tamano: 100,
+    anclaje: 'esquina',
+    opacidad: 1,
+    activo_global: true,
+    es_sello_grafico: true
+  },
+  {
+    id: 'COLORMAKER',
+    nombre: 'Color Maker',
+    descripcion: 'Tecnología Tiandy para captura a todo color 24/7 con apertura F1.0 / F1.6',
+    imagen_url: '/data/badges/colormaker.png',
+    posicion: 'bottom-right',
+    capa: 'front',
+    tamano: 100,
+    anclaje: 'esquina',
+    opacidad: 1,
+    activo_global: true,
+    es_sello_grafico: true
+  },
+  {
+    id: 'POLAR_DAY',
+    nombre: 'Polar day',
+    descripcion: 'Sensibilidad extrema para visión nocturna ultra clara a color sin reflectores',
+    imagen_url: '/data/badges/polarday.png',
+    posicion: 'bottom-center',
+    capa: 'front',
+    tamano: 100,
+    anclaje: 'esquina',
+    opacidad: 1,
+    activo_global: true,
+    es_sello_grafico: true
+  },
+  {
+    id: 'SMD_1',
+    nombre: 'SMD 1.0',
+    descripcion: 'Smart Motion Detection v1.0 para filtrado de falsas alarmas de movimiento básico',
+    imagen_url: '/data/badges/smd-1.svg',
+    posicion: 'top-right',
+    capa: 'front',
+    tamano: 100,
+    anclaje: 'esquina',
+    opacidad: 1,
+    activo_global: true,
+    es_sello_grafico: true
+  },
+  {
+    id: 'SMD_2',
+    nombre: 'SMD 2.0',
+    descripcion: 'Smart Motion Detection v2.0 con clasificación precisa de humanos y vehículos',
+    imagen_url: '/data/badges/smd-2.svg',
+    posicion: 'top-right',
+    capa: 'front',
+    tamano: 100,
+    anclaje: 'esquina',
+    opacidad: 1,
+    activo_global: true,
+    es_sello_grafico: true
+  },
+  {
+    id: 'SMD_3',
+    nombre: 'SMD 3.0',
+    descripcion: 'Smart Motion Detection v3.0 Deep Learning Pro con máxima precisión y largo alcance',
+    imagen_url: '/data/badges/smd-3.svg',
+    posicion: 'top-right',
+    capa: 'front',
+    tamano: 100,
+    anclaje: 'esquina',
+    opacidad: 1,
+    activo_global: true,
+    es_sello_grafico: true
+  },
+  {
+    id: 'VCA',
+    nombre: 'VCA',
+    descripcion: 'Video Content Analytics (Tripwire, Perímetro, Objeto Abandonado, etc.)',
+    imagen_url: '/data/badges/vca.svg',
+    posicion: 'top-right',
+    capa: 'front',
+    tamano: 100,
+    anclaje: 'esquina',
+    opacidad: 1,
+    activo_global: true,
+    es_sello_grafico: true
+  },
+  {
+    id: 'DUAL_LIGHT',
+    nombre: 'Dual Light',
+    descripcion: 'Iluminación híbrida inteligente IR + Luz blanca cálida',
+    imagen_url: '',
+    posicion: 'top-right',
+    capa: 'front',
+    tamano: 100,
+    anclaje: 'esquina',
+    opacidad: 1,
+    activo_global: true,
+    es_sello_grafico: false
+  },
+  {
+    id: 'PARLANTE_INCORPORADO',
+    nombre: 'Parlante incorporado',
+    descripcion: 'Altavoz de alta potencia integrado para audio bidireccional y mensajes',
+    imagen_url: '',
+    posicion: 'top-right',
+    capa: 'front',
+    tamano: 100,
+    anclaje: 'esquina',
+    opacidad: 1,
+    activo_global: true,
+    es_sello_grafico: false
+  },
+  {
+    id: 'EARLY_WARNING',
+    nombre: 'Early Warning (EW)',
+    descripcion: 'Disuasión activa con estroboscópico rojo/azul y sirena ante intrusión',
+    imagen_url: '',
+    posicion: 'top-right',
+    capa: 'front',
+    tamano: 100,
+    anclaje: 'esquina',
+    opacidad: 1,
+    activo_global: true,
+    es_sello_grafico: false
+  }
+];
+
+apiRouter.get('/configuracion/badges', (req, res) => {
+  try {
+    const raw = getConfiguracion('global_badges_config', '');
+    let badges = defaultGlobalBadges;
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Fusionar con defaults para garantizar que nuevos badges existan siempre
+          const idsExistentes = new Set(parsed.map((b: any) => b.id));
+          const faltantes = defaultGlobalBadges.filter(d => !idsExistentes.has(d.id));
+          badges = [...parsed, ...faltantes];
+        }
+      } catch (_) {}
+    }
+    res.json({ success: true, badges });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+apiRouter.post('/configuracion/badges', (req, res) => {
+  try {
+    const badges = Array.isArray(req.body) ? req.body : req.body.badges || [];
+    if (!Array.isArray(badges) || badges.length === 0) {
+      return res.status(400).json({ success: false, error: 'Lista de badges inválida' });
+    }
+    setConfiguracion('global_badges_config', JSON.stringify(badges));
+    res.json({ success: true, badges });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 7c. Configuración de Visibilidad de Secciones del Catálogo
+const defaultSecciones = {
+  CAMARA: true,
+  NVR: true,
+  SWITCH: true,
+  ACCESORIO: true,
+  WIKI: true,
+  HERRAMIENTAS: true,
+  HERRAMIENTAS_UPS: true,
+  HERRAMIENTAS_ALMACENAMIENTO: true
+};
+
+apiRouter.get('/configuracion/secciones', (req, res) => {
+  try {
+    const raw = getConfiguracion('secciones_visibles', JSON.stringify(defaultSecciones));
+    const secciones = { ...defaultSecciones, ...JSON.parse(raw) };
+    res.json({ success: true, secciones });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+apiRouter.post('/configuracion/secciones', (req, res) => {
+  try {
+    const raw = getConfiguracion('secciones_visibles', JSON.stringify(defaultSecciones));
+    const current = JSON.parse(raw);
+    const updated = { ...defaultSecciones, ...current, ...(req.body || {}) };
+    setConfiguracion('secciones_visibles', JSON.stringify(updated));
+    res.json({ success: true, secciones: updated });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -233,6 +523,7 @@ apiRouter.get('/stats', (req, res) => {
       camaras: todos.filter(p => p.tipo_dispositivo === 'CAMARA').length,
       nvrs: todos.filter(p => p.tipo_dispositivo === 'NVR').length,
       switches: todos.filter(p => p.tipo_dispositivo === 'SWITCH').length,
+      accesorios: todos.filter(p => p.tipo_dispositivo === 'ACCESORIO').length,
       stock_inmediato: todos.filter(p => p.estado_stock === 'ENTREGA_INMEDIATA').length,
       pocas_unidades: todos.filter(p => p.estado_stock === 'POCAS_UNIDADES' || p.estado_stock === 'ULTIMA_UNIDAD').length,
       proximo_arribo: todos.filter(p => p.estado_stock === 'PROXIMO_ARRIBO').length,
@@ -242,6 +533,26 @@ apiRouter.get('/stats', (req, res) => {
     res.json(stats);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// 9. Auditoría y Estado del Almacenamiento (Archivos y Huérfanos)
+apiRouter.get('/storage/status', (req, res) => {
+  try {
+    const audit = getStorageAudit();
+    res.json({ success: true, ...audit });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 9b. Limpieza de Archivos Huérfanos
+apiRouter.post('/storage/clean', (req, res) => {
+  try {
+    const result = cleanOrphanedFiles();
+    res.json({ success: true, ...result });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 

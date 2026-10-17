@@ -3,14 +3,14 @@ import { ItemCotizacion } from '../../shared/types.js';
 import { formatCurrency, parseModelAndSpec } from '../../shared/helpers.js';
 import { 
   X, 
-  ShoppingCart, 
+  Calculator, 
   Trash2, 
   Plus, 
   Minus, 
   Copy, 
   Check, 
   Printer, 
-  Camera, 
+  Cctv, 
   HardDrive, 
   Network, 
   ArrowRight,
@@ -79,7 +79,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
         <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/80 px-6 py-4 dark:border-slate-800 dark:bg-slate-950/80">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-md shadow-emerald-600/20">
-              <ShoppingCart className="h-5 w-5" />
+              <Calculator className="h-5 w-5" />
             </div>
             <div>
               <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
@@ -107,7 +107,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
           {items.length === 0 ? (
             <div className="py-16 text-center space-y-3">
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-100 text-slate-400 dark:bg-slate-800">
-                <ShoppingCart className="h-8 w-8" />
+                <Calculator className="h-8 w-8" />
               </div>
               <h3 className="text-base font-bold text-slate-700 dark:text-slate-300">
                 Tu cotización está vacía
@@ -145,7 +145,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
                             className="h-full w-full object-contain"
                           />
                         ) : prod.tipo_dispositivo === 'CAMARA' ? (
-                          <Camera className="h-6 w-6 text-slate-400" />
+                          <Cctv className="h-6 w-6 text-slate-400" />
                         ) : prod.tipo_dispositivo === 'NVR' ? (
                           <HardDrive className="h-6 w-6 text-slate-400" />
                         ) : (
@@ -166,9 +166,13 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
                         </div>
 
                         <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                          <span className="font-semibold">{prod.serie}</span>
-                          <span>•</span>
-                          <span>{prod.tipo_dispositivo}</span>
+                          {prod.serie && prod.serie.trim() && prod.serie.trim().toLowerCase() !== 'general series' ? (
+                            <>
+                              <span className="font-semibold">{prod.serie.trim()}</span>
+                              <span>•</span>
+                            </>
+                          ) : null}
+                          <span>{prod.tipo_dispositivo === 'CAMARA' ? 'Cámara IP' : prod.tipo_dispositivo === 'NVR' ? 'Grabador NVR' : prod.tipo_dispositivo === 'SWITCH' ? 'Switch PoE' : 'Accesorio'}</span>
                         </div>
 
                         <div className="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-1">

@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Producto, TipoDispositivo, EstadoStock } from '../../../shared/types.js';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { Producto, TipoDispositivo, EstadoStock, SelloGraficoConfig, PosicionSello, CapaSello, BadgeGlobalConfig } from '../../../shared/types.js';
 import { formatCurrency, parseModelAndSpec } from '../../../shared/helpers.js';
 import { optimizeImageToWebP, formatFileSize } from '../../utils/imageOptimizer.js';
+import { SellosGraficosOverlay } from '../../components/Badges.js';
 import { 
-  Camera, 
+  Cctv, 
   HardDrive, 
   Network, 
   Upload, 
@@ -18,11 +19,20 @@ import {
   DollarSign, 
   CheckCircle2, 
   Eye, 
+  EyeOff,
   ShieldCheck,
   Volume2,
   Mic,
   Database,
-  Sparkles
+  Sparkles,
+  FileText,
+  RotateCcw,
+  Move,
+  ChevronDown,
+  ChevronRight,
+  Plus,
+  Trash2,
+  FileSpreadsheet
 } from 'lucide-react';
 
 interface ProductEditFormProps {
@@ -36,15 +46,76 @@ interface ProductEditFormProps {
   submitLabel?: string;
 }
 
-const AVAILABLE_BADGES: { id: string; label: string; desc: string }[] = [
-  { id: 'COLORMAKER', label: 'ColorMaker', desc: 'Color vívido las 24 horas con gran apertura' },
-  { id: 'SUPER_STARLIGHT', label: 'Super Starlight', desc: 'Sensibilidad extrema a ultra baja luz' },
-  { id: 'EARLY_WARNING', label: 'Early Warning (EW)', desc: 'Disuasión activa con estrobo y altavoz' },
+export const DEFAULT_SELLOS_GRAFICOS: SelloGraficoConfig[] = [
+  {
+    id: 'NUEVO_MODELO',
+    nombre: 'Nuevo Modelo',
+    activo: false,
+    imagen_url: '/data/badges/nuevo-modelo.svg',
+    posicion: 'top-left',
+    capa: 'front',
+    tamano: 100
+  },
+  {
+    id: 'COLORMAKER',
+    nombre: 'Color Maker',
+    activo: false,
+    imagen_url: '/data/badges/colormaker.svg',
+    posicion: 'bottom-right',
+    capa: 'front',
+    tamano: 100
+  },
+  {
+    id: 'POLAR_DAY',
+    nombre: 'Polar day',
+    activo: false,
+    imagen_url: '/data/badges/polarday.svg',
+    posicion: 'bottom-center',
+    capa: 'front',
+    tamano: 100
+  },
+  {
+    id: 'SMD_1',
+    nombre: 'SMD 1.0',
+    activo: false,
+    imagen_url: '/data/badges/smd-1.svg',
+    posicion: 'top-right',
+    capa: 'front',
+    tamano: 100
+  },
+  {
+    id: 'SMD_2',
+    nombre: 'SMD 2.0',
+    activo: false,
+    imagen_url: '/data/badges/smd-2.svg',
+    posicion: 'top-right',
+    capa: 'front',
+    tamano: 100
+  },
+  {
+    id: 'SMD_3',
+    nombre: 'SMD 3.0',
+    activo: false,
+    imagen_url: '/data/badges/smd-3.svg',
+    posicion: 'top-right',
+    capa: 'front',
+    tamano: 100
+  },
+  {
+    id: 'VCA',
+    nombre: 'VCA',
+    activo: false,
+    imagen_url: '/data/badges/vca.svg',
+    posicion: 'top-right',
+    capa: 'front',
+    tamano: 100
+  }
+];
+
+export const AVAILABLE_TECH_BADGES: { id: string; label: string; desc: string }[] = [
   { id: 'DUAL_LIGHT', label: 'Dual Light', desc: 'Iluminación híbrida IR + Luz blanca' },
-  { id: 'MIC_INCORPORADO', label: 'Micrófono Incorporado', desc: 'Captura de audio en tiempo real' },
   { id: 'PARLANTE_INCORPORADO', label: 'Altavoz / Parlante', desc: 'Audio bidireccional y sirenas' },
-  { id: 'POE_INTEGRADO', label: 'PoE Integrado', desc: 'Alimentación y datos por un solo cable' },
-  { id: 'SMART_IR', label: 'Smart IR', desc: 'Ajuste inteligente de infrarrojos sin sobreexposición' }
+  { id: 'EARLY_WARNING', label: 'Early Warning (EW)', desc: 'Disuasión activa con estrobo y sirena' }
 ];
 
 export const ProductEditForm: React.FC<ProductEditFormProps> = ({
@@ -57,28 +128,194 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
   title,
   submitLabel = 'Guardar Ficha Técnica'
 }) => {
-  const [formData, setFormData] = useState<Partial<Producto>>({
-    modelo: '',
-    serie: 'Lite Series',
-    tipo_dispositivo: 'CAMARA',
-    subtipo: '',
-    especificacion_completa: '',
-    codigo_1: '',
-    codigo_2: '',
-    precio_usd: 0,
-    estado_stock: 'ENTREGA_INMEDIATA',
-    badge_nuevo: false,
-    visible: true,
-    imagen_principal: '',
-    datasheet_pdf: '',
-    badges_detectados: [],
-    datos_tecnicos: {},
-    ...initialData
+  const [formData, setFormData] = useState<Partial<Producto>>(() => {
+    const base: Partial<Producto> = {
+      modelo: '',
+      serie: '',
+      tipo_dispositivo: 'CAMARA',
+      subtipo: '',
+      especificacion_completa: '',
+      codigo_1: '',
+      codigo_2: '',
+      precio_usd: 0,
+      estado_stock: 'ENTREGA_INMEDIATA',
+      badge_nuevo: false,
+      visible: true,
+      imagen_principal: '',
+      datasheet_pdf: '',
+      badges_detectados: [],
+      datos_tecnicos: {},
+      ...initialData
+    };
+
+    // Para cámaras Tiandy, el micrófono incorporado siempre está marcado por defecto
+    const isCam = (base.tipo_dispositivo || 'CAMARA') === 'CAMARA';
+    if (isCam) {
+      const dt = { ...(base.datos_tecnicos || {}) };
+      const cam = { ...((dt as any).camara || {}) };
+      if (cam.microfono_incorporado === undefined) {
+        cam.microfono_incorporado = true;
+      }
+      base.datos_tecnicos = { ...dt, camara: cam };
+    }
+
+    // Inicialización y migración automática de sellos gráficos
+    const rawSellos = (base.datos_tecnicos as any)?.sellos_graficos;
+    let sellosList: SelloGraficoConfig[] = [];
+    if (Array.isArray(rawSellos) && rawSellos.length > 0) {
+      sellosList = DEFAULT_SELLOS_GRAFICOS.map((def) => {
+        const found = rawSellos.find((s: any) => s.id === def.id);
+        return found ? { ...def, ...found } : def;
+      });
+    } else {
+      sellosList = DEFAULT_SELLOS_GRAFICOS.map((def) => {
+        let activo = false;
+        if (def.id === 'NUEVO_MODELO' && base.badge_nuevo) activo = true;
+        if (def.id === 'COLORMAKER' && (base.badges_detectados || []).some((b: string) => b.toUpperCase().includes('COLORMAKER'))) activo = true;
+        if (def.id === 'POLAR_DAY' && (base.badges_detectados || []).some((b: string) => b.toUpperCase().includes('POLAR'))) activo = true;
+        if (def.id === 'SMD_1' && (base.badges_detectados || []).some((b: string) => /SMD\s*1/i.test(b))) activo = true;
+        if (def.id === 'SMD_2' && (base.badges_detectados || []).some((b: string) => /SMD\s*2/i.test(b))) activo = true;
+        if (def.id === 'SMD_3' && (base.badges_detectados || []).some((b: string) => /SMD\s*3/i.test(b))) activo = true;
+        if (def.id === 'VCA' && (base.badges_detectados || []).some((b: string) => /VCA/i.test(b))) activo = true;
+        return { ...def, activo };
+      });
+    }
+
+    base.datos_tecnicos = {
+      ...base.datos_tecnicos,
+      sellos_graficos: sellosList
+    };
+
+    return base;
   });
 
-  const [activeTab, setActiveTab] = useState<'general' | 'specs' | 'badges'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'specs' | 'badges' | 'matriz'>('general');
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
+    General: true,
+    Camera: true,
+    Lens: true
+  });
+  const [newCategoryName, setNewCategoryName] = useState<string>('');
+
+  const toggleCategory = (cat: string) => {
+    setExpandedCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
+  };
+
+  const handleDatasheetKeyChange = (category: string, oldKey: string, newKey: string) => {
+    if (!newKey.trim()) return;
+    setFormData((prev) => {
+      const currentSpecs = { ...(prev.datos_tecnicos?.especificaciones_datasheet || {}) };
+      const catObj = { ...(currentSpecs[category] || {}) };
+      const val = catObj[oldKey];
+      delete catObj[oldKey];
+      catObj[newKey] = val;
+      currentSpecs[category] = catObj;
+      return {
+        ...prev,
+        datos_tecnicos: {
+          ...prev.datos_tecnicos,
+          especificaciones_datasheet: currentSpecs
+        }
+      };
+    });
+  };
+
+  const handleDatasheetValChange = (category: string, key: string, val: string) => {
+    setFormData((prev) => {
+      const currentSpecs = { ...(prev.datos_tecnicos?.especificaciones_datasheet || {}) };
+      const catObj = { ...(currentSpecs[category] || {}) };
+      catObj[key] = val;
+      currentSpecs[category] = catObj;
+      return {
+        ...prev,
+        datos_tecnicos: {
+          ...prev.datos_tecnicos,
+          especificaciones_datasheet: currentSpecs
+        }
+      };
+    });
+  };
+
+  const handleDatasheetItemDelete = (category: string, key: string) => {
+    setFormData((prev) => {
+      const currentSpecs = { ...(prev.datos_tecnicos?.especificaciones_datasheet || {}) };
+      const catObj = { ...(currentSpecs[category] || {}) };
+      delete catObj[key];
+      currentSpecs[category] = catObj;
+      return {
+        ...prev,
+        datos_tecnicos: {
+          ...prev.datos_tecnicos,
+          especificaciones_datasheet: currentSpecs
+        }
+      };
+    });
+  };
+
+  const handleDatasheetItemAdd = (category: string) => {
+    setFormData((prev) => {
+      const currentSpecs = { ...(prev.datos_tecnicos?.especificaciones_datasheet || {}) };
+      const catObj = { ...(currentSpecs[category] || {}) };
+      const newKey = `Nuevo Parámetro ${Object.keys(catObj).length + 1}`;
+      catObj[newKey] = '';
+      currentSpecs[category] = catObj;
+      return {
+        ...prev,
+        datos_tecnicos: {
+          ...prev.datos_tecnicos,
+          especificaciones_datasheet: currentSpecs
+        }
+      };
+    });
+  };
+
+  const handleDatasheetCategoryAdd = () => {
+    const name = newCategoryName.trim();
+    if (!name) return;
+    setFormData((prev) => {
+      const currentSpecs = { ...(prev.datos_tecnicos?.especificaciones_datasheet || {}) };
+      if (!currentSpecs[name]) {
+        currentSpecs[name] = {};
+      }
+      return {
+        ...prev,
+        datos_tecnicos: {
+          ...prev.datos_tecnicos,
+          especificaciones_datasheet: currentSpecs
+        }
+      };
+    });
+    setExpandedCategories((prev) => ({ ...prev, [name]: true }));
+    setNewCategoryName('');
+  };
+
+  const handleDatasheetCategoryDelete = (category: string) => {
+    if (!confirm(`¿Eliminar toda la sección "${category}" de la matriz del datasheet?`)) return;
+    setFormData((prev) => {
+      const currentSpecs = { ...(prev.datos_tecnicos?.especificaciones_datasheet || {}) };
+      delete currentSpecs[category];
+      return {
+        ...prev,
+        datos_tecnicos: {
+          ...prev.datos_tecnicos,
+          especificaciones_datasheet: currentSpecs
+        }
+      };
+    });
+  };
+
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [imageUploadError, setImageUploadError] = useState<string | null>(null);
+  const [localImagePreview, setLocalImagePreview] = useState<string | null>(null);
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  // Ingesta PDF inteligente integrada
+  const [isUploadingPdf, setIsUploadingPdf] = useState(false);
+  const [isDraggingPdf, setIsDraggingPdf] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+  const [pdfSuccess, setPdfSuccess] = useState<string | null>(null);
+
   const [imageStats, setImageStats] = useState<{
     originalSize: string;
     optimizedSize: string;
@@ -131,16 +368,61 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
     };
   }, [formData.codigo_1, formData.codigo_2, formData.id, formData.modelo, existingProducts]);
 
+  // Opciones oficiales de Serie Comercial según el Tipo de Dispositivo
+  const seriesOptions = useMemo(() => {
+    if (formData.tipo_dispositivo === 'CAMARA') {
+      return ['AK Series', 'SK Series', 'LK Series', 'WIFI / 4G Solar', 'PTZ'];
+    }
+    if (formData.tipo_dispositivo === 'NVR') {
+      return ['AK Series', 'SK Series', 'LK Series'];
+    }
+    return ['General'];
+  }, [formData.tipo_dispositivo]);
+
   // Sincronizar si cambia initialData (ej: tras extracción de PDF o selección de producto)
+  const [precioInput, setPrecioInput] = useState<string>(() => {
+    const val = initialData?.precio_usd;
+    return (val !== undefined && val !== null ? val : 0).toFixed(2);
+  });
+
   useEffect(() => {
     if (initialData) {
+      const rawSellos = (initialData.datos_tecnicos as any)?.sellos_graficos;
+      let sellosList: SelloGraficoConfig[] = [];
+      if (Array.isArray(rawSellos) && rawSellos.length > 0) {
+        sellosList = DEFAULT_SELLOS_GRAFICOS.map((def) => {
+          const found = rawSellos.find((s: any) => s.id === def.id);
+          return found ? { ...def, ...found } : def;
+        });
+      } else {
+        sellosList = DEFAULT_SELLOS_GRAFICOS.map((def) => {
+          let activo = false;
+          if (def.id === 'NUEVO_MODELO' && initialData.badge_nuevo) activo = true;
+          if (def.id === 'COLORMAKER' && (initialData.badges_detectados || []).some((b: string) => b.toUpperCase().includes('COLORMAKER'))) activo = true;
+          if (def.id === 'POLAR_DAY' && (initialData.badges_detectados || []).some((b: string) => b.toUpperCase().includes('POLAR'))) activo = true;
+          if (def.id === 'SMD_1' && (initialData.badges_detectados || []).some((b: string) => /SMD\s*1/i.test(b))) activo = true;
+          if (def.id === 'SMD_2' && (initialData.badges_detectados || []).some((b: string) => /SMD\s*2/i.test(b))) activo = true;
+          if (def.id === 'SMD_3' && (initialData.badges_detectados || []).some((b: string) => /SMD\s*3/i.test(b))) activo = true;
+          if (def.id === 'VCA' && (initialData.badges_detectados || []).some((b: string) => /VCA/i.test(b))) activo = true;
+          return { ...def, activo };
+        });
+      }
+
       setFormData(prev => ({
         ...prev,
-        ...initialData
+        ...initialData,
+        datos_tecnicos: {
+          ...(initialData.datos_tecnicos || {}),
+          sellos_graficos: sellosList
+        }
       }));
       const parsed = parseModelAndSpec(initialData.modelo || '', initialData.subtipo, initialData.especificacion_completa);
       setBaseModelInput(parsed.baseModel);
       setVariantSpecInput(parsed.variantSpec);
+      const pVal = initialData.precio_usd;
+      setPrecioInput((pVal !== undefined && pVal !== null ? pVal : 0).toFixed(2));
+      setLocalImagePreview(null);
+      setImgError(false);
     }
   }, [initialData]);
 
@@ -204,24 +486,97 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
     });
   };
 
-  // Subir imagen local al backend con optimización automática a WebP y redimensionado
-  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // Configuración global de sellos (fuente de verdad para posición, escala, imagen y estado global)
+  const [globalBadgesConfig, setGlobalBadgesConfig] = useState<BadgeGlobalConfig[]>([]);
+
+  useEffect(() => {
+    fetch(`/api/configuracion/badges?_t=${Date.now()}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.badges)) {
+          setGlobalBadgesConfig(data.badges);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const baseSellos = useMemo(() => {
+    if (globalBadgesConfig.length > 0) {
+      return globalBadgesConfig.map((gb) => ({
+        id: gb.id,
+        nombre: gb.nombre,
+        activo: false,
+        imagen_url: gb.imagen_url,
+        posicion: gb.posicion,
+        capa: gb.capa,
+        tamano: gb.tamano,
+        anclaje: gb.anclaje || 'esquina',
+        opacidad: gb.opacidad !== undefined ? gb.opacidad : 1,
+        activo_global: gb.activo_global
+      }));
+    }
+    return DEFAULT_SELLOS_GRAFICOS;
+  }, [globalBadgesConfig]);
+
+  // Sellos gráficos computados
+  const currentSellos: (SelloGraficoConfig & { activo_global?: boolean })[] = useMemo(() => {
+    const raw = (formData.datos_tecnicos as any)?.sellos_graficos;
+    if (Array.isArray(raw) && raw.length > 0) {
+      return baseSellos.map((def) => {
+        const found = raw.find((s: any) => s.id === def.id);
+        return found ? { ...def, activo: Boolean(found.activo) } : def;
+      });
+    }
+    return baseSellos;
+  }, [formData.datos_tecnicos, baseSellos]);
+
+  const handleUpdateSellos = (newSellos: SelloGraficoConfig[]) => {
+    const isNuevoActivo = Boolean(newSellos.find((s) => s.id === 'NUEVO_MODELO')?.activo);
+    setFormData((prev) => ({
+      ...prev,
+      badge_nuevo: isNuevoActivo,
+      datos_tecnicos: {
+        ...prev.datos_tecnicos,
+        sellos_graficos: newSellos
+      }
+    }));
+  };
+
+  const handleToggleSello = (id: string) => {
+    const updated = currentSellos.map((s) => {
+      if (s.id === id) {
+        return { ...s, activo: !s.activo };
+      }
+      return s;
+    });
+    handleUpdateSellos(updated);
+  };
+
+  // Procesar archivo de imagen con compresión WebP, preview instantáneo y subida
+  const processImageFile = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      setImageUploadError('El archivo debe ser una imagen válida (JPG, PNG, WebP, etc.)');
+      return;
+    }
 
     setIsUploadingImage(true);
     setImageUploadError(null);
     setImageStats(null);
+    setImgError(false);
 
     try {
       // 1. Redimensionar a máx 800px y convertir a WebP ligero
       const optimized = await optimizeImageToWebP(file, 800, 0.85);
 
-      // 2. Preparar payload con archivo .webp
+      // 2. Previsualización instantánea en memoria (0 delay)
+      const localBlobUrl = URL.createObjectURL(optimized.blob);
+      setLocalImagePreview(localBlobUrl);
+
+      // 3. Preparar payload con archivo .webp
       const body = new FormData();
       body.append('image', optimized.blob, optimized.fileName);
 
-      // 3. Enviar a endpoint de guardado
+      // 4. Enviar a endpoint de guardado
       const res = await fetch('/api/upload-image', {
         method: 'POST',
         body
@@ -235,14 +590,80 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
           dimensions: `${optimized.width}x${optimized.height} px`
         });
       } else {
-        setImageUploadError(data.error || 'Error al subir la imagen');
+        setImageUploadError(data.error || 'Error al subir la imagen al servidor');
       }
     } catch (err: any) {
       setImageUploadError(`Error procesando imagen: ${err.message}`);
     } finally {
       setIsUploadingImage(false);
-      // Reset input para permitir seleccionar el mismo archivo si se desea reintentar
-      e.target.value = '';
+    }
+  };
+
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processImageFile(file);
+    }
+    e.target.value = '';
+  };
+
+  // Ingesta inteligente de PDF para auto-completar el formulario
+  const handlePdfFile = async (file: File) => {
+    if (!file.name.toLowerCase().endsWith('.pdf')) {
+      setPdfError('El archivo seleccionado debe ser un documento PDF (.pdf)');
+      return;
+    }
+
+    setIsUploadingPdf(true);
+    setPdfError(null);
+    setPdfSuccess(null);
+
+    try {
+      const body = new FormData();
+      body.append('pdf', file);
+
+      const res = await fetch('/api/extract-pdf', {
+        method: 'POST',
+        body
+      });
+      const result = await res.json();
+
+      if (res.ok && result.success && result.data) {
+        const extracted: Producto = result.data;
+
+        setFormData((prev) => ({
+          ...prev,
+          modelo: extracted.modelo || prev.modelo,
+          especificacion_completa: extracted.especificacion_completa || extracted.modelo || prev.especificacion_completa,
+          serie: '',
+          tipo_dispositivo: extracted.tipo_dispositivo || prev.tipo_dispositivo,
+          subtipo: extracted.subtipo || prev.subtipo,
+          codigo_1: extracted.codigo_1 || prev.codigo_1,
+          codigo_2: extracted.codigo_2 || prev.codigo_2,
+          datasheet_pdf: extracted.datasheet_pdf || prev.datasheet_pdf,
+          badges_detectados: Array.from(new Set([...(prev.badges_detectados || []), ...(extracted.badges_detectados || [])])),
+          datos_tecnicos: {
+            ...prev.datos_tecnicos,
+            ...(extracted.datos_tecnicos || {})
+          }
+        }));
+
+        const parsed = parseModelAndSpec(extracted.modelo || '', extracted.subtipo, extracted.especificacion_completa);
+        setBaseModelInput(parsed.baseModel);
+        setVariantSpecInput(parsed.variantSpec);
+
+        if (extracted.precio_usd) {
+          setPrecioInput(extracted.precio_usd.toFixed(2));
+        }
+
+        setPdfSuccess(`✓ Datasheet de "${extracted.modelo}" procesado con éxito. Especificaciones técnicas autocompletadas.`);
+      } else {
+        setPdfError(result.error || 'No se pudieron extraer datos del PDF');
+      }
+    } catch (err: any) {
+      setPdfError(`Error al procesar el archivo PDF: ${err.message}`);
+    } finally {
+      setIsUploadingPdf(false);
     }
   };
 
@@ -262,12 +683,52 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
       return;
     }
 
+    const parsedPrice = parseFloat(precioInput.replace(',', '.')) || 0;
+    const isNuevoActivo = Boolean(currentSellos.find((s) => s.id === 'NUEVO_MODELO')?.activo);
+    const isColorMakerActivo = Boolean(currentSellos.find((s) => s.id === 'COLORMAKER')?.activo);
+    const isPolarDayActivo = Boolean(currentSellos.find((s) => s.id === 'POLAR_DAY')?.activo);
+    const isSmd1Activo = Boolean(currentSellos.find((s) => s.id === 'SMD_1')?.activo);
+    const isSmd2Activo = Boolean(currentSellos.find((s) => s.id === 'SMD_2')?.activo);
+    const isSmd3Activo = Boolean(currentSellos.find((s) => s.id === 'SMD_3')?.activo);
+    const isVcaActivo = Boolean(currentSellos.find((s) => s.id === 'VCA')?.activo);
+
+    let updatedBadges = [...(formData.badges_detectados || [])].filter(
+      (b) => !['COLORMAKER', 'ColorMaker', 'POLAR_DAY', 'Polar Day', 'SMD 1.0', 'SMD_1', 'SMD 2.0', 'SMD_2', 'SMD 3.0', 'SMD_3', 'VCA'].some(x => b.toUpperCase().includes(x.toUpperCase()))
+    );
+    if (isColorMakerActivo) updatedBadges.push('COLORMAKER');
+    if (isPolarDayActivo) updatedBadges.push('POLAR_DAY');
+    if (isSmd1Activo) updatedBadges.push('SMD 1.0');
+    if (isSmd2Activo) updatedBadges.push('SMD 2.0');
+    if (isSmd3Activo) updatedBadges.push('SMD 3.0');
+    if (isVcaActivo) updatedBadges.push('VCA');
+
+    const finalDatosTecnicos: any = {
+      ...(formData.datos_tecnicos || {}),
+      sellos_graficos: currentSellos
+    };
+
+    // Sanitización automática según tipo de dispositivo para evitar datos residuales
+    if (formData.tipo_dispositivo === 'NVR') {
+      delete finalDatosTecnicos.camara;
+      delete finalDatosTecnicos.switch;
+    } else if (formData.tipo_dispositivo === 'CAMARA') {
+      delete finalDatosTecnicos.nvr;
+      delete finalDatosTecnicos.switch;
+    } else if (formData.tipo_dispositivo === 'SWITCH') {
+      delete finalDatosTecnicos.camara;
+      delete finalDatosTecnicos.nvr;
+    }
+
     const toSave: Producto = {
       ...(formData as Producto),
       modelo: finalModel,
       especificacion_completa: formData.especificacion_completa || finalModel,
+      precio_usd: parsedPrice,
       codigo_1: formData.codigo_1 ? formData.codigo_1.trim() : null,
-      codigo_2: formData.codigo_2 ? formData.codigo_2.trim() : null
+      codigo_2: formData.codigo_2 ? formData.codigo_2.trim() : null,
+      badge_nuevo: isNuevoActivo,
+      badges_detectados: updatedBadges,
+      datos_tecnicos: finalDatosTecnicos
     };
     onSave(toSave);
   };
@@ -279,24 +740,77 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
   const { baseModel, variantSpec } = parseModelAndSpec(formData.modelo || '', formData.subtipo || '');
 
   return (
-    <div className="flex flex-col h-full max-h-[85vh]">
-      {/* Header del Modal */}
-      <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 px-1">
-        <div>
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            {title || (formData.id ? `Editar Modelo: ${formData.modelo}` : 'Nuevo Producto en Catálogo')}
-          </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            {baseModel} {variantSpec ? `• Variante: ${variantSpec}` : ''}
-          </p>
+    <div className="flex flex-col h-full max-h-[88vh]">
+      {/* Header Sticky del Modal con Acciones Inmediatas */}
+      <div className="sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 pb-3 pt-1 px-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                {title || (formData.id ? `Editar: ${baseModel || formData.modelo}` : 'Nuevo Producto en Catálogo')}
+              </h3>
+              <span className="rounded bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-mono font-bold text-slate-600 dark:text-slate-300">
+                {formData.tipo_dispositivo === 'CAMARA' ? 'Cámara IP' : formData.tipo_dispositivo === 'NVR' ? 'NVR' : formData.tipo_dispositivo === 'SWITCH' ? 'Switch PoE' : 'Accesorio'}
+              </span>
+            </div>
+            {variantSpec && (
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono block mt-0.5">
+                Variante: {variantSpec}
+              </span>
+            )}
+          </div>
         </div>
-        <button
-          onClick={onCancel}
-          type="button"
-          className="rounded-xl p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-        >
-          <X className="h-5 w-5" />
-        </button>
+
+        {/* Acciones Rápidas en la Cabecera */}
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          {/* Switch de Visibilidad en Catálogo */}
+          <label 
+            className={`cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all select-none ${
+              formData.visible !== false
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300 shadow-sm'
+                : 'bg-slate-100 text-slate-500 border-slate-300 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 opacity-70'
+            }`}
+            title="Controla si este producto se visualiza en la web pública de clientes"
+          >
+            <input
+              type="checkbox"
+              checked={formData.visible !== false}
+              onChange={(e) => handleGeneralChange('visible', e.target.checked)}
+              className="sr-only"
+            />
+            {formData.visible !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+            <span>{formData.visible !== false ? 'Visible en Web' : 'Oculto en Web'}</span>
+          </label>
+
+          {/* Botón Cancelar */}
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-xl border border-slate-300 dark:border-slate-700 px-3.5 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          >
+            Cancelar
+          </button>
+
+          {/* Botón Guardar */}
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isSaving}
+            className="flex items-center gap-1.5 rounded-xl bg-tiandy-700 hover:bg-tiandy-600 px-4 py-1.5 text-xs font-bold text-white transition-all shadow-md shadow-tiandy-700/20 disabled:opacity-50 active:scale-95"
+          >
+            {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+            <span>{submitLabel}</span>
+          </button>
+
+          {/* Botón Cerrar [X] */}
+          <button
+            onClick={onCancel}
+            type="button"
+            className="rounded-xl p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ml-0.5"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       {/* Alerta de Producto Duplicado */}
@@ -309,6 +823,83 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
               Se detectó el modelo <strong>"{formData.modelo}"</strong> previamente cargado. Si guardas estos cambios, sobrescribirás o duplicarás la ficha técnica existente.
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Zona de Ingesta Inteligente de Datasheet PDF */}
+      <div 
+        onDragOver={(e) => { e.preventDefault(); setIsDraggingPdf(true); }}
+        onDragLeave={() => setIsDraggingPdf(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setIsDraggingPdf(false);
+          const file = e.dataTransfer.files?.[0];
+          if (file) handlePdfFile(file);
+        }}
+        className={`mt-3 rounded-2xl border-2 border-dashed p-3.5 transition-all flex flex-col sm:flex-row items-center justify-between gap-3 ${
+          isDraggingPdf 
+            ? 'border-tiandy-500 bg-tiandy-50/80 dark:bg-tiandy-950/40 ring-2 ring-tiandy-500/20' 
+            : 'border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/40 hover:border-slate-300 dark:hover:border-slate-600'
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-tiandy-100 dark:bg-tiandy-950/80 border border-tiandy-200 dark:border-tiandy-800 flex items-center justify-center text-tiandy-700 dark:text-tiandy-400 shrink-0">
+            {isUploadingPdf ? <Loader2 className="h-5 w-5 animate-spin" /> : <FileText className="h-5 w-5" />}
+          </div>
+          <div>
+            <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <span>Cargar PDF</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-tiandy-100 text-tiandy-700 dark:bg-tiandy-900/60 dark:text-tiandy-300">
+                Auto-llenado con Datasheet
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+              Arrastra aquí el Datasheet PDF o usa el botón para auto-completar especificaciones, modelo y conectividad.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end">
+          <label className="cursor-pointer rounded-xl bg-tiandy-700 text-white hover:bg-tiandy-600 px-4 py-2 text-xs font-bold flex items-center gap-2 transition-all shadow-sm">
+            {isUploadingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+            <span>{isUploadingPdf ? 'Extrayendo PDF...' : 'Cargar PDF'}</span>
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handlePdfFile(file);
+                e.target.value = '';
+              }}
+              disabled={isUploadingPdf}
+              className="hidden"
+            />
+          </label>
+        </div>
+      </div>
+
+      {/* Notificaciones de Ingesta PDF */}
+      {pdfSuccess && (
+        <div className="mt-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 p-2.5 flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-300">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+            <span>{pdfSuccess}</span>
+          </div>
+          <button onClick={() => setPdfSuccess(null)} className="text-emerald-600 hover:text-emerald-800 dark:hover:text-white ml-2">
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
+      {pdfError && (
+        <div className="mt-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/80 p-2.5 flex items-center justify-between text-xs text-rose-800 dark:text-rose-300">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-rose-600 shrink-0" />
+            <span>{pdfError}</span>
+          </div>
+          <button onClick={() => setPdfError(null)} className="text-rose-600 hover:text-rose-800 dark:hover:text-white ml-2">
+            <X className="h-3.5 w-3.5" />
+          </button>
         </div>
       )}
 
@@ -350,7 +941,20 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
           }`}
         >
           <Tag className="h-4 w-4" />
-          3. Tecnologías y Badges ({formData.badges_detectados?.length || 0})
+          3. Etiquetas del Producto ({formData.badges_detectados?.length || 0})
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('matriz')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            activeTab === 'matriz'
+              ? 'bg-tiandy-700 text-white shadow-sm'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
+        >
+          <FileSpreadsheet className="h-4 w-4" />
+          4. Matriz Datasheet ({Object.keys(formData.datos_tecnicos?.especificaciones_datasheet || {}).length})
         </button>
       </div>
 
@@ -397,43 +1001,49 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                   </span>
                 </div>
               </div>
-
-              {/* Vista previa en tiempo real */}
-              <div className="pt-2 border-t border-slate-200/80 dark:border-slate-700/60 flex flex-wrap items-center justify-between gap-2 text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="text-slate-500 dark:text-slate-400 text-[11px] font-medium">Visualización en catálogo:</span>
-                  <div>
-                    <span className="font-mono font-bold text-slate-900 dark:text-white">
-                      {baseModelInput || '—'}
-                    </span>
-                    {variantSpecInput && (
-                      <span className="text-xs font-normal text-slate-500 dark:text-slate-400 ml-1.5">
-                        {variantSpecInput}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="font-mono text-[11px] text-slate-400">
-                  Modelo exacto guardado: <span className="font-bold text-slate-700 dark:text-slate-300">"{formData.modelo || ''}"</span>
-                </div>
-              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
               {/* Serie Comercial */}
               <div>
-                <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1">
-                  Serie Comercial *
+                <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between">
+                  <span>Serie Comercial</span>
+                  <span className="text-[10px] font-normal text-slate-400 font-sans lowercase">(opcional)</span>
                 </label>
-                <input
-                  type="text"
-                  value={formData.serie || ''}
-                  onChange={(e) => handleGeneralChange('serie', e.target.value)}
-                  placeholder="ej. Lite Series, AK Series, Spark Series..."
-                  required
-                  className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 text-xs font-bold text-slate-900 dark:text-white focus:border-tiandy-600 focus:outline-none"
-                />
+                {(() => {
+                  const isSinSerie = !formData.serie || !formData.serie.trim() || formData.serie.trim().toLowerCase() === 'general series';
+                  const selectValue = isSinSerie ? '' : formData.serie;
+
+                  return (
+                    <>
+                      <select
+                        value={selectValue}
+                        onChange={(e) => handleGeneralChange('serie', e.target.value)}
+                        className={`w-full rounded-xl border p-2.5 text-xs font-bold focus:border-tiandy-600 focus:outline-none transition-colors ${
+                          isSinSerie
+                            ? 'border-amber-300 bg-amber-50/50 text-amber-800 dark:border-amber-800/80 dark:bg-amber-950/30 dark:text-amber-300'
+                            : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white'
+                        }`}
+                      >
+                        <option value="">-- Sin Serie Asignada --</option>
+                        {seriesOptions.map((opt) => (
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                        {formData.serie && !seriesOptions.includes(formData.serie) && !isSinSerie && (
+                          <option value={formData.serie}>{formData.serie} (Actual)</option>
+                        )}
+                      </select>
+                      {isSinSerie && (
+                        <span className="text-[10px] text-amber-600 dark:text-amber-400 mt-1 block font-medium">
+                          ⚠️ Puedes guardarlo sin serie; se resaltará como pendiente en la tabla.
+                        </span>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
 
               {/* Tipo de Dispositivo */}
@@ -443,12 +1053,28 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                 </label>
                 <select
                   value={formData.tipo_dispositivo || 'CAMARA'}
-                  onChange={(e) => handleGeneralChange('tipo_dispositivo', e.target.value as TipoDispositivo)}
+                  onChange={(e) => {
+                    const newTipo = e.target.value as TipoDispositivo;
+                    setFormData((prev) => {
+                      let updatedSerie = prev.serie || '';
+                      if (newTipo === 'SWITCH' || newTipo === 'ACCESORIO') {
+                        updatedSerie = '';
+                      } else if (newTipo === 'NVR' && !['AK Series', 'SK Series', 'LK Series'].includes(updatedSerie)) {
+                        updatedSerie = '';
+                      }
+                      return {
+                        ...prev,
+                        tipo_dispositivo: newTipo,
+                        serie: updatedSerie
+                      };
+                    });
+                  }}
                   className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 text-xs font-bold text-slate-900 dark:text-white focus:border-tiandy-600 focus:outline-none"
                 >
                   <option value="CAMARA">Cámara IP</option>
                   <option value="NVR">Grabador NVR</option>
                   <option value="SWITCH">Switch PoE</option>
+                  <option value="ACCESORIO">Accesorio / Montaje</option>
                 </select>
               </div>
 
@@ -466,7 +1092,7 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                 />
               </div>
 
-              {/* Precio en U$S (2 decimales) */}
+              {/* Precio en U$S (siempre con 2 decimales) */}
               <div>
                 <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1">
                   Precio Neto U$S (s/IVA) *
@@ -476,11 +1102,17 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                     U$S
                   </span>
                   <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.precio_usd || 0}
-                    onChange={(e) => handleGeneralChange('precio_usd', parseFloat(e.target.value) || 0)}
+                    type="text"
+                    inputMode="decimal"
+                    value={precioInput}
+                    onChange={(e) => setPrecioInput(e.target.value)}
+                    onBlur={() => {
+                      const parsed = parseFloat(precioInput.replace(',', '.')) || 0;
+                      const normalized = Math.max(0, Math.round(parsed * 100) / 100);
+                      setPrecioInput(normalized.toFixed(2));
+                      handleGeneralChange('precio_usd', normalized);
+                    }}
+                    placeholder="0.00"
                     className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 py-2.5 pl-12 pr-3 font-mono text-xs font-bold text-slate-900 dark:text-white focus:border-tiandy-600 focus:outline-none"
                   />
                 </div>
@@ -580,34 +1212,22 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
               </div>
             </div>
 
-            {/* Checkboxes de Visibilidad y Nuevo */}
-            <div className="flex flex-wrap items-center gap-6 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-              <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700 dark:text-slate-200">
-                <input
-                  type="checkbox"
-                  checked={formData.visible !== false}
-                  onChange={(e) => handleGeneralChange('visible', e.target.checked)}
-                  className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
-                />
-                <span className="flex items-center gap-1.5">
-                  <Eye className="h-4 w-4 text-blue-600" />
-                  Visible en Catálogo Público
-                </span>
-              </label>
-
-              <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-amber-700 dark:text-amber-400">
-                <input
-                  type="checkbox"
-                  checked={Boolean(formData.badge_nuevo)}
-                  onChange={(e) => handleGeneralChange('badge_nuevo', e.target.checked)}
-                  className="rounded text-amber-500 focus:ring-amber-400 h-4 w-4"
-                />
-                <span>Marcar con Badge "Nuevo Ingreso"</span>
-              </label>
-            </div>
-
-            {/* Carga de Imagen del Producto con Optimización Automática WebP */}
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 p-4 bg-slate-50/50 dark:bg-slate-800/40 space-y-3">
+            {/* Carga de Imagen del Producto con Optimización Automática WebP y Drag & Drop */}
+            <div 
+              onDragOver={(e) => { e.preventDefault(); setIsDraggingImage(true); }}
+              onDragLeave={() => setIsDraggingImage(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDraggingImage(false);
+                const file = e.dataTransfer.files?.[0];
+                if (file) processImageFile(file);
+              }}
+              className={`rounded-2xl border p-4 space-y-3 transition-all ${
+                isDraggingImage
+                  ? 'border-tiandy-500 bg-tiandy-50/80 dark:bg-tiandy-950/40 ring-2 ring-tiandy-500/20'
+                  : 'border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40'
+              }`}
+            >
               <div className="flex items-center justify-between">
                 <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
                   Imagen Principal del Producto
@@ -619,31 +1239,41 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
               </div>
               
               <div className="flex flex-col sm:flex-row items-center gap-4">
-                {/* Preview */}
-                <div className="relative w-28 h-28 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-center overflow-hidden shrink-0 shadow-inner group">
-                  {formData.imagen_principal ? (
+                {/* Preview Box con Drag and Drop */}
+                <div 
+                  className={`relative w-28 h-28 rounded-2xl border bg-white dark:bg-slate-900 flex items-center justify-center overflow-hidden shrink-0 shadow-inner group transition-all ${
+                    isDraggingImage ? 'border-tiandy-500 ring-2 ring-tiandy-400' : 'border-slate-200 dark:border-slate-700'
+                  }`}
+                >
+                  {(localImagePreview || formData.imagen_principal) && !imgError ? (
                     <>
                       <img
-                        src={formData.imagen_principal}
+                        key={localImagePreview || formData.imagen_principal}
+                        src={localImagePreview || formData.imagen_principal}
                         alt={formData.modelo}
-                        className="w-full h-full object-contain p-1.5"
-                        onError={(e) => {
-                          (e.target as HTMLElement).style.display = 'none';
-                        }}
+                        className="w-full h-full object-contain p-1.5 transition-all"
+                        onError={() => setImgError(true)}
                       />
                       <span className="absolute bottom-1 right-1 rounded bg-black/70 px-1 py-0.2 text-[8px] font-bold text-white uppercase tracking-wider">
-                        {formData.imagen_principal.endsWith('.webp') ? 'WEBP' : 'IMG'}
+                        {(localImagePreview || formData.imagen_principal)?.endsWith('.webp') || localImagePreview ? 'WEBP' : 'IMG'}
                       </span>
                     </>
                   ) : (
-                    <div className="flex flex-col items-center justify-center text-slate-300 dark:text-slate-600">
+                    <div className="flex flex-col items-center justify-center text-slate-300 dark:text-slate-600 p-2 text-center">
                       <ImageIcon className="h-8 w-8 mb-1" />
-                      <span className="text-[9px] font-semibold text-slate-400">Sin Imagen</span>
+                      <span className="text-[9px] font-semibold text-slate-400">
+                        {isDraggingImage ? 'Soltar aquí' : 'Sin Imagen'}
+                      </span>
+                    </div>
+                  )}
+                  {isUploadingImage && (
+                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center text-white">
+                      <Loader2 className="h-6 w-6 animate-spin text-tiandy-400" />
                     </div>
                   )}
                 </div>
 
-                {/* Subir archivo o ingresar URL */}
+                {/* Subir archivo, arrastrar o ingresar URL */}
                 <div className="flex-1 w-full space-y-2">
                   <div className="flex flex-wrap items-center gap-3">
                     <label className="cursor-pointer rounded-xl bg-slate-900 text-white dark:bg-tiandy-700 hover:bg-slate-800 dark:hover:bg-tiandy-600 px-4 py-2 text-xs font-bold flex items-center gap-2 transition-all shadow-sm">
@@ -658,10 +1288,12 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                       />
                     </label>
 
-                    {formData.imagen_principal && (
+                    {(formData.imagen_principal || localImagePreview) && (
                       <button
                         type="button"
                         onClick={() => {
+                          setLocalImagePreview(null);
+                          setImgError(false);
                           handleGeneralChange('imagen_principal', '');
                           setImageStats(null);
                         }}
@@ -671,6 +1303,10 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                       </button>
                     )}
                   </div>
+
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Puedes arrastrar una imagen directamente sobre este cuadro o usar el botón para cargarla.
+                  </p>
 
                   {/* Estadísticas de compresión WebP en tiempo real */}
                   {imageStats && (
@@ -685,7 +1321,11 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                   <input
                     type="text"
                     value={formData.imagen_principal || ''}
-                    onChange={(e) => handleGeneralChange('imagen_principal', e.target.value)}
+                    onChange={(e) => {
+                      setLocalImagePreview(null);
+                      setImgError(false);
+                      handleGeneralChange('imagen_principal', e.target.value);
+                    }}
                     placeholder="o pega una URL directa de imagen (ej: /data/images/... o https://...)"
                     className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 text-xs font-mono font-medium text-slate-700 dark:text-slate-300 focus:outline-none"
                   />
@@ -719,7 +1359,7 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
             {formData.tipo_dispositivo === 'CAMARA' && (
               <div className="space-y-4">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-tiandy-700 dark:text-tiandy-400 flex items-center gap-1.5">
-                  <Camera className="h-4 w-4" />
+                  <Cctv className="h-4 w-4" />
                   Parámetros Técnicos de Cámara IP
                 </h4>
 
@@ -871,6 +1511,56 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                       className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 text-xs font-semibold text-slate-900 dark:text-white"
                     />
                   </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">
+                      Alimentación
+                    </label>
+                    <input
+                      type="text"
+                      value={camSpecs.alimentacion?.tipo || camSpecs.alimentacion_tipo || (formData.datos_tecnicos as any)?.caracteristicas_principales?.alimentacion || ''}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        handleTechnicalChange('camara', 'alimentacion', {
+                          tipo: val,
+                          especificacion: camSpecs.alimentacion?.especificacion || camSpecs.consumo_max_w || ''
+                        });
+                        handleTechnicalChange('camara', 'alimentacion_tipo', val);
+                        setFormData((prev) => ({
+                          ...prev,
+                          datos_tecnicos: {
+                            ...prev.datos_tecnicos,
+                            caracteristicas_principales: {
+                              ...(prev.datos_tecnicos?.caracteristicas_principales as any),
+                              alimentacion: val
+                            }
+                          }
+                        }));
+                      }}
+                      placeholder="ej. PoE (802.3af), 12V DC, 12V DC / PoE (802.3af)"
+                      className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 text-xs font-semibold text-slate-900 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">
+                      Consumo Máximo (Watts)
+                    </label>
+                    <input
+                      type="text"
+                      value={camSpecs.alimentacion?.especificacion || camSpecs.consumo_max_w || ''}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        handleTechnicalChange('camara', 'alimentacion', {
+                          tipo: camSpecs.alimentacion?.tipo || camSpecs.alimentacion_tipo || '',
+                          especificacion: val
+                        });
+                        handleTechnicalChange('camara', 'consumo_max_w', val);
+                      }}
+                      placeholder="ej. Max. 2W, Max. 6W, Max. 7.5W"
+                      className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 text-xs font-semibold text-slate-900 dark:text-white"
+                    />
+                  </div>
                 </div>
 
                 {/* Toggles de Hardware de Cámara */}
@@ -878,7 +1568,7 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                   <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700 dark:text-slate-200">
                     <input
                       type="checkbox"
-                      checked={Boolean(camSpecs.microfono_incorporado)}
+                      checked={camSpecs.microfono_incorporado !== undefined ? Boolean(camSpecs.microfono_incorporado) : true}
                       onChange={(e) => handleTechnicalChange('camara', 'microfono_incorporado', e.target.checked)}
                       className="rounded text-tiandy-700 focus:ring-tiandy-600 h-4 w-4"
                     />
@@ -906,6 +1596,34 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                     />
                     <Database className="h-4 w-4 text-amber-600" />
                     Ranura MicroSD (Slot SD)
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700 dark:text-slate-200">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(camSpecs.interfaces?.entrada_alarma)}
+                      onChange={(e) => {
+                        const inter = { ...(camSpecs.interfaces || {}), entrada_alarma: e.target.checked ? '1-ch Entrada de Alarma' : null };
+                        handleTechnicalChange('camara', 'interfaces', inter);
+                      }}
+                      className="rounded text-tiandy-700 focus:ring-tiandy-600 h-4 w-4"
+                    />
+                    <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                    Entrada de Alarma
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700 dark:text-slate-200">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(camSpecs.interfaces?.salida_alarma || (camSpecs as any).salidas_alarma)}
+                      onChange={(e) => {
+                        const inter = { ...(camSpecs.interfaces || {}), salida_alarma: e.target.checked ? '1-ch Salida de Alarma' : null };
+                        handleTechnicalChange('camara', 'interfaces', inter);
+                      }}
+                      className="rounded text-tiandy-700 focus:ring-tiandy-600 h-4 w-4"
+                    />
+                    <ShieldCheck className="h-4 w-4 text-rose-600" />
+                    Salida de Alarma
                   </label>
                 </div>
               </div>
@@ -938,19 +1656,56 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                     <input
                       type="number"
                       value={nvrSpecs.bahias_hdd || 1}
-                      onChange={(e) => handleTechnicalChange('nvr', 'bahias_hdd', parseInt(e.target.value) || 0)}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value) || 0;
+                        handleTechnicalChange('nvr', 'bahias_hdd', val);
+                        handleTechnicalChange('nvr', 'bahias_sata', val);
+                      }}
                       className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 text-xs font-semibold text-slate-900 dark:text-white"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">
-                      Canales PoE Integrados
+                      Capacidad Máx. por Disco (TB)
                     </label>
                     <input
                       type="number"
-                      value={nvrSpecs.canales_poe || 0}
-                      onChange={(e) => handleTechnicalChange('nvr', 'canales_poe', parseInt(e.target.value) || 0)}
+                      value={nvrSpecs.capacidad_max_por_disco_tb || 10}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value) || 0;
+                        handleTechnicalChange('nvr', 'capacidad_max_por_disco_tb', val);
+                        setFormData((prev: any) => ({
+                          ...prev,
+                          datos_tecnicos: {
+                            ...prev.datos_tecnicos,
+                            caracteristicas_principales: {
+                              ...prev.datos_tecnicos?.caracteristicas_principales,
+                              capacidad_max: `Hasta ${val}TB por disco`
+                            }
+                          }
+                        }));
+                      }}
+                      min={1}
+                      max={32}
+                      className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 text-xs font-semibold text-slate-900 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">
+                      Puertos PoE Integrados
+                    </label>
+                    <input
+                      type="number"
+                      value={nvrSpecs.puertos_poe_integrados || nvrSpecs.canales_poe || 0}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value, 10) || 0;
+                        handleTechnicalChange('nvr', 'puertos_poe_integrados', val);
+                        handleTechnicalChange('nvr', 'canales_poe', val);
+                      }}
+                      min={0}
+                      max={64}
                       className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 text-xs font-semibold text-slate-900 dark:text-white"
                     />
                   </div>
@@ -993,6 +1748,83 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                       className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 text-xs font-semibold text-slate-900 dark:text-white"
                     />
                   </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">
+                      Alimentación
+                    </label>
+                    <input
+                      type="text"
+                      value={nvrSpecs.alimentacion || (formData.datos_tecnicos as any)?.caracteristicas_principales?.alimentacion || ''}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        handleTechnicalChange('nvr', 'alimentacion', val);
+                        setFormData((prev) => ({
+                          ...prev,
+                          datos_tecnicos: {
+                            ...prev.datos_tecnicos,
+                            caracteristicas_principales: {
+                              ...(prev.datos_tecnicos?.caracteristicas_principales as any),
+                              alimentacion: val
+                            }
+                          }
+                        }));
+                      }}
+                      placeholder="ej. 12V DC, 48V DC, 100~240V AC"
+                      className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 text-xs font-semibold text-slate-900 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Toggles de Interfaces E/S de NVR */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700 dark:text-slate-200">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(nvrSpecs.entradas_alarma || (formData.datos_tecnicos as any)?.caracteristicas_principales?.entradas_alarma)}
+                      onChange={(e) => {
+                        const val = e.target.checked ? '4-ch Entrada de Alarma' : '';
+                        handleTechnicalChange('nvr', 'entradas_alarma', val);
+                        setFormData((prev) => ({
+                          ...prev,
+                          datos_tecnicos: {
+                            ...prev.datos_tecnicos,
+                            caracteristicas_principales: {
+                              ...(prev.datos_tecnicos?.caracteristicas_principales as any),
+                              entradas_alarma: val || null
+                            }
+                          }
+                        }));
+                      }}
+                      className="rounded text-tiandy-700 focus:ring-tiandy-600 h-4 w-4"
+                    />
+                    <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                    Entrada de Alarma (Alarm In)
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700 dark:text-slate-200">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(nvrSpecs.salidas_alarma || (formData.datos_tecnicos as any)?.caracteristicas_principales?.salidas_alarma)}
+                      onChange={(e) => {
+                        const val = e.target.checked ? '1-ch Salida de Alarma' : '';
+                        handleTechnicalChange('nvr', 'salidas_alarma', val);
+                        setFormData((prev) => ({
+                          ...prev,
+                          datos_tecnicos: {
+                            ...prev.datos_tecnicos,
+                            caracteristicas_principales: {
+                              ...(prev.datos_tecnicos?.caracteristicas_principales as any),
+                              salidas_alarma: val || null
+                            }
+                          }
+                        }));
+                      }}
+                      className="rounded text-tiandy-700 focus:ring-tiandy-600 h-4 w-4"
+                    />
+                    <ShieldCheck className="h-4 w-4 text-rose-600" />
+                    Salida de Alarma (Alarm Out)
+                  </label>
                 </div>
               </div>
             )}
@@ -1059,66 +1891,365 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
           </div>
         )}
 
-        {/* TAB 3: BADGES Y TECNOLOGÍAS */}
+        {/* TAB 3: ETIQUETAS Y SELLOS GRÁFICOS */}
         {activeTab === 'badges' && (
-          <div className="space-y-4 animate-in fade-in-50 duration-150">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-              Selecciona las tecnologías y distintivos destacados para este modelo:
-            </h4>
+          <div className="space-y-6 animate-in fade-in-50 duration-150">
+            {/* Cabecera explicativa de la sección */}
+            <div className="rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/30 p-3.5 border border-emerald-200 dark:border-emerald-800/60 flex items-start justify-between gap-3">
+              <div className="flex items-start gap-2.5">
+                <Sparkles className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                <div className="text-xs">
+                  <span className="font-bold text-slate-900 dark:text-white">
+                    Gestión Centralizada y Uniforme de Etiquetas
+                  </span>
+                  <p className="text-slate-500 dark:text-slate-400 mt-0.5">
+                    Activa o desactiva las etiquetas y sellos para este producto. La ubicación, anclaje, tamaño y sellos se configuran de forma única y uniforme en el menú <strong>Gestor de Etiquetas</strong>.
+                  </p>
+                </div>
+              </div>
+            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {AVAILABLE_BADGES.map((b) => {
-                const isActive = (formData.badges_detectados || []).includes(b.id);
-                return (
-                  <div
-                    key={b.id}
-                    onClick={() => handleToggleBadge(b.id)}
-                    className={`cursor-pointer rounded-2xl p-3 border transition-all flex items-start gap-3 ${
-                      isActive
-                        ? 'border-tiandy-600 bg-tiandy-50/60 dark:bg-tiandy-950/40 dark:border-tiandy-700 text-slate-900 dark:text-white shadow-sm'
-                        : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700'
-                    }`}
-                  >
-                    <div className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 mt-0.5 ${
-                      isActive ? 'bg-tiandy-700 text-white' : 'border border-slate-300 dark:border-slate-700'
-                    }`}>
-                      {isActive && <Check className="w-3.5 h-3.5" />}
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold">{b.label}</div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-                        {b.desc}
-                      </div>
-                    </div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Columna Izquierda: Activación de Sellos y Distintivos (7 cols) */}
+              <div className="lg:col-span-7 space-y-5">
+                
+                {/* 1. SELLOS GRÁFICOS SOBRE LA IMAGEN */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                      <Tag className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                      Sellos Gráficos sobre Imagen (Activar / Desactivar)
+                    </h4>
+                    <span className="text-[10px] text-slate-400">
+                      Ubicación y tamaño uniformes
+                    </span>
                   </div>
-                );
-              })}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {currentSellos.map((sello) => (
+                      <div
+                        key={sello.id}
+                        onClick={() => handleToggleSello(sello.id)}
+                        className={`cursor-pointer rounded-2xl border p-3 transition-all flex items-center justify-between ${
+                          sello.activo
+                            ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 dark:border-emerald-600 shadow-xs'
+                            : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 opacity-75 hover:border-slate-300'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center p-1 shrink-0 overflow-hidden shadow-2xs">
+                            <img
+                              src={sello.imagen_url || `/data/badges/${sello.id.toLowerCase().replace('_', '-')}.svg`}
+                              alt={sello.nombre}
+                              className="max-h-full max-w-full object-contain"
+                              onError={(e) => {
+                                const img = e.currentTarget;
+                                img.onerror = null;
+                                if (sello.id === 'NUEVO_MODELO') img.src = '/data/badges/nuevo-modelo.svg';
+                                else if (sello.id === 'COLORMAKER') img.src = '/data/badges/colormaker.svg';
+                                else if (sello.id === 'POLAR_DAY') img.src = '/data/badges/polarday.svg';
+                                else if (sello.id === 'SMD_1') img.src = '/data/badges/smd-1.svg';
+                                else if (sello.id === 'SMD_2') img.src = '/data/badges/smd-2.svg';
+                                else if (sello.id === 'SMD_3') img.src = '/data/badges/smd-3.svg';
+                                else if (sello.id === 'VCA') img.src = '/data/badges/vca.svg';
+                              }}
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold text-slate-900 dark:text-white truncate flex items-center gap-1.5">
+                              <span>{sello.nombre}</span>
+                              {sello.activo_global === false && (
+                                <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 font-bold">
+                                  Global Inactivo
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-[10px] text-slate-400 truncate">
+                              {sello.posicion || 'top-right'} • {sello.tamano || 100}%
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                          sello.activo ? 'bg-emerald-600 text-white' : 'border border-slate-300 dark:border-slate-700'
+                        }`}>
+                          {sello.activo && <Check className="w-3.5 h-3.5" />}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 2. DISTINTIVOS TECNOLÓGICOS FUNCIONALES */}
+                <div className="space-y-3 pt-2">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                    <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                    Distintivos Tecnológicos Funcionales
+                  </h4>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {AVAILABLE_TECH_BADGES.map((b) => {
+                      const isActive = (formData.badges_detectados || []).includes(b.id);
+                      return (
+                        <div
+                          key={b.id}
+                          onClick={() => handleToggleBadge(b.id)}
+                          className={`cursor-pointer rounded-2xl p-3 border transition-all flex flex-col justify-between ${
+                            isActive
+                              ? 'border-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/30 dark:border-emerald-700 text-slate-900 dark:text-white shadow-sm'
+                              : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="text-xs font-bold text-slate-900 dark:text-white">{b.label}</span>
+                            <div className={`w-4 h-4 rounded flex items-center justify-center shrink-0 ${
+                              isActive ? 'bg-emerald-600 text-white' : 'border border-slate-300 dark:border-slate-700'
+                            }`}>
+                              {isActive && <Check className="w-3 h-3" />}
+                            </div>
+                          </div>
+                          <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+                            {b.desc}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Columna Derecha: Previsualización en Vivo de la Tarjeta con Sellos (5 cols) */}
+              <div className="lg:col-span-5 sticky top-16">
+                <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <Eye className="h-4 w-4 text-tiandy-600" />
+                      Previsualización en Vivo de la Imagen
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400">
+                      CSS Overlays
+                    </span>
+                  </div>
+
+                  {/* Cuadro simulador idéntico a ProductCard */}
+                  <div className="relative aspect-[16/10] bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700/80 flex items-center justify-center p-4 overflow-hidden shadow-inner">
+                    {/* Sellos detrás */}
+                    <SellosGraficosOverlay sellos={currentSellos} capaFiltro="back" tamano="normal" />
+
+                    {/* Imagen principal */}
+                    {localImagePreview || formData.imagen_principal ? (
+                      <img
+                        src={localImagePreview || formData.imagen_principal}
+                        alt="Previsualización"
+                        className="max-h-full max-w-full object-contain relative z-10 drop-shadow-sm"
+                      />
+                    ) : (
+                      <div className="text-center text-slate-300 dark:text-slate-600 relative z-10">
+                        <ImageIcon className="w-12 h-12 mx-auto stroke-1 mb-1" />
+                        <span className="text-[10px] font-mono uppercase text-slate-400">Sin Imagen Cargada</span>
+                      </div>
+                    )}
+
+                    {/* Sellos delante */}
+                    <SellosGraficosOverlay sellos={currentSellos} capaFiltro="front" tamano="normal" />
+
+                    {/* Badge de stock simulado para ver superposición */}
+                    <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-md text-[9px] font-bold border border-slate-200 bg-slate-100/90 text-slate-700 dark:bg-slate-800/90 dark:text-slate-300 dark:border-slate-700 shadow-2xs z-30">
+                      STOCK
+                    </span>
+                  </div>
+
+                  {/* Resumen de sellos activos */}
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 space-y-1 pt-1">
+                    <div className="font-semibold text-slate-700 dark:text-slate-300">
+                      Sellos aplicados en este producto:
+                    </div>
+                    {currentSellos.filter(s => s.activo).length === 0 ? (
+                      <div className="text-[10px] italic text-slate-400">Ningún sello gráfico activo</div>
+                    ) : (
+                      currentSellos.filter(s => s.activo).map(s => (
+                        <div key={s.id} className="text-[10px] flex items-center justify-between font-mono bg-white dark:bg-slate-900/60 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-800">
+                          <span className="font-bold text-slate-800 dark:text-slate-200">• {s.nombre}</span>
+                          <span className="text-slate-400">
+                            {s.posicion} ({s.capa === 'front' ? 'delante' : 'fondo'})
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
 
-        {/* Footer de Acciones del Formulario */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
-          <div className="text-xs text-slate-400">
-            {formData.precio_usd ? `Precio fijado: ${formatCurrency(formData.precio_usd)}` : 'Sin precio fijado'}
-          </div>
+        {/* TAB 4: MATRIZ DATASHEET & COMPARATIVA */}
+        {activeTab === 'matriz' && (
+          <div className="space-y-4 animate-in fade-in-50 duration-150">
+            {/* Header explicativo y añadir nueva categoría */}
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 p-4 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase text-slate-800 dark:text-slate-200">
+                    <FileSpreadsheet className="h-4 w-4 text-tiandy-700 dark:text-tiandy-400" />
+                    <span>Matriz de Especificaciones del Datasheet</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                    Información técnica completa extraída del PDF oficial. Se utiliza para la matriz comparativa de productos y la ficha técnica profunda.
+                  </p>
+                </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="rounded-xl border border-slate-300 dark:border-slate-700 px-4 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="flex items-center gap-2 rounded-xl bg-tiandy-700 hover:bg-tiandy-600 px-6 py-2.5 text-xs font-bold text-white transition-all shadow-md shadow-tiandy-700/20 disabled:opacity-50 active:scale-95"
-            >
-              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-              {submitLabel}
-            </button>
+                {/* Formulario rápido para añadir nueva categoría */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    placeholder="Nueva categoría (ej. Audio)"
+                    className="rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200"
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleDatasheetCategoryAdd(); } }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleDatasheetCategoryAdd}
+                    className="rounded-xl bg-tiandy-700 text-white hover:bg-tiandy-600 px-3 py-1.5 text-xs font-bold flex items-center gap-1 transition-all shadow-xs cursor-pointer"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Crear Sección</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Listado de Categorías con Acordeón */}
+            {Object.keys(formData.datos_tecnicos?.especificaciones_datasheet || {}).length === 0 ? (
+              <div className="text-center py-10 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-6">
+                <FileText className="w-10 h-10 text-slate-400 mx-auto mb-2" />
+                <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300">Sin matriz técnica registrada</h4>
+                <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
+                  Sube el archivo PDF del producto con el botón de auto-llenado superior para cargar automáticamente todas las especificaciones estructuradas, o agrega una categoría manualmente.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {Object.entries(formData.datos_tecnicos?.especificaciones_datasheet || {}).map(([cat, items]) => {
+                  const isExpanded = expandedCategories[cat] !== false;
+                  const count = items ? Object.keys(items).length : 0;
+
+                  return (
+                    <div
+                      key={cat}
+                      className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-xs"
+                    >
+                      {/* Cabecera del Acordeón */}
+                      <div className="flex items-center justify-between px-4 py-3 bg-slate-50/80 dark:bg-slate-800/60 border-b border-slate-200/80 dark:border-slate-800">
+                        <button
+                          type="button"
+                          onClick={() => toggleCategory(cat)}
+                          className="flex items-center gap-2 text-left font-bold text-xs text-slate-800 dark:text-slate-200 hover:text-tiandy-600 dark:hover:text-tiandy-400 transition-colors cursor-pointer"
+                        >
+                          {isExpanded ? (
+                            <ChevronDown className="h-4 w-4 text-slate-500" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4 text-slate-500" />
+                          )}
+                          <span className="uppercase tracking-wide">{cat}</span>
+                          <span className="text-[10px] font-normal text-slate-400 bg-white dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
+                            {count} parámetros
+                          </span>
+                        </button>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleDatasheetItemAdd(cat)}
+                            className="px-2.5 py-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 rounded-lg border border-emerald-200 dark:border-emerald-800 flex items-center gap-1 transition-colors cursor-pointer"
+                          >
+                            <Plus className="h-3 w-3" />
+                            <span>Parámetro</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDatasheetCategoryDelete(cat)}
+                            className="p-1 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                            title="Eliminar sección completa"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Cuerpo del Acordeón (Grid de Claves y Valores) */}
+                      {isExpanded && (
+                        <div className="p-3 divide-y divide-slate-100 dark:divide-slate-800/60">
+                          {count === 0 ? (
+                            <div className="text-[11px] italic text-slate-400 py-2 text-center">
+                              Sección sin parámetros. Usa el botón "+ Parámetro" para añadir uno.
+                            </div>
+                          ) : (
+                            Object.entries(items || {}).map(([key, val], idx) => (
+                              <div
+                                key={`${cat}-${key}-${idx}`}
+                                className="grid grid-cols-1 md:grid-cols-12 gap-2 py-2 items-center hover:bg-slate-50/50 dark:hover:bg-slate-800/20 px-1 rounded-lg"
+                              >
+                                {/* Nombre del Parámetro (Clave) */}
+                                <div className="md:col-span-4">
+                                  <input
+                                    type="text"
+                                    defaultValue={key}
+                                    onBlur={(e) => {
+                                      if (e.target.value !== key) {
+                                        handleDatasheetKeyChange(cat, key, e.target.value);
+                                      }
+                                    }}
+                                    className="w-full text-xs font-semibold text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-tiandy-600 focus:outline-none"
+                                    placeholder="Nombre del parámetro"
+                                  />
+                                </div>
+
+                                {/* Valor del Parámetro */}
+                                <div className="md:col-span-7">
+                                  <input
+                                    type="text"
+                                    value={val || ''}
+                                    onChange={(e) => handleDatasheetValChange(cat, key, e.target.value)}
+                                    className="w-full text-xs text-slate-900 dark:text-white bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-tiandy-600 focus:outline-none"
+                                    placeholder="Valor técnico (ej. 2.8mm, IP67, etc.)"
+                                  />
+                                </div>
+
+                                {/* Botón Borrar Fila */}
+                                <div className="md:col-span-1 flex justify-end">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDatasheetItemDelete(cat, key)}
+                                    className="p-1.5 text-slate-300 hover:text-rose-500 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                                    title="Eliminar este parámetro"
+                                  >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  </button>
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Footer compacto de estado */}
+        <div className="flex items-center justify-between pt-3 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-400">
+          <div>
+            {formData.precio_usd ? `Precio fijado: ${formatCurrency(formData.precio_usd)} neto s/IVA` : 'Sin precio fijado'}
+          </div>
+          <div className="text-[11px] text-slate-400">
+            {formData.modelo ? `Modelo: ${formData.modelo}` : ''}
           </div>
         </div>
       </form>

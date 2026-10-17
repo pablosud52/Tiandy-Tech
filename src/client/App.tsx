@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Producto, TipoDispositivo, FiltrosBusqueda, ItemCotizacion } from '../shared/types.js';
+import { Producto, TipoDispositivo, FiltrosBusqueda, ItemCotizacion, BadgeGlobalConfig } from '../shared/types.js';
 import { getProductSpecs } from '../shared/helpers.js';
 import { Navbar } from './components/Navbar.js';
 import { TabsNav } from './components/TabsNav.js';
@@ -7,32 +7,37 @@ import { ProductCard } from './components/ProductCard.js';
 import { ProductTable } from './components/ProductTable.js';
 import { FilterSidebar } from './components/FilterSidebar.js';
 import { ProductDetailModal } from './components/ProductDetailModal.js';
+import { getProductSellos } from './components/Badges.js';
 import { CompareFloatingBar, CompareModal } from './components/CompareModal.js';
+import { CompareView } from './components/CompareView.js';
 import { QuotationModal } from './components/QuotationModal.js';
 import { WikiPage } from './pages/WikiPage.js';
 import { AdminPage } from './admin/AdminPage.js';
 import { AdminLogin } from './admin/AdminLogin.js';
-import { Filter, SlidersHorizontal, Loader2, AlertCircle, ArrowUpDown, Barcode, X } from 'lucide-react';
+import { Filter, SlidersHorizontal, Loader2, AlertCircle, ArrowUpDown, Barcode, X, Calculator, BatteryCharging, Database } from 'lucide-react';
 
 export default function App() {
   // Navigation State
-  const [activeView, setActiveView] = useState<'catalog' | 'wiki' | 'admin'>('catalog');
+  const [activeView, setActiveView] = useState<'catalog' | 'wiki' | 'admin' | 'compare' | 'herramientas'>('catalog');
   const [activeTab, setActiveTab] = useState<TipoDispositivo | 'WIKI'>('CAMARA');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [busqueda, setBusqueda] = useState<string>('');
   const [busquedaCodigo, setBusquedaCodigo] = useState<string>('');
 
-  // Admin Authentication State
+  // Admin Authentication State (almacenado en sessionStorage para exigir credenciales al cerrar pestaña/navegador)
   const [adminUser, setAdminUser] = useState<any>(() => {
     try {
-      const saved = localStorage.getItem('tiandy_admin_user');
+      // Limpiar residuos antiguos permanentes de localStorage
+      localStorage.removeItem('tiandy_admin_token');
+      localStorage.removeItem('tiandy_admin_user');
+      const saved = sessionStorage.getItem('tiandy_admin_user');
       return saved ? JSON.parse(saved) : null;
     } catch {
       return null;
     }
   });
   const [adminToken, setAdminToken] = useState<string | null>(() => {
-    return localStorage.getItem('tiandy_admin_token') || null;
+    return sessionStorage.getItem('tiandy_admin_token') || null;
   });
 
   // Validar sesión activa en el backend al montar o cambiar token
@@ -44,6 +49,8 @@ export default function App() {
         .then((res) => res.json())
         .then((data) => {
           if (!data.success) {
+            sessionStorage.removeItem('tiandy_admin_token');
+            sessionStorage.removeItem('tiandy_admin_user');
             localStorage.removeItem('tiandy_admin_token');
             localStorage.removeItem('tiandy_admin_user');
             setAdminUser(null);
@@ -52,22 +59,55 @@ export default function App() {
             setAdminUser(data.user);
           }
         })
-        .catch(() => {});
+        .catch(() => {
+          sessionStorage.removeItem('tiandy_admin_token');
+          sessionStorage.removeItem('tiandy_admin_user');
+          setAdminUser(null);
+          setAdminToken(null);
+        });
     }
   }, [adminToken]);
 
-  // Dark Mode
+  // Dark Mode (por defecto modo visual claro)
   const [darkMode, setDarkMode] = useState<boolean>(() => {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const saved = localStorage.getItem('tiandy_theme');
+    if (saved) return saved === 'dark';
+    return false;
   });
 
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('tiandy_theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('tiandy_theme', 'light');
     }
   }, [darkMode]);
+
+  // Secciones Visibles en Catálogo Público (controladas desde el panel)
+  const [seccionesVisibles, setSeccionesVisibles] = useState<Record<string, boolean>>({
+    CAMARA: true,
+    NVR: true,
+    SWITCH: true,
+    ACCESORIO: true,
+    WIKI: true,
+    HERRAMIENTAS: true,
+    HERRAMIENTAS_UPS: true,
+    HERRAMIENTAS_ALMACENAMIENTO: true
+  });
+
+  // Configuración Centralizada de Etiquetas Globales con persistencia inmediata para evitar parpadeos
+  const [globalBadges, setGlobalBadges] = useState<BadgeGlobalConfig[]>(() => {
+    try {
+      const cached = localStorage.getItem('tiandy_global_badges');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return [];
+  });
 
   // Data State
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -84,6 +124,8 @@ export default function App() {
     canales: [],
     bahias: [],
     puertos_poe: [],
+    puertos_poe_nvr: [],
+    interfaces_es: [],
     microfono_incorporado: false,
     altavoz_incorporado: false,
     slot_sd: false,
@@ -100,7 +142,7 @@ export default function App() {
   const [isCompareModalOpen, setIsCompareModalOpen] = useState<boolean>(false);
 
   // Sorting State
-  const [ordenarPor, setOrdenarPor] = useState<'default' | 'precio_asc' | 'precio_desc' | 'modelo_asc'>('default');
+  const [ordenarPor, setOrdenarPor] = useState<'modelo_asc' | 'precio_asc' | 'precio_desc'>('modelo_asc');
 
   // Quotation State
   const [cotizacion, setCotizacion] = useState<ItemCotizacion[]>(() => {
@@ -160,42 +202,135 @@ export default function App() {
     setCotizacion([]);
   };
 
-  // Sync TabsNav WIKI click with activeView
-  const handleTabChange = (tab: TipoDispositivo | 'WIKI') => {
+  // Sync TabsNav clicks with activeView
+  const handleTabChange = (tab: TipoDispositivo | 'WIKI' | 'COMPARE' | 'HERRAMIENTAS') => {
     if (tab === 'WIKI') {
       setActiveView('wiki');
+    } else if (tab === 'COMPARE') {
+      setActiveView('compare');
+    } else if (tab === 'HERRAMIENTAS') {
+      setActiveView('herramientas');
     } else {
       setActiveView('catalog');
       setActiveTab(tab);
     }
   };
 
-  // Fetch Products
-  const fetchProductos = async () => {
-    setIsLoading(true);
+  // Fetch Products con anti-caché y soporte para refresco en tiempo real
+  const fetchProductos = async (silent: boolean = false) => {
+    if (!silent) setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/productos?limit=500');
+      const res = await fetch(`/api/productos?limit=500&_t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
       const data = await res.json();
       const list = Array.isArray(data) ? data : data.data || [];
       setProductos(list);
     } catch (err: any) {
-      setError(`Error de conexión con el servidor: ${err.message}`);
+      if (!silent) setError(`Error de conexión con el servidor: ${err.message}`);
     } finally {
-      setIsLoading(false);
+      if (!silent) setIsLoading(false);
     }
+  };
+
+  const fetchSecciones = async () => {
+    try {
+      const res = await fetch(`/api/configuracion/secciones?_t=${Date.now()}`);
+      const data = await res.json();
+      if (data.success && data.secciones) {
+        setSeccionesVisibles(data.secciones);
+        // Si la sección activa quedó oculta, reasignar a la primera visible
+        setActiveTab((prev) => {
+          if (data.secciones[prev] === false) {
+            const available = (['CAMARA', 'NVR', 'SWITCH', 'ACCESORIO'] as TipoDispositivo[]).find(
+              (cat) => data.secciones[cat] !== false
+            );
+            return available || 'CAMARA';
+          }
+          return prev;
+        });
+      }
+    } catch {}
+  };
+
+  const fetchGlobalBadges = async () => {
+    try {
+      const res = await fetch(`/api/configuracion/badges?_t=${Date.now()}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.badges)) {
+        setGlobalBadges(data.badges);
+        try {
+          localStorage.setItem('tiandy_global_badges', JSON.stringify(data.badges));
+        } catch {}
+      }
+    } catch {}
   };
 
   useEffect(() => {
     fetchProductos();
+    fetchSecciones();
+    fetchGlobalBadges();
+
+    let bc: BroadcastChannel | null = null;
+    try {
+      bc = new BroadcastChannel('tiandy_sync');
+      bc.onmessage = (ev) => {
+        if (ev.data?.type === 'REFRESH_ALL') {
+          fetchProductos(true);
+          fetchSecciones();
+          fetchGlobalBadges();
+        }
+      };
+    } catch {}
+
+    const handleFocus = () => {
+      fetchProductos(true);
+      fetchSecciones();
+      fetchGlobalBadges();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      if (bc) bc.close();
+    };
   }, []);
 
-  // Comparison Handlers
+  // Revalidación inmediata al regresar a la vista pública de catálogo
+  useEffect(() => {
+    if (activeView === 'catalog' || activeView === 'compare') {
+      fetchProductos(true);
+      fetchSecciones();
+      fetchGlobalBadges();
+    }
+  }, [activeView]);
+
+  // Comparison Handlers con restricción de homogeneidad de categoría (máx 4)
   const handleToggleCompare = (producto: Producto) => {
     if (comparedProducts.some((p) => p.id === producto.id)) {
       setComparedProducts((prev) => prev.filter((p) => p.id !== producto.id));
-    } else if (comparedProducts.length < 3) {
+      return;
+    }
+
+    if (comparedProducts.length > 0 && comparedProducts[0].tipo_dispositivo !== producto.tipo_dispositivo) {
+      const catLabel = comparedProducts[0].tipo_dispositivo === 'CAMARA' 
+        ? 'Cámaras IP' 
+        : comparedProducts[0].tipo_dispositivo === 'NVR' 
+        ? 'NVRs / Grabadores' 
+        : 'Switches PoE';
+      alert(`No se pueden comparar productos de diferentes categorías. Actualmente estás comparando ${catLabel}. Limpia la comparativa para comparar otros dispositivos.`);
+      return;
+    }
+
+    if (comparedProducts.length < 4) {
       setComparedProducts((prev) => [...prev, producto]);
+    } else {
+      alert('Se permite comparar hasta un máximo de 4 productos simultáneamente.');
     }
   };
 
@@ -219,6 +354,8 @@ export default function App() {
       canales: [],
       bahias: [],
       puertos_poe: [],
+      puertos_poe_nvr: [],
+      interfaces_es: [],
       microfono_incorporado: false,
       altavoz_incorporado: false,
       slot_sd: false,
@@ -234,22 +371,17 @@ export default function App() {
     if (activeView !== 'catalog') return [];
 
     return productos.filter((prod) => {
+      // 0. Ocultar si la sección está deshabilitada en el panel
+      if (seccionesVisibles && seccionesVisibles[prod.tipo_dispositivo] === false) {
+        return false;
+      }
+
       // 1. Tab Tipo Dispositivo
       if ((prod.tipo_dispositivo as string) !== activeTab) return false;
 
       const specs = getProductSpecs(prod);
 
-      // 2. Buscador Exclusivo por Códigos (Código 1 y Código 2)
-      if (busquedaCodigo.trim()) {
-        const codQuery = busquedaCodigo.toLowerCase().trim();
-        const matchCod1 = prod.codigo_1 ? prod.codigo_1.toLowerCase().includes(codQuery) : false;
-        const matchCod2 = prod.codigo_2 ? prod.codigo_2.toLowerCase().includes(codQuery) : false;
-        if (!matchCod1 && !matchCod2) {
-          return false;
-        }
-      }
-
-      // 3. Buscador General de Catálogo (Modelo, Serie, Descripción y Especificaciones)
+      // 2. Buscador General de Catálogo (Modelo, Serie, Descripción, Especificaciones y Analíticas)
       if (busqueda.trim()) {
         const query = busqueda.toLowerCase().trim();
         const matchModelo = prod.modelo.toLowerCase().includes(query);
@@ -257,14 +389,72 @@ export default function App() {
         const matchDesc = (prod.subtipo || prod.especificacion_completa || '').toLowerCase().includes(query);
         const matchFormato = (specs.formato || '').toLowerCase().includes(query);
         const matchRes = (specs.resolucion || '').toLowerCase().includes(query);
-        if (!matchModelo && !matchSerie && !matchDesc && !matchFormato && !matchRes) {
+
+        // Analíticas y Badges (SMD, VCA, etc. excluyendo expresamente "nuevo" y "modelo")
+        const isGenericQuery = query === 'nuevo' || query === 'modelo' || query === 'nuevo modelo';
+        const cam = (prod.datos_tecnicos as any)?.camara;
+        const cp = (prod.datos_tecnicos as any)?.caracteristicas_principales;
+        const smdVal = cp?.smd || cam?.analiticas_ia?.version_smd || (prod.badges_detectados?.find((b: string) => /SMD/i.test(b)));
+        const matchSmd = Boolean(smdVal && String(smdVal).toLowerCase().includes(query));
+        const matchVca = Boolean((cp?.vca || cam?.analiticas_ia?.vca_funciones) && 'vca'.includes(query));
+        const matchBadges = !isGenericQuery && (prod.badges_detectados || []).some((b: string) => 
+          !b.toLowerCase().includes('nuevo') && !b.toLowerCase().includes('modelo') && b.toLowerCase().includes(query)
+        );
+        const matchSellos = !isGenericQuery && getProductSellos(prod, globalBadges).some((s) => 
+          s.activo && s.id !== 'NUEVO_MODELO' && s.nombre.toLowerCase().includes(query)
+        );
+
+        if (!matchModelo && !matchSerie && !matchDesc && !matchFormato && !matchRes && !matchSmd && !matchVca && !matchBadges && !matchSellos) {
           return false;
         }
       }
 
-      // 3. Serie Tiandy
+      // 3. Series Tiandy (AK, SK, LK, WIFI / 4G Solar, PTZ)
       if (filtros.serie && filtros.serie.length > 0) {
-        if (!filtros.serie.some((s: string) => prod.serie.toLowerCase().includes(s.toLowerCase()))) return false;
+        const matchesSerie = filtros.serie.some((s: string) => {
+          const sLower = s.toLowerCase();
+          const prodSerieLower = (prod.serie || '').toLowerCase();
+          const prodModelLower = (prod.modelo || '').toLowerCase();
+          const prodDescLower = (prod.subtipo || prod.especificacion_completa || '').toLowerCase();
+
+          if (s === 'AK') {
+            return prodSerieLower.includes('ak');
+          }
+          if (s === 'SK') {
+            return prodSerieLower.includes('sk') || prodSerieLower.includes('spark');
+          }
+          if (s === 'LK') {
+            return prodSerieLower.includes('lk') || prodSerieLower.includes('lite');
+          }
+          if (s === 'WIFI_4G') {
+            const cam = (prod.datos_tecnicos as any)?.camara;
+            const conec = (cam?.conectividad_tipo || '').toLowerCase();
+            return (
+              prodSerieLower.includes('wifi') ||
+              prodSerieLower.includes('wi-fi') ||
+              prodSerieLower.includes('solar') ||
+              prodSerieLower.includes('4g') ||
+              prodModelLower.includes('wifi') ||
+              prodDescLower.includes('wifi') ||
+              prodDescLower.includes('wi-fi') ||
+              prodDescLower.includes('solar') ||
+              conec.includes('wi-fi') ||
+              conec.includes('solar') ||
+              conec.includes('4g')
+            );
+          }
+          if (s === 'PTZ') {
+            return (
+              prodSerieLower.includes('ptz') ||
+              prodModelLower.includes('ptz') ||
+              (specs.formato || '').toLowerCase().includes('ptz') ||
+              prodDescLower.includes('ptz')
+            );
+          }
+          return prodSerieLower.includes(sLower);
+        });
+
+        if (!matchesSerie) return false;
       }
 
       // 4. Estado Stock
@@ -286,9 +476,21 @@ export default function App() {
         }
       }
 
-      // 7. Badges de tecnología
+      // 7. Badges de tecnología y Sellos Gráficos
       if (filtros.badges && filtros.badges.length > 0) {
-        const hasAnyBadge = filtros.badges.some((b: string) => prod.badges_detectados?.includes(b as any));
+        const sellos = getProductSellos(prod);
+        const hasAnyBadge = filtros.badges.some((b: string) => {
+          const bNorm = b.toUpperCase().replace(/\s+/g, '_');
+          // Chequear sellos gráficos activos
+          if (bNorm === 'COLORMAKER' && sellos.some((s) => s.id === 'COLORMAKER' && s.activo)) return true;
+          if (bNorm === 'POLAR_DAY' && sellos.some((s) => s.id === 'POLAR_DAY' && s.activo)) return true;
+          if (bNorm === 'NUEVO_MODELO' && (sellos.some((s) => s.id === 'NUEVO_MODELO' && s.activo) || prod.badge_nuevo)) return true;
+          // Chequear badges detectados en formato normalizado
+          return (prod.badges_detectados || []).some((bd: string) => {
+            const bdNorm = bd.toUpperCase().replace(/\s+/g, '_');
+            return bdNorm === bNorm || bdNorm.includes(bNorm) || bNorm.includes(bdNorm);
+          });
+        });
         if (!hasAnyBadge) return false;
       }
 
@@ -308,8 +510,26 @@ export default function App() {
         const prodB = `${specs.bahias} HDD${(specs.bahias || 1) > 1 ? 's' : ''}`;
         if (!filtros.bahias.includes(prodB)) return false;
       }
-
       if (filtros.poe_integrado && (!specs.canales_poe || specs.canales_poe === 0)) return false;
+
+      // 10.1 Puertos PoE NVR (4 Puertos PoE / 8 Puertos PoE)
+      if (filtros.puertos_poe_nvr && filtros.puertos_poe_nvr.length > 0) {
+        const poeMatches = filtros.puertos_poe_nvr.some((pStr: string) => {
+          if (pStr.includes('4') && specs.canales_poe === 4) return true;
+          if (pStr.includes('8') && specs.canales_poe === 8) return true;
+          return false;
+        });
+        if (!poeMatches) return false;
+      }
+
+      // 10.2 Interfaces E/S (Alarmas y Audio en Cámaras y NVRs)
+      if (filtros.interfaces_es && filtros.interfaces_es.length > 0) {
+        for (const es of filtros.interfaces_es) {
+          if (es === 'ENTRADA_ALARMA' && !specs.entrada_alarma) return false;
+          if (es === 'SALIDA_ALARMA' && !specs.salida_alarma) return false;
+          if (es === 'SALIDA_AUDIO' && !specs.salida_audio) return false;
+        }
+      }
 
       // 11. Switches
       if (filtros.puertos_poe && filtros.puertos_poe.length > 0) {
@@ -319,7 +539,7 @@ export default function App() {
 
       return true;
     });
-  }, [productos, activeView, activeTab, busqueda, filtros]);
+  }, [productos, activeView, activeTab, busqueda, filtros, seccionesVisibles]);
 
   // Sorted Products
   const sortedProducts = useMemo(() => {
@@ -365,7 +585,8 @@ export default function App() {
     return {
       camaras: productos.filter((p) => p.tipo_dispositivo === 'CAMARA').length,
       nvrs: productos.filter((p) => p.tipo_dispositivo === 'NVR').length,
-      switches: productos.filter((p) => p.tipo_dispositivo === 'SWITCH').length
+      switches: productos.filter((p) => p.tipo_dispositivo === 'SWITCH').length,
+      accesorios: productos.filter((p) => p.tipo_dispositivo === 'ACCESORIO').length
     };
   }, [productos]);
 
@@ -373,23 +594,40 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100 flex flex-col font-sans">
-      {/* Navbar Global */}
-      <Navbar
-        busqueda={busqueda}
-        setBusqueda={setBusqueda}
-        busquedaCodigo={busquedaCodigo}
-        setBusquedaCodigo={setBusquedaCodigo}
-        viewMode={viewMode}
-        setViewMode={setViewMode}
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        activeView={activeView}
-        setActiveView={setActiveView}
-        totalProductos={productos.length}
-        onOpenCotizacion={() => setIsCotizacionOpen(true)}
-        totalCotizacionItems={totalCotizacionItems}
-        totalCotizacionMonto={totalCotizacionMonto}
-      />
+      {/* Cabecera Unificada Sticky (Navbar + TabsNav) - Solo visible fuera del panel de control */}
+      {activeView !== 'admin' && (
+        <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+          <Navbar
+            busqueda={busqueda}
+            setBusqueda={setBusqueda}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            darkMode={darkMode}
+            setDarkMode={setDarkMode}
+            activeView={activeView}
+            setActiveView={setActiveView}
+            totalProductos={productos.length}
+            onOpenCotizacion={() => setIsCotizacionOpen(true)}
+            totalCotizacionItems={totalCotizacionItems}
+            totalCotizacionMonto={totalCotizacionMonto}
+          />
+          <TabsNav
+            activeTab={
+              activeView === 'wiki'
+                ? 'WIKI'
+                : activeView === 'compare'
+                ? 'COMPARE'
+                : activeView === 'herramientas'
+                ? 'HERRAMIENTAS'
+                : activeTab
+            }
+            setActiveTab={handleTabChange}
+            counts={counts}
+            compareCount={comparedProducts.length}
+            seccionesVisibles={seccionesVisibles}
+          />
+        </header>
+      )}
 
       {/* Main Content Area */}
       {activeView === 'admin' ? (
@@ -405,6 +643,8 @@ export default function App() {
           ) : (
             <AdminPage
               currentUser={adminUser}
+              darkMode={darkMode}
+              setDarkMode={setDarkMode}
               onLogout={() => {
                 if (adminToken) {
                   fetch('/api/auth/logout', {
@@ -412,13 +652,20 @@ export default function App() {
                     headers: { Authorization: `Bearer ${adminToken}` }
                   }).catch(() => {});
                 }
+                sessionStorage.removeItem('tiandy_admin_token');
+                sessionStorage.removeItem('tiandy_admin_user');
                 localStorage.removeItem('tiandy_admin_token');
                 localStorage.removeItem('tiandy_admin_user');
                 setAdminUser(null);
                 setAdminToken(null);
+                fetchProductos(true);
                 setActiveView('catalog');
               }}
-              onBackToCatalog={() => setActiveView('catalog')}
+              onBackToCatalog={() => {
+                fetchProductos(true);
+                setActiveView('catalog');
+              }}
+              onRefreshCatalog={() => fetchProductos(true)}
             />
           )}
         </main>
@@ -426,16 +673,102 @@ export default function App() {
         <main className="flex-1">
           <WikiPage />
         </main>
-      ) : (
-        <>
-          {/* Tabs Navigation (Cámaras, NVRs, Switches, Wiki) */}
-          <TabsNav
-            activeTab={activeTab}
-            setActiveTab={handleTabChange}
-            counts={counts}
+      ) : activeView === 'compare' ? (
+        <main className="flex-1">
+          <CompareView
+            productos={comparedProducts}
+            allProductos={productos}
+            onRemove={handleRemoveCompare}
+            onClear={handleClearCompare}
+            onAddProduct={handleToggleCompare}
+            onBackToCatalog={() => setActiveView('catalog')}
+            onOpenProductDetail={setSelectedProduct}
+            onAddToCotizacion={handleAddToCotizacion}
           />
+        </main>
+      ) : activeView === 'herramientas' ? (
+        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tiandy-100 dark:bg-tiandy-950/60 text-tiandy-700 dark:text-tiandy-300 text-xs font-bold uppercase tracking-wider mb-2">
+              <Calculator className="w-3.5 h-3.5" />
+              Herramientas de Ingeniería & Cálculo
+            </div>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+              Calculadoras Técnicas para Instaladores
+            </h1>
+            <p className="text-slate-600 dark:text-slate-400 mt-2 max-w-2xl text-sm">
+              Módulos diseñados para dimensionar sistemas de videovigilancia Tiandy: estimación de respaldo energético (UPS) y requerimientos de almacenamiento HDD según compresión S+265.
+            </p>
+          </div>
 
-          <main className="flex-1 w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-6">
+          {seccionesVisibles?.HERRAMIENTAS_UPS === false && seccionesVisibles?.HERRAMIENTAS_ALMACENAMIENTO === false ? (
+            <div className="p-12 text-center rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500">
+              <Calculator className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+              <p className="text-base font-semibold text-slate-700 dark:text-slate-300">No hay herramientas de cálculo habilitadas en este momento.</p>
+              <p className="text-xs text-slate-400 mt-1">El administrador puede habilitar la Calculadora UPS o Almacenamiento HDD desde el panel de control en la sección "Visibilidad Web".</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Calculadora UPS */}
+              {seccionesVisibles?.HERRAMIENTAS_UPS !== false && (
+                <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-tiandy-400 transition-all">
+                  <div>
+                    <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
+                      <BatteryCharging className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+                      Calculadora de Respaldo UPS
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+                      Dimensiona la autonomía de baterías y potencia requerida (VA/Watts) calculando el consumo consolidado de NVRs, cámaras PoE y switches Tiandy.
+                    </p>
+                    <div className="flex items-center gap-2 text-xs font-medium text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 px-3 py-1.5 rounded-lg w-fit">
+                      <span>⚡ Próximamente disponible</span>
+                    </div>
+                  </div>
+                  <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <button
+                      disabled
+                      className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
+                    >
+                      En fase de calibración técnica
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Calculadora Almacenamiento HDD */}
+              {seccionesVisibles?.HERRAMIENTAS_ALMACENAMIENTO !== false && (
+                <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-tiandy-400 transition-all">
+                  <div>
+                    <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
+                      <Database className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+                      Calculadora de Almacenamiento HDD
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+                      Estima los Terabytes necesarios para días de retención continua o por evento, aprovechando la eficiencia de compresión S+265 de Tiandy.
+                    </p>
+                    <div className="flex items-center gap-2 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 px-3 py-1.5 rounded-lg w-fit">
+                      <span>💾 Próximamente disponible</span>
+                    </div>
+                  </div>
+                  <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <button
+                      disabled
+                      className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
+                    >
+                      En fase de calibración técnica
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </main>
+      ) : (
+        <main className="flex-1 w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-6">
             <div className="flex gap-6">
               {/* Desktop Filter Sidebar */}
               <FilterSidebar
@@ -450,7 +783,7 @@ export default function App() {
 
               {/* Products Area */}
               <div className="flex-1 min-w-0">
-                {/* Top Bar: Mobile Filter Toggle + Status Count + Sort Pills */}
+                {/* Top Bar: Filtros Móvil + Ordenamiento a la izquierda | Contador a la derecha */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
                   <div className="flex flex-wrap items-center gap-3">
                     <button
@@ -460,42 +793,22 @@ export default function App() {
                       <SlidersHorizontal className="h-4 w-4" />
                       Filtros
                     </button>
-                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                      Mostrando <strong className="text-slate-900 dark:text-white">{sortedProducts.length}</strong> de {counts[activeTab === 'CAMARA' ? 'camaras' : activeTab === 'NVR' ? 'nvrs' : 'switches']} modelos
-                    </span>
 
-                    {/* Indicador de filtro exclusivo por código */}
-                    {busquedaCodigo && (
-                      <span className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 text-xs font-mono font-medium text-amber-700 dark:text-amber-400">
-                        <Barcode className="w-3.5 h-3.5" />
-                        <span>Código: <strong>{busquedaCodigo}</strong></span>
-                        <button
-                          onClick={() => setBusquedaCodigo('')}
-                          className="ml-1 text-amber-600 hover:text-amber-900 dark:hover:text-white"
-                          title="Quitar filtro de código"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-3">
-                    {/* Pastillas de ordenamiento */}
+                    {/* Pastillas de ordenamiento a la izquierda */}
                     <div className="flex items-center gap-1 bg-slate-200/60 dark:bg-slate-800/80 p-1 rounded-xl">
                       <span className="text-slate-500 dark:text-slate-400 text-[11px] font-bold px-1.5 flex items-center gap-1">
                         <ArrowUpDown className="w-3 h-3 text-slate-400" />
                         Ordenar:
                       </span>
                       <button
-                        onClick={() => setOrdenarPor('default')}
+                        onClick={() => setOrdenarPor('modelo_asc')}
                         className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
-                          ordenarPor === 'default'
+                          ordenarPor === 'modelo_asc'
                             ? 'bg-tiandy-700 text-white shadow-sm'
                             : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                         }`}
                       >
-                        Defecto
+                        Modelo A-Z
                       </button>
                       <button
                         onClick={() => setOrdenarPor('precio_asc')}
@@ -517,21 +830,14 @@ export default function App() {
                       >
                         Precio: Mayor
                       </button>
-                      <button
-                        onClick={() => setOrdenarPor('modelo_asc')}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
-                          ordenarPor === 'modelo_asc'
-                            ? 'bg-tiandy-700 text-white shadow-sm'
-                            : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-                        }`}
-                      >
-                        Modelo A-Z
-                      </button>
                     </div>
+                  </div>
 
-                    <div className="text-[11px] font-medium text-slate-400 hidden xl:block">
-                      Precios expresados en U$S neto oficial sin IVA
-                    </div>
+                  {/* Contador de productos a la derecha (reemplaza 'Precios expresados...') */}
+                  <div className="flex items-center gap-2 sm:ml-auto">
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                      Mostrando <strong className="text-slate-900 dark:text-white">{sortedProducts.length}</strong> de {counts[activeTab === 'CAMARA' ? 'camaras' : activeTab === 'NVR' ? 'nvrs' : activeTab === 'SWITCH' ? 'switches' : 'accesorios']} modelos
+                    </span>
                   </div>
                 </div>
 
@@ -549,7 +855,7 @@ export default function App() {
                     <h3 className="font-bold text-sm">Error de comunicación</h3>
                     <p className="text-xs mt-1">{error}</p>
                     <button
-                      onClick={fetchProductos}
+                      onClick={() => fetchProductos()}
                       className="mt-3 rounded-lg bg-rose-600 px-4 py-1.5 text-xs font-bold text-white hover:bg-rose-500"
                     >
                       Reintentar conexión
@@ -585,9 +891,10 @@ export default function App() {
                             onSelect={setSelectedProduct}
                             isCompared={comparedIds.includes(String(prod.id))}
                             onToggleCompare={handleToggleCompare}
-                            canCompare={comparedProducts.length < 3}
+                            canCompare={comparedProducts.length < 4}
                             onAddToCotizacion={handleAddToCotizacion}
                             isEnCotizacion={cotizacionIds.includes(String(prod.id))}
+                            globalBadges={globalBadges}
                           />
                         ))}
                       </div>
@@ -597,9 +904,11 @@ export default function App() {
                         onSelect={setSelectedProduct}
                         comparedIds={comparedIds}
                         onToggleCompare={handleToggleCompare}
-                        canCompare={comparedProducts.length < 3}
+                        canCompare={comparedProducts.length < 4}
                         onAddToCotizacion={handleAddToCotizacion}
                         cotizacionIds={cotizacionIds}
+                        globalBadges={globalBadges}
+                        activeTab={activeTab}
                       />
                     )}
                   </>
@@ -607,13 +916,12 @@ export default function App() {
               </div>
             </div>
           </main>
-        </>
       )}
 
-      {/* Floating Comparison Bar */}
+      {/* Floating Comparison Bar (redirige directamente a la sección de comparativa estilo GSMArena) */}
       <CompareFloatingBar
         productos={comparedProducts}
-        onOpen={() => setIsCompareModalOpen(true)}
+        onOpen={() => setActiveView('compare')}
         onRemove={handleRemoveCompare}
         onClear={handleClearCompare}
       />
@@ -624,8 +932,9 @@ export default function App() {
         onClose={() => setSelectedProduct(null)}
         isCompared={selectedProduct ? comparedIds.includes(String(selectedProduct.id)) : false}
         onToggleCompare={handleToggleCompare}
-        canCompare={comparedProducts.length < 3}
+        canCompare={comparedProducts.length < 4}
         onAddToCotizacion={handleAddToCotizacion}
+        globalBadges={globalBadges}
       />
 
       {/* Quotation Cart Modal */}
@@ -648,16 +957,17 @@ export default function App() {
         onOpenModal={() => setIsCompareModalOpen(true)}
       />
 
-      {/* Clean Footer */}
+      {/* Clean Footer con Legales Oficiales */}
       <footer className="mt-auto border-t border-slate-200 bg-white py-6 dark:border-slate-800 dark:bg-slate-900 transition-colors">
-        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400 text-center md:text-left">
           <div className="flex items-center gap-2">
             <span className="font-bold text-slate-700 dark:text-slate-200">Tiandy Tech</span>
             <span>•</span>
-            <span>Plataforma Unificada de Catálogo Técnico y Datasheets</span>
+            <span>Los precios están expresados en Dólares Americanos y no Incluyen impuestos.</span>
           </div>
-          <div>
-            Diseñado para uso profesional de distribuidores, integradores e instaladores de CCTV.
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-[11px] text-slate-400 dark:text-slate-500">
+            <span>• Mercadería sujeta a stock.</span>
+            <span>• Los precios pueden variar sin previo aviso.</span>
           </div>
         </div>
       </footer>

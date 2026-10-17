@@ -1,4 +1,4 @@
-export type TipoDispositivo = 'CAMARA' | 'NVR' | 'SWITCH';
+export type TipoDispositivo = 'CAMARA' | 'NVR' | 'SWITCH' | 'ACCESORIO';
 
 export type EstadoStock = 
   | 'ENTREGA_INMEDIATA'
@@ -37,6 +37,13 @@ export interface DatosCamara {
     tipo: string;
     especificacion?: string;
   };
+  alimentacion_tipo?: string;
+  consumo_max_w?: string;
+  microfono_incorporado?: boolean;
+  altavoz_incorporado?: boolean;
+  slot_sd?: boolean;
+  proteccion_ip?: string;
+  codecs_video?: string;
   interfaces?: {
     audio_integrado?: 'Sin Audio' | 'Solo Micrófono' | 'Micrófono + Parlante' | string;
     audio_io_externo?: string | null;
@@ -56,6 +63,7 @@ export interface DatosCamara {
     };
     vca_funciones?: string[];
   };
+  carcasa?: string;
   fisico?: {
     material?: string;
     grado_ip?: string;
@@ -74,6 +82,7 @@ export interface DatosNVR {
   bahias_sata: number;
   capacidad_max_por_disco_tb: number;
   puertos_poe_integrados: number;
+  canales_poe?: number;
   salidas_video: string[];
   resolucion_max_grabacion: string;
   decodificacion_simultanea: string;
@@ -103,10 +112,108 @@ export interface DatosSwitch {
   tipo_fuente?: string;
 }
 
+export interface CaracteristicasPrincipalesCamara {
+  formato: string | null;
+  carcasa: string | null;
+  resolucion: string | null;
+  sensor: string | null;
+  min_iluminacion: string | null;
+  vision_nocturna: string | null;
+  dori: {
+    detecta: string | null;
+    observa: string | null;
+    reconoce: string | null;
+    identifica: string | null;
+  } | null;
+  almacenamiento: string | null;
+  compresion_video: string | null;
+  smd: string | null; // "SMD 2.0", "SMD 1.0" o null (se muestra "-")
+  vca: string | null;
+  alimentacion: string | null;
+  salidas_alarma: string | null;
+}
+
+export interface CaracteristicasPrincipalesNVR {
+  canales_ip: string | null;
+  ancho_banda: string | null;
+  bahias_sata: string | null;
+  capacidad_max: string | null;
+  puertos_poe: string | null;
+  salidas_video: string | null;
+  decodificacion: string | null;
+  compresion: string | null;
+  ia_soportada: string | null;
+  alimentacion: string | null;
+}
+
+export interface CaracteristicasPrincipalesSwitch {
+  puertos_poe: string | null;
+  velocidad_poe: string | null;
+  puertos_uplink: string | null;
+  puertos_sfp: string | null;
+  presupuesto_watts: string | null;
+  estandar_poe: string | null;
+  modo_extend: string | null;
+  poe_watchdog: string | null;
+  alimentacion: string | null;
+}
+
+export type CaracteristicasPrincipales = 
+  | CaracteristicasPrincipalesCamara 
+  | CaracteristicasPrincipalesNVR 
+  | CaracteristicasPrincipalesSwitch;
+
+export type EspecificacionesDatasheet = Record<string, Record<string, string | null>>;
+
+export type PosicionSello = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'bottom-center' | 'center';
+export type CapaSello = 'front' | 'back';
+
+export type AnclajeSello = 'esquina' | 'centro';
+
+export interface SelloGraficoConfig {
+  id: 'NUEVO_MODELO' | 'COLORMAKER' | 'POLAR_DAY' | 'SMD_1' | 'SMD_2' | 'SMD_3' | 'VCA' | (string & {});
+  nombre: string;
+  activo: boolean;
+  imagen_url?: string;
+  posicion?: PosicionSello;
+  capa?: CapaSello;
+  tamano?: number; // escala porcentual (ej. 100 = 100%, 80 = 80%)
+  anclaje?: AnclajeSello; // 'esquina' (borde exterior) o 'centro' (punto medio)
+  opacidad?: number; // Opacidad de 0.5 a 1.0 (mínimo 50% de opacidad, máximo 50% de transparencia)
+}
+
+export interface BadgeGlobalConfig {
+  id: string;
+  nombre: string;
+  descripcion?: string;
+  imagen_url?: string; // Opcional: si tiene imagen se muestra sello gráfico, si no tiene, funciona como distintivo textual estilo Dual Light
+  posicion: PosicionSello;
+  capa: CapaSello;
+  tamano: number; // Porcentaje de escala (ej. 50 a 200)
+  anclaje?: AnclajeSello; // 'esquina' o 'centro'
+  opacidad?: number; // Opacidad de 0.5 a 1.0 (mínimo 50% de opacidad, máximo 50% de transparencia)
+  activo_global: boolean;
+  es_sello_grafico: boolean;
+}
+
+export interface SeccionesWebConfig {
+  CAMARA: boolean;
+  NVR: boolean;
+  SWITCH: boolean;
+  ACCESORIO: boolean;
+  WIKI: boolean;
+  HERRAMIENTAS: boolean;
+  HERRAMIENTAS_UPS: boolean;
+  HERRAMIENTAS_ALMACENAMIENTO: boolean;
+}
+
 export type DatosTecnicos = {
   camara?: DatosCamara;
   nvr?: DatosNVR;
   switch?: DatosSwitch;
+  caracteristicas_principales?: CaracteristicasPrincipales;
+  especificaciones_datasheet?: EspecificacionesDatasheet;
+  sellos_graficos?: SelloGraficoConfig[];
 };
 
 export interface Producto {
@@ -168,6 +275,8 @@ export interface FiltrosBusqueda {
   canales: string[];
   bahias: string[];
   puertos_poe: string[];
+  puertos_poe_nvr?: string[];
+  interfaces_es?: string[];
   microfono_incorporado: boolean;
   altavoz_incorporado: boolean;
   slot_sd: boolean;

@@ -35,6 +35,8 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       localStorage.removeItem('tiandy_cotizacion');
       localStorage.removeItem('tiandy_admin_token');
       localStorage.removeItem('tiandy_admin_user');
+      sessionStorage.removeItem('tiandy_admin_token');
+      sessionStorage.removeItem('tiandy_admin_user');
     } catch {}
     window.location.reload();
   };

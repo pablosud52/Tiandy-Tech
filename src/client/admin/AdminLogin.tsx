@@ -32,8 +32,10 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
 
       const data = await res.json();
       if (res.ok && data.success) {
-        localStorage.setItem('tiandy_admin_token', data.token);
-        localStorage.setItem('tiandy_admin_user', JSON.stringify(data.user));
+        sessionStorage.setItem('tiandy_admin_token', data.token);
+        sessionStorage.setItem('tiandy_admin_user', JSON.stringify(data.user));
+        localStorage.removeItem('tiandy_admin_token');
+        localStorage.removeItem('tiandy_admin_user');
         onLoginSuccess(data.user, data.token);
       } else {
         setError(data.error || 'Credenciales inválidas. Verifica tu usuario y contraseña.');

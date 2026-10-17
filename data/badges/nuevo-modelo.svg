@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <!-- Sombra suave para dar volumen al sello -->
+    <filter id="badge-shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000" flood-opacity="0.3" />
+    </filter>
+    <radialGradient id="red-gradient" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ff3333" />
+      <stop offset="70%" stop-color="#d60000" />
+      <stop offset="100%" stop-color="#990000" />
+    </radialGradient>
+  </defs>
+
+  <g filter="url(#badge-shadow)">
+    <!-- Forma festoneada/dentada de 24 puntas -->
+    <path fill="url(#red-gradient)" stroke="#ffffff" stroke-width="3" stroke-dasharray="4,2" d="
+      M 100,10 
+      L 112,18 L 126,13 L 136,25 L 150,23 L 157,37 L 171,40 L 173,55 L 186,62 L 184,77 L 194,87 L 188,102 
+      L 194,116 L 184,127 L 186,142 L 173,149 L 170,163 L 156,166 L 149,180 L 135,178 L 124,190 L 111,184 
+      L 98,193 L 87,184 L 75,190 L 65,178 L 51,180 L 44,166 L 30,163 L 27,149 L 14,142 L 16,127 
+      L 6,116 L 12,102 L 6,87 L 16,77 L 14,62 L 27,55 L 29,40 L 43,37 L 50,23 L 64,25 
+      L 74,13 L 88,18 Z
+    " />
+    <!-- Círculo interior punteado blanco -->
+    <circle cx="100" cy="103" r="68" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-dasharray="6,3" opacity="0.9" />
+  </g>
+
+  <!-- Tipografía de impacto en dos líneas rotada sutilmente -->
+  <g transform="rotate(-6 100 103)" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="900">
+    <text x="100" y="88" fill="#ffffff" font-size="28" letter-spacing="1.5">NUEVO</text>
+    <text x="100" y="126" fill="#ffffff" font-size="24" letter-spacing="2">MODELO</text>
+  </g>
+</svg>
