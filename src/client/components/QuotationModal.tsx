@@ -89,7 +89,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
                 </span>
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Presupuesto en tiempo real con precios oficiales de lista para el gremio.
+                Cotizador en tiempo real con precios oficiales de lista.
               </p>
             </div>
           </div>
@@ -239,12 +239,20 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
         {items.length > 0 && (
           <div className="border-t border-slate-200 bg-slate-50/80 p-6 dark:border-slate-800 dark:bg-slate-950/80 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">
-                  Precios netos expresados en moneda oficial <strong className="text-slate-700 dark:text-slate-300">U$S</strong> (sin IVA).
+              <div className="space-y-1">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-tiandy-500 flex-shrink-0" />
+                  Los precios están expresados en Dólares Americanos (U$S) y no incluyen impuestos.
                 </div>
-                <div className="text-[11px] text-slate-400 mt-0.5">
-                  Cotización sujeta a disponibilidad de stock y tipo de cambio oficial del día.
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-[11px] text-slate-500 dark:text-slate-400">
+                  <span className="flex items-center gap-1.5">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-tiandy-500 flex-shrink-0" />
+                    Mercadería sujeta a stock disponible.
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-tiandy-500 flex-shrink-0" />
+                    Los precios pueden variar sin previo aviso.
+                  </span>
                 </div>
               </div>
 
@@ -301,3 +309,169 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
     </div>
   );
 };
+
+export const QuotationFloatingBar: React.FC<{
+  items: ItemCotizacion[];
+  onOpen: () => void;
+  onRemove: (id: any) => void;
+  onClear: () => void;
+  onUpdateQuantity?: (id: any, newQty: number) => void;
+  standalone?: boolean;
+}> = ({ items, onOpen, onRemove, onClear, onUpdateQuantity, standalone = true }) => {
+  if (items.length === 0) return null;
+
+  const totalUnidades = items.reduce((acc, it) => acc + (it.cantidad || 0), 0);
+  const isMultiModel = items.length > 1;
+
+  return (
+    <div className={`${standalone ? 'fixed bottom-6 left-1/2 z-40 -translate-x-1/2 transform' : ''} animate-in slide-in-from-bottom duration-300`}>
+      <div className="flex items-center gap-3 sm:gap-4 rounded-2xl border border-slate-700/80 bg-slate-900/95 p-3 sm:px-5 sm:py-3.5 shadow-2xl backdrop-blur-md text-white transition-all duration-200">
+        
+        {/* Columna 1: Indicador y Contador Total de Productos */}
+        <div
+          className={`flex ${
+            isMultiModel
+              ? 'flex-col items-start self-start gap-1.5 pr-2.5 sm:pr-3 pt-0.5'
+              : 'items-center gap-2 pr-2.5 sm:pr-3'
+          } border-r border-slate-700/80 shrink-0`}
+        >
+          {/* Icono blanco directo sin fondo ni borde */}
+          <Calculator className="h-4 w-4 text-white shrink-0" />
+
+          {!isMultiModel ? (
+            /* 1 solo modelo: [ (X) ] PRODUCTO o PRODUCTOS */
+            <div className="flex items-center gap-2">
+              <span className="flex h-6 min-w-[24px] px-1.5 items-center justify-center rounded-full bg-emerald-500 text-xs font-black text-slate-950 shadow-xs">
+                {totalUnidades}
+              </span>
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-200 hidden sm:inline">
+                {totalUnidades === 1 ? 'PRODUCTO' : 'PRODUCTOS'}
+              </span>
+            </div>
+          ) : (
+            /* Más de 1 modelo: Contadores de Modelos y Productos debajo del icono */
+            <div className="flex flex-col gap-1 text-[11px] font-bold text-slate-300">
+              <div className="flex items-center gap-1.5">
+                <span className="flex h-5 min-w-[20px] px-1 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-black text-slate-950 shadow-xs">
+                  {items.length}
+                </span>
+                <span className="tracking-wide text-slate-200">
+                  {items.length === 1 ? 'Modelo' : 'Modelos'}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="flex h-5 min-w-[20px] px-1 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-black text-slate-950 shadow-xs">
+                  {totalUnidades}
+                </span>
+                <span className="tracking-wide text-slate-200">
+                  {totalUnidades === 1 ? 'Producto' : 'Productos'}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Columna 2: Lista de modelos apilados verticalmente con Mini-Stepper
+            - 1 producto: 1 fila
+            - 2 productos: 2 filas
+            - >2 productos: 2 productos y medio visibles (peek effect a 92px) con scroll vertical y fade mask */}
+        <div
+          className={`flex flex-col gap-1.5 min-w-[210px] sm:min-w-[260px] lg:min-w-[300px] transition-all duration-200 ${
+            items.length > 2
+              ? 'max-h-[92px] overflow-y-auto pr-1.5 [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] [scrollbar-width:thin]'
+              : ''
+          }`}
+        >
+          {items.map((it) => (
+            <div
+              key={it.producto.id}
+              className="flex items-center justify-between gap-2 rounded-xl bg-slate-800/95 pl-2.5 sm:pl-3 pr-1 py-0.5 text-xs font-mono font-medium border border-slate-700/80 text-slate-200 shrink-0 shadow-2xs hover:border-slate-600 transition-colors h-[36px]"
+            >
+              <span className="truncate max-w-[105px] sm:max-w-[135px] font-bold text-slate-100" title={it.producto.modelo}>
+                {it.producto.modelo}
+              </span>
+
+              <div className="flex items-center gap-1 shrink-0">
+                {/* Mini Stepper: [-] [qty] [+] con márgenes superior e inferior reducidos a la mitad y número blanco más grande */}
+                <div className="flex items-center h-[28px] rounded-lg bg-slate-900 border border-slate-700 px-1 text-slate-300">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onUpdateQuantity) {
+                        if (it.cantidad <= 1) {
+                          onRemove(it.producto.id);
+                        } else {
+                          onUpdateQuantity(it.producto.id, it.cantidad - 1);
+                        }
+                      } else if (it.cantidad <= 1) {
+                        onRemove(it.producto.id);
+                      }
+                    }}
+                    className="w-4.5 h-4.5 rounded flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 active:scale-90 transition-all"
+                    title="Disminuir cantidad"
+                  >
+                    <Minus className="w-3.5 h-3.5" />
+                  </button>
+
+                  <span className="min-w-[22px] px-0.5 text-center font-black text-xs sm:text-[13px] font-mono text-white select-none">
+                    {it.cantidad}
+                  </span>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onUpdateQuantity) {
+                        onUpdateQuantity(it.producto.id, it.cantidad + 1);
+                      }
+                    }}
+                    className="w-4.5 h-4.5 rounded flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 active:scale-90 transition-all"
+                    title="Aumentar cantidad"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Botón rápido para eliminar este producto */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemove(it.producto.id);
+                  }}
+                  className="w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-rose-950/40 transition-colors"
+                  title="Quitar producto de la cotización"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Columna 3: Botones de acción rápida (Vaciar en rojo y Ver Cotizador) */}
+        <div
+          className={`flex ${
+            isMultiModel ? 'flex-col justify-center items-stretch gap-1.5' : 'items-center gap-2'
+          } pl-3 sm:pl-4 border-l border-slate-700/80 shrink-0`}
+        >
+          <button
+            onClick={onClear}
+            className="flex items-center justify-center gap-1.5 rounded-xl bg-rose-600 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs font-bold text-white hover:bg-rose-500 shadow-md shadow-rose-950/40 transition-all active:scale-95 shrink-0"
+            title="Vaciar lista de cotización"
+          >
+            <span>Vaciar</span>
+          </button>
+          <button
+            onClick={onOpen}
+            className="flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs font-bold text-white hover:bg-emerald-500 shadow-md shadow-emerald-950/40 transition-all active:scale-95 shrink-0"
+            title="Abrir cotizador oficial"
+          >
+            <span>Ver Cotizador</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+

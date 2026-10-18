@@ -1,0 +1,67 @@
+version: 1
+project:
+  root: .
+  stacks:
+    - react
+    - vite
+    - tailwindcss
+    - nodejs
+    - express
+    - sqlite
+  package_managers:
+    - npm
+  monorepo: false
+  signals:
+    - vite.config.ts
+    - tailwind.config.js
+    - tsconfig.json
+    - package.json
+sdd:
+  artifact_store: 02-DOCS/wiki/sdd
+  execution_mode: automatic
+  autopilot: true
+  registry_path: .rsc/skill-registry.json
+  review_budget:
+    line_budget: 400
+    file_budget: 15
+  delivery_strategy:
+    default: ask-on-risk
+testing:
+  strict_tdd: false
+  runners: []
+  commands:
+    apply:
+      - npm run build
+    verify:
+      - npm run build
+phase_rules:
+  proposal: optional-on-ambiguity
+  specify: requires intent or proposal
+  plan: requires spec
+  tasks: requires plan and spec
+  analyze: requires spec plan tasks
+  implement: requires analyze pass
+  verify: requires spec tasks evidence
+  archive: requires verify record and review/ship outcome
+models:
+  enabled: false
+  provider: gemini
+  tiers:
+    heavy: gemini-3.8-pro
+    balanced: gemini-3.8-flash
+    light: gemini-3.8-flash-lite
+  phases:
+    constitution: heavy
+    specify: balanced
+    clarify: balanced
+    plan: heavy
+    tasks: balanced
+    analyze: heavy
+    implement: balanced
+    verify: balanced
+    review: heavy
+    ship: light
+    debug: heavy
+    worktrees: light
+    sdd-init: light
+  overrides: {}

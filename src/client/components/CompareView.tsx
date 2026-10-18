@@ -398,7 +398,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
                           </div>
                         )}
 
-                        {/* Precio Comercial Gremio */}
+                        {/* Precio Comercial Oficial */}
                         <div className="mt-2 text-sm font-black font-mono text-emerald-700 dark:text-emerald-400">
                           {formatCurrency(prod.precio_usd)}
                         </div>

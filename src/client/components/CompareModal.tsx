@@ -18,11 +18,12 @@ export const CompareFloatingBar: React.FC<{
   onOpen: () => void;
   onRemove: (id: string) => void;
   onClear: () => void;
-}> = ({ productos, onOpen, onRemove, onClear }) => {
+  standalone?: boolean;
+}> = ({ productos, onOpen, onRemove, onClear, standalone = true }) => {
   if (productos.length === 0) return null;
 
   return (
-    <div className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2 transform animate-in slide-in-from-bottom duration-300">
+    <div className={`${standalone ? 'fixed bottom-6 left-1/2 z-40 -translate-x-1/2 transform' : ''} animate-in slide-in-from-bottom duration-300`}>
       <div className="flex items-center gap-3 rounded-2xl border border-slate-700/80 bg-slate-900/95 px-5 py-3 shadow-2xl backdrop-blur-md text-white">
         <div className="flex items-center gap-2 pr-2 border-r border-slate-700">
           <ArrowLeftRight className="h-4 w-4 text-emerald-400" />

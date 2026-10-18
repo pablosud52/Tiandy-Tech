@@ -5,10 +5,11 @@
 @layer base {
   body {
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    @apply antialiased text-slate-800 dark:text-slate-100 bg-[#f8fafc] dark:bg-[#060a14];
   }
 }
 
-/* Scrollbar estilizada sutil */
+/* Scrollbar técnica estilizada */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -24,9 +25,38 @@
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: #334155;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Efectos de cristal esmerilado para headers y barras de herramientas */
+.glass-header {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(255, 255, 255, 0.82);
+}
+
+.dark .glass-header {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background-color: rgba(11, 17, 32, 0.85);
+}
+
+/* Micro-interacciones de hardware 60fps con propiedades compuestas exclusivamente */
+.hardware-card {
+  transition-property: transform, box-shadow, border-color;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.hardware-card:hover {
+  transform: translateY(-2px);
 }

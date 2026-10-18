@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Producto, TipoDispositivo, FiltrosBusqueda, ItemCotizacion, BadgeGlobalConfig } from '../shared/types.js';
 import { getProductSpecs } from '../shared/helpers.js';
 import { Navbar } from './components/Navbar.js';
-import { TabsNav } from './components/TabsNav.js';
 import { ProductCard } from './components/ProductCard.js';
 import { ProductTable } from './components/ProductTable.js';
 import { FilterSidebar } from './components/FilterSidebar.js';
@@ -10,11 +9,11 @@ import { ProductDetailModal } from './components/ProductDetailModal.js';
 import { getProductSellos } from './components/Badges.js';
 import { CompareFloatingBar, CompareModal } from './components/CompareModal.js';
 import { CompareView } from './components/CompareView.js';
-import { QuotationModal } from './components/QuotationModal.js';
+import { QuotationModal, QuotationFloatingBar } from './components/QuotationModal.js';
 import { WikiPage } from './pages/WikiPage.js';
 import { AdminPage } from './admin/AdminPage.js';
 import { AdminLogin } from './admin/AdminLogin.js';
-import { Filter, SlidersHorizontal, Loader2, AlertCircle, ArrowUpDown, Barcode, X, Calculator, BatteryCharging, Database } from 'lucide-react';
+import { Filter, SlidersHorizontal, Loader2, AlertCircle, ArrowUpDown, Barcode, X, Calculator, BatteryCharging, Database, LayoutGrid, Table } from 'lucide-react';
 
 export default function App() {
   // Navigation State
@@ -133,6 +132,27 @@ export default function App() {
     modo_extendido: false
   });
 
+  // Resetear filtros automáticamente al cambiar de sección/categoría para no bloquear productos
+  useEffect(() => {
+    setFiltros({
+      serie: [],
+      estado_stock: [],
+      formato: [],
+      resolucion_mp: [],
+      badges: [],
+      canales: [],
+      bahias: [],
+      puertos_poe: [],
+      puertos_poe_nvr: [],
+      interfaces_es: [],
+      microfono_incorporado: false,
+      altavoz_incorporado: false,
+      slot_sd: false,
+      poe_integrado: false,
+      modo_extendido: false
+    });
+  }, [activeTab]);
+
   // Mobile Filters Drawer
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState<boolean>(false);
 
@@ -177,6 +197,16 @@ export default function App() {
         );
       }
       return [...prev, { producto, cantidad }];
+    });
+  };
+
+  const handleToggleCotizacion = (producto: Producto) => {
+    setCotizacion((prev) => {
+      const exists = prev.find((item) => String(item.producto.id) === String(producto.id));
+      if (exists) {
+        return prev.filter((item) => String(item.producto.id) !== String(producto.id));
+      }
+      return [...prev, { producto, cantidad: 1 }];
     });
   };
 
@@ -404,7 +434,15 @@ export default function App() {
           s.activo && s.id !== 'NUEVO_MODELO' && s.nombre.toLowerCase().includes(query)
         );
 
-        if (!matchModelo && !matchSerie && !matchDesc && !matchFormato && !matchRes && !matchSmd && !matchVca && !matchBadges && !matchSellos) {
+        // Búsqueda por "alarma" / "alarm" en entradas/salidas de cámaras y NVRs
+        const isAlarmQuery = query.includes('alarm') || query.includes('alarma');
+        const matchAlarma = isAlarmQuery && (
+          Boolean(specs.entrada_alarma) ||
+          Boolean(specs.salida_alarma) ||
+          JSON.stringify(prod.datos_tecnicos || {}).toLowerCase().includes('alarm')
+        );
+
+        if (!matchModelo && !matchSerie && !matchDesc && !matchFormato && !matchRes && !matchSmd && !matchVca && !matchBadges && !matchSellos && !matchAlarma) {
           return false;
         }
       }
@@ -594,36 +632,22 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100 flex flex-col font-sans">
-      {/* Cabecera Unificada Sticky (Navbar + TabsNav) - Solo visible fuera del panel de control */}
+      {/* Cabecera Unificada Sticky (Navbar única) - Solo visible fuera del panel de control */}
       {activeView !== 'admin' && (
-        <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+        <header className="sticky top-0 z-40 glass-header border-b border-slate-200/80 dark:border-slate-800/80 shadow-xs transition-colors">
           <Navbar
             busqueda={busqueda}
             setBusqueda={setBusqueda}
-            viewMode={viewMode}
-            setViewMode={setViewMode}
             darkMode={darkMode}
             setDarkMode={setDarkMode}
             activeView={activeView}
             setActiveView={setActiveView}
-            totalProductos={productos.length}
-            onOpenCotizacion={() => setIsCotizacionOpen(true)}
-            totalCotizacionItems={totalCotizacionItems}
-            totalCotizacionMonto={totalCotizacionMonto}
-          />
-          <TabsNav
-            activeTab={
-              activeView === 'wiki'
-                ? 'WIKI'
-                : activeView === 'compare'
-                ? 'COMPARE'
-                : activeView === 'herramientas'
-                ? 'HERRAMIENTAS'
-                : activeTab
-            }
-            setActiveTab={handleTabChange}
+            activeCategory={activeTab as TipoDispositivo}
+            onSelectCategory={(cat) => handleTabChange(cat)}
             counts={counts}
             compareCount={comparedProducts.length}
+            onOpenCotizacion={() => setIsCotizacionOpen(true)}
+            totalCotizacionItems={totalCotizacionItems}
             seccionesVisibles={seccionesVisibles}
           />
         </header>
@@ -794,6 +818,34 @@ export default function App() {
                       Filtros
                     </button>
 
+                    {/* Selector de modo Fichas / Tabla (estilo gemelo a Ordenar, con triple separación hacia Ordenar) */}
+                    <div className="flex items-center gap-1 bg-slate-200/60 dark:bg-slate-800/80 p-1 rounded-xl mr-6">
+                      <button
+                        onClick={() => setViewMode('grid')}
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                          viewMode === 'grid'
+                            ? 'bg-tiandy-700 text-white shadow-sm'
+                            : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                        title="Modo Fichas Visuales de Hardware"
+                      >
+                        <LayoutGrid className="w-3.5 h-3.5" />
+                        <span>Fichas</span>
+                      </button>
+                      <button
+                        onClick={() => setViewMode('table')}
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                          viewMode === 'table'
+                            ? 'bg-tiandy-700 text-white shadow-sm'
+                            : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                        title="Modo Tabla Técnica"
+                      >
+                        <Table className="w-3.5 h-3.5" />
+                        <span>Tabla</span>
+                      </button>
+                    </div>
+
                     {/* Pastillas de ordenamiento a la izquierda */}
                     <div className="flex items-center gap-1 bg-slate-200/60 dark:bg-slate-800/80 p-1 rounded-xl">
                       <span className="text-slate-500 dark:text-slate-400 text-[11px] font-bold px-1.5 flex items-center gap-1">
@@ -892,7 +944,7 @@ export default function App() {
                             isCompared={comparedIds.includes(String(prod.id))}
                             onToggleCompare={handleToggleCompare}
                             canCompare={comparedProducts.length < 4}
-                            onAddToCotizacion={handleAddToCotizacion}
+                            onAddToCotizacion={handleToggleCotizacion}
                             isEnCotizacion={cotizacionIds.includes(String(prod.id))}
                             globalBadges={globalBadges}
                           />
@@ -905,7 +957,7 @@ export default function App() {
                         comparedIds={comparedIds}
                         onToggleCompare={handleToggleCompare}
                         canCompare={comparedProducts.length < 4}
-                        onAddToCotizacion={handleAddToCotizacion}
+                        onAddToCotizacion={handleToggleCotizacion}
                         cotizacionIds={cotizacionIds}
                         globalBadges={globalBadges}
                         activeTab={activeTab}
@@ -918,13 +970,32 @@ export default function App() {
           </main>
       )}
 
-      {/* Floating Comparison Bar (redirige directamente a la sección de comparativa estilo GSMArena) */}
-      <CompareFloatingBar
-        productos={comparedProducts}
-        onOpen={() => setActiveView('compare')}
-        onRemove={handleRemoveCompare}
-        onClear={handleClearCompare}
-      />
+      {/* Floating Action Bars (Cotizador & Comparador con vista rápida y acceso directo) */}
+      <div className="fixed bottom-5 sm:bottom-6 left-1/2 z-40 -translate-x-1/2 transform flex flex-col-reverse items-center gap-2.5 max-w-[95vw] pointer-events-none">
+        {cotizacion.length > 0 && (
+          <div className="pointer-events-auto">
+            <QuotationFloatingBar
+              items={cotizacion}
+              onOpen={() => setIsCotizacionOpen(true)}
+              onRemove={handleRemoveFromCotizacion}
+              onClear={handleClearCotizacion}
+              onUpdateQuantity={handleUpdateCotizacionQty}
+              standalone={false}
+            />
+          </div>
+        )}
+        {comparedProducts.length > 0 && (
+          <div className="pointer-events-auto">
+            <CompareFloatingBar
+              productos={comparedProducts}
+              onOpen={() => setActiveView('compare')}
+              onRemove={handleRemoveCompare}
+              onClear={handleClearCompare}
+              standalone={false}
+            />
+          </div>
+        )}
+      </div>
 
       {/* Detail Technical Modal */}
       <ProductDetailModal
@@ -957,17 +1028,30 @@ export default function App() {
         onOpenModal={() => setIsCompareModalOpen(true)}
       />
 
-      {/* Clean Footer con Legales Oficiales */}
-      <footer className="mt-auto border-t border-slate-200 bg-white py-6 dark:border-slate-800 dark:bg-slate-900 transition-colors">
-        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400 text-center md:text-left">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-700 dark:text-slate-200">Tiandy Tech</span>
-            <span>•</span>
-            <span>Los precios están expresados en Dólares Americanos y no Incluyen impuestos.</span>
+      {/* Footer Estilo en.tiandy.com (Fondo oscuro y textos blancos) */}
+      <footer className="mt-auto border-t border-slate-800 bg-slate-950 text-white py-6">
+        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex flex-col lg:flex-row items-center justify-between gap-4">
+          {/* Marca Oficial */}
+          <div className="flex items-center gap-3 shrink-0">
+            <span className="font-poppins font-black text-base sm:text-lg text-white tracking-tight">
+              Tiandy Uruguay
+            </span>
           </div>
-          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-[11px] text-slate-400 dark:text-slate-500">
-            <span>• Mercadería sujeta a stock.</span>
-            <span>• Los precios pueden variar sin previo aviso.</span>
+
+          {/* Información Legal y Comercial con formato uniforme y alta visibilidad en blanco */}
+          <div className="flex flex-wrap items-center justify-center lg:justify-end gap-x-6 gap-y-2 text-xs font-semibold text-slate-200">
+            <span className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-tiandy-400 shrink-0 shadow-xs" />
+              <span>Los precios están expresados en Dólares Americanos (U$S) y no incluyen impuestos.</span>
+            </span>
+            <span className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-tiandy-400 shrink-0 shadow-xs" />
+              <span>Mercadería sujeta a stock disponible.</span>
+            </span>
+            <span className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-tiandy-400 shrink-0 shadow-xs" />
+              <span>Los precios pueden variar sin previo aviso.</span>
+            </span>
           </div>
         </div>
       </footer>

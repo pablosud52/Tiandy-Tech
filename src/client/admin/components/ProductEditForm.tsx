@@ -1130,7 +1130,6 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                 >
                   <option value="ENTREGA_INMEDIATA">ENTREGA INMEDIATA</option>
                   <option value="POCAS_UNIDADES">POCAS UNIDADES</option>
-                  <option value="ULTIMA_UNIDAD">ÚLTIMA UNIDAD</option>
                   <option value="PROXIMO_ARRIBO">PRÓXIMO ARRIBO</option>
                   <option value="AGOTADO">AGOTADO</option>
                   <option value="CONSULTAR">CONSULTAR</option>

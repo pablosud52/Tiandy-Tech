@@ -28,28 +28,28 @@ export const TabsNav: React.FC<TabsNavProps> = ({
       label: 'Cámaras IP',
       icon: Cctv,
       count: counts.camaras,
-      desc: 'Bullet, Turret, Domo, PTZ y Panorámicas'
+      desc: 'Bullet, Turret, Domo, PTZ'
     },
     {
       id: 'NVR' as const,
-      label: 'NVRs / Grabadores',
+      label: 'NVRs',
       icon: HardDrive,
       count: counts.nvrs,
-      desc: '4ch a 80ch con analíticas IA nativas'
+      desc: 'Grabación y Analíticas IA'
     },
     {
       id: 'SWITCH' as const,
       label: 'Switches PoE',
       icon: Network,
       count: counts.switches,
-      desc: 'CCTV Extend 250m y PoE Watchdog'
+      desc: 'Watchdog y 250m Extend'
     },
     {
       id: 'ACCESORIO' as const,
       label: 'Accesorios',
       icon: Wrench,
       count: counts.accesorios || 0,
-      desc: 'Anclajes, cajas estancas y soportes'
+      desc: 'Soportes y Cajas Estancas'
     }
   ];
 
@@ -64,7 +64,7 @@ export const TabsNav: React.FC<TabsNavProps> = ({
       label: 'Herramientas',
       icon: Calculator,
       count: null,
-      desc: 'Calculadora UPS y Almacenamiento HDD',
+      desc: 'Cálculo UPS & Discos HDD',
       visible: seccionesVisibles ? seccionesVisibles.HERRAMIENTAS !== false : true
     },
     {
@@ -72,7 +72,7 @@ export const TabsNav: React.FC<TabsNavProps> = ({
       label: 'Comparativa',
       icon: ArrowLeftRight,
       count: compareCount > 0 ? compareCount : null,
-      desc: 'Matriz comparativa parámetro a parámetro',
+      desc: 'Matriz Técnica DORI & PoE',
       visible: true
     },
     {
@@ -80,7 +80,7 @@ export const TabsNav: React.FC<TabsNavProps> = ({
       label: 'Wiki Técnica',
       icon: BookOpen,
       count: null,
-      desc: 'Estándar DORI, ColorMaker, Polar Day',
+      desc: 'Glosario & Tecnologías',
       visible: seccionesVisibles ? seccionesVisibles.WIKI !== false : true
     }
   ];
@@ -95,22 +95,23 @@ export const TabsNav: React.FC<TabsNavProps> = ({
       <button
         key={tab.id}
         onClick={() => setActiveTab(tab.id as any)}
-        className={`group flex items-center gap-2 px-3 py-1.5 rounded-lg font-medium text-xs sm:text-sm whitespace-nowrap transition-all ${
+        className={`group relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all duration-150 select-none ${
           isActive
-            ? 'bg-tiandy-50 dark:bg-tiandy-950/60 text-tiandy-700 dark:text-tiandy-300 font-semibold shadow-sm border border-tiandy-200 dark:border-tiandy-800'
-            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 border border-transparent'
+            ? 'bg-tiandy-600 text-white shadow-md shadow-tiandy-600/20 font-bold ring-1 ring-tiandy-500/40'
+            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
         }`}
+        title={tab.desc}
       >
-        <Icon className={`w-4 h-4 transition-colors ${
-          isActive ? 'text-tiandy-700 dark:text-tiandy-400' : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
-        }`} />
+        <Icon className={`w-4 h-4 shrink-0 transition-transform duration-150 ${isActive ? 'text-white scale-110' : 'text-slate-400 dark:text-slate-500 group-hover:text-tiandy-600 dark:group-hover:text-tiandy-400'}`} />
         <span>{tab.label}</span>
-        {tab.count !== null && (
-          <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-mono ${
-            isActive
-              ? 'bg-tiandy-700 text-white dark:bg-tiandy-600'
-              : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
-          }`}>
+        {tab.count !== null && tab.count !== undefined && (
+          <span
+            className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono font-bold ${
+              isActive
+                ? 'bg-white/20 text-white'
+                : 'bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-400 group-hover:bg-tiandy-100 dark:group-hover:bg-tiandy-950/60 group-hover:text-tiandy-700 dark:group-hover:text-tiandy-300'
+            }`}
+          >
             {tab.count}
           </span>
         )}
@@ -119,18 +120,18 @@ export const TabsNav: React.FC<TabsNavProps> = ({
   };
 
   return (
-    <div className="bg-white/95 dark:bg-slate-900/95 border-t border-slate-100 dark:border-slate-800/80 transition-colors">
-      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
-        <div className="flex items-center justify-between gap-4 py-2 overflow-x-auto">
-          {/* Categorías a la izquierda (Cámaras IP, NVRs, Switches) */}
-          <nav className="flex items-center gap-1.5 sm:gap-2.5 shrink-0" aria-label="Categorías de Productos">
+    <div className="w-full">
+      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-2">
+        <div className="flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
+          {/* Categorías Principales */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {categoryTabs.map(renderTabButton)}
-          </nav>
+          </div>
 
-          {/* Comparativa y Wiki Técnica a la derecha */}
-          <nav className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 ml-auto" aria-label="Herramientas">
+          {/* Vistas Técnicas Secundarias */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 pl-4 border-l border-slate-200/80 dark:border-slate-800/80">
             {rightTabs.map(renderTabButton)}
-          </nav>
+          </div>
         </div>
       </div>
     </div>

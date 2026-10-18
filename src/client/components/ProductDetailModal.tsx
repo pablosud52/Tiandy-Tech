@@ -35,42 +35,36 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const sellosGraficos = useMemo(() => getProductSellos(producto, globalBadges), [producto, globalBadges]);
   const hasTopRightSello = useMemo(() => sellosGraficos.some((s) => s.posicion === 'top-right'), [sellosGraficos]);
 
-  const stockBadgeMap: Record<string, { label: string; bg: string; text: string; border: string }> = {
+  const stockBadgeMap: Record<string, { label: string; bg: string; text: string }> = {
     ENTREGA_INMEDIATA: {
-      label: 'STOCK DISPONIBLE',
-      bg: 'bg-emerald-50 dark:bg-emerald-950/60',
-      text: 'text-emerald-700 dark:text-emerald-400',
-      border: 'border-emerald-300 dark:border-emerald-700'
+      label: 'ENTREGA INMEDIATA',
+      bg: 'bg-emerald-600',
+      text: 'text-white'
     },
     POCAS_UNIDADES: {
       label: 'POCAS UNIDADES',
-      bg: 'bg-amber-50 dark:bg-amber-950/60',
-      text: 'text-amber-700 dark:text-amber-400',
-      border: 'border-amber-300 dark:border-amber-700'
+      bg: 'bg-amber-500',
+      text: 'text-white'
     },
     ULTIMA_UNIDAD: {
-      label: 'ÚLTIMA UNIDAD',
-      bg: 'bg-orange-50 dark:bg-orange-950/60',
-      text: 'text-orange-700 dark:text-orange-400',
-      border: 'border-orange-300 dark:border-orange-700'
+      label: 'POCAS UNIDADES',
+      bg: 'bg-amber-500',
+      text: 'text-white'
     },
     PROXIMO_ARRIBO: {
       label: 'PRÓXIMO ARRIBO',
-      bg: 'bg-blue-50 dark:bg-blue-950/60',
-      text: 'text-blue-700 dark:text-blue-400',
-      border: 'border-blue-300 dark:border-blue-700'
+      bg: 'bg-yellow-400',
+      text: 'text-slate-950 font-bold'
     },
     AGOTADO: {
       label: 'AGOTADO',
-      bg: 'bg-slate-100 dark:bg-slate-800',
-      text: 'text-slate-500 dark:text-slate-400',
-      border: 'border-slate-300 dark:border-slate-700'
+      bg: 'bg-rose-600',
+      text: 'text-white'
     },
     CONSULTAR: {
-      label: 'CONSULTAR STOCK',
-      bg: 'bg-purple-50 dark:bg-purple-950/60',
-      text: 'text-purple-700 dark:text-purple-400',
-      border: 'border-purple-300 dark:border-purple-700'
+      label: 'CONSULTAR',
+      bg: 'bg-slate-500',
+      text: 'text-white'
     }
   };
 
@@ -92,7 +86,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           <div>
             <div className="flex items-center gap-2 flex-wrap mb-1">
               {producto.serie && producto.serie.trim() && producto.serie.trim().toLowerCase() !== 'general series' && (
-                <span className="rounded bg-tiandy-700 px-2 py-0.5 text-xs font-bold text-white tracking-wide">
+                <span className="rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-0.5 text-xs font-bold text-slate-700 dark:text-slate-300 tracking-wide uppercase">
                   {producto.serie.trim()}
                 </span>
               )}
@@ -105,7 +99,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 </span>
               )}
               <span
-                className={`rounded-full border px-2.5 py-0.5 text-xs font-bold tracking-wide ${currentStock.bg} ${currentStock.text} ${currentStock.border}`}
+                className={`rounded-md px-2.5 py-0.5 text-xs font-bold tracking-wide shadow-xs ${currentStock.bg} ${currentStock.text}`}
               >
                 {currentStock.label}
               </span>
@@ -134,9 +128,9 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               disabled={!isCompared && !canCompare}
               className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-colors ${
                 isCompared
-                  ? 'bg-emerald-600 text-white'
+                  ? 'bg-tiandy-600 text-white'
                   : canCompare
-                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950 hover:text-emerald-600'
+                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950 hover:text-tiandy-600'
                   : 'opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-800 text-slate-400'
               }`}
             >
@@ -157,7 +151,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           {/* Top Showcase: Foto destacada + Precios & Cotizador */}
           <div className="flex flex-col md:flex-row items-center gap-6 rounded-2xl bg-slate-50 p-5 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800">
             {/* Foto del Producto con Sellos Gráficos y Badges Funcionales */}
-            <div className="w-44 h-44 sm:w-52 sm:h-52 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 p-3 flex items-center justify-center shrink-0 shadow-sm relative group overflow-hidden">
+            <div className="w-56 h-56 sm:w-64 sm:h-64 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 p-3 sm:p-4 flex items-center justify-center shrink-0 shadow-sm relative group overflow-hidden">
               <SellosGraficosOverlay sellos={sellosGraficos} capaFiltro="back" tamano="large" />
               <BadgeOverlay badges={producto.badges_detectados} hasTopRightSello={hasTopRightSello} />
               {producto.imagen_principal && !modalImgError ? (
@@ -170,7 +164,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               ) : (
                 <div className="text-center text-slate-300 dark:text-slate-600 relative z-10">
                   <div className="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800 mx-auto flex items-center justify-center border border-slate-200 dark:border-slate-700 mb-2">
-                    <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
+                    <span className="text-xl font-black text-tiandy-600 dark:text-tiandy-400">
                       {producto.tipo_dispositivo === 'CAMARA' ? 'IPC' : producto.tipo_dispositivo === 'NVR' ? 'NVR' : 'PoE'}
                     </span>
                   </div>
@@ -185,10 +179,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             {/* Datos Comerciales y Cotizador */}
             <div className="flex-1 w-full flex flex-col justify-between space-y-4">
               <div>
-                <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  Precio Especial Gremio / Integrador
-                </div>
-                <div className="flex items-baseline gap-2 mt-1">
+                <div className="flex items-baseline gap-2">
                   <span className={`font-mono text-3xl sm:text-4xl ${
                     producto.precio_usd && producto.precio_usd > 0
                       ? 'font-black text-slate-900 dark:text-white'
@@ -197,9 +188,20 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     {formatCurrency(producto.precio_usd)}
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                  Stock garantizado para integradores y gremio de seguridad electrónica.
-                </p>
+                <div className="mt-3 space-y-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                  <p className="flex items-center gap-1.5">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-tiandy-500 flex-shrink-0" />
+                    Los precios están expresados en Dólares Americanos (U$S) y no incluyen impuestos.
+                  </p>
+                  <p className="flex items-center gap-1.5">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-tiandy-500 flex-shrink-0" />
+                    Mercadería sujeta a stock disponible.
+                  </p>
+                  <p className="flex items-center gap-1.5">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-tiandy-500 flex-shrink-0" />
+                    Los precios pueden variar sin previo aviso.
+                  </p>
+                </div>
               </div>
 
               {/* Cotizador Action */}
@@ -229,7 +231,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       onAddToCotizacion(producto, quoteQty);
                       onClose();
                     }}
-                    className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-emerald-500 shadow-md shadow-emerald-600/20 active:scale-95 transition-all"
+                    className="flex items-center gap-2 rounded-xl bg-tiandy-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-tiandy-500 shadow-md shadow-tiandy-600/20 active:scale-95 transition-all"
                   >
                     <Calculator className="h-4 w-4" />
                     Añadir {quoteQty} {quoteQty === 1 ? 'unidad' : 'unidades'} a Cotización
@@ -245,7 +247,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
             <div className="bg-slate-100/70 dark:bg-slate-800/70 px-5 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                <SlidersHorizontal className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <SlidersHorizontal className="h-4 w-4 text-tiandy-600 dark:text-tiandy-400" />
                 Características Principales
               </h3>
               <span className="text-[11px] text-slate-500 font-mono">
@@ -371,7 +373,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   {/* 10. SMD (Estrictamente versión: SMD 2.0 o SMD 1.0 o -) */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 p-3 sm:px-5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
                     <span className="font-semibold text-slate-500 dark:text-slate-400">SMD:</span>
-                    <span className="sm:col-span-2 font-bold text-emerald-600 dark:text-emerald-400">
+                    <span className="sm:col-span-2 font-bold text-tiandy-600 dark:text-tiandy-400">
                       {cp.smd || '-'}
                     </span>
                   </div>
@@ -467,7 +469,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 p-3 sm:px-5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
                     <span className="font-semibold text-slate-500 dark:text-slate-400">Presupuesto Watts:</span>
-                    <span className="sm:col-span-2 font-bold text-emerald-600 dark:text-emerald-400">{cp.presupuesto_watts || (specs.presupuesto_poe ? `${specs.presupuesto_poe}W` : '-')}</span>
+                    <span className="sm:col-span-2 font-bold text-tiandy-600 dark:text-tiandy-400">{cp.presupuesto_watts || (specs.presupuesto_poe ? `${specs.presupuesto_poe}W` : '-')}</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 p-3 sm:px-5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
                     <span className="font-semibold text-slate-500 dark:text-slate-400">Estándar PoE:</span>
@@ -500,7 +502,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 className="w-full bg-slate-50 dark:bg-slate-800/80 px-5 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <Layers className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  <Layers className="h-4 w-4 text-tiandy-600 dark:text-tiandy-400" />
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
                     Especificaciones Técnicas Completas del Datasheet
                   </span>
@@ -519,7 +521,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 <div className="p-4 sm:p-5 space-y-5 divide-y divide-slate-100 dark:divide-slate-800/60 animate-in fade-in duration-200">
                   {Object.entries(fullSpecs).map(([catName, attrs]) => (
                     <div key={catName} className="pt-4 first:pt-0 space-y-2">
-                      <h4 className="text-xs font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-3 py-1.5 rounded-lg border border-emerald-200/50 dark:border-emerald-800/30">
+                      <h4 className="text-xs font-black uppercase tracking-wider text-tiandy-700 dark:text-tiandy-400 bg-emerald-50 dark:bg-emerald-950/30 px-3 py-1.5 rounded-lg border border-emerald-200/50 dark:border-emerald-800/30">
                         {catName}
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-xs pt-1">
@@ -541,11 +543,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-slate-200 p-4 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80">
-          <div className="text-[11px] text-slate-500 hidden sm:block">
-            Ficha técnica oficial para integradores y gremio de seguridad electrónica.
-          </div>
-
+        <div className="flex items-center justify-end border-t border-slate-200 p-4 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80">
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
             {producto.datasheet_pdf && (
               <a
@@ -554,7 +552,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm"
               >
-                <Download className="h-4 w-4 text-emerald-600" />
+                <Download className="h-4 w-4 text-tiandy-600" />
                 Descargar Datasheet PDF
               </a>
             )}

@@ -51,7 +51,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const renderSectionHeader = (title: string, sectionKey: string) => (
     <button
       onClick={() => toggleSection(sectionKey)}
-      className="flex w-full items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+      className="flex w-full items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 hover:text-tiandy-600 dark:hover:text-tiandy-400 transition-colors"
     >
       <span>{title}</span>
       {openSections[sectionKey] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -77,11 +77,11 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <Filter className="h-4 w-4 text-tiandy-600 dark:text-tiandy-400" />
             <h2 className="font-bold text-sm text-slate-900 dark:text-white uppercase tracking-wider">
               Filtros
             </h2>
-            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+            <span className="rounded-full bg-tiandy-100 px-2 py-0.5 text-[10px] font-bold text-tiandy-700 dark:bg-tiandy-950 dark:text-tiandy-400">
               {conteoResultados}
             </span>
           </div>
@@ -129,13 +129,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                     return (
                       <label
                         key={s.id}
-                        className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                        className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-tiandy-600 cursor-pointer"
                       >
                         <input
                           type="checkbox"
                           checked={checked}
                           onChange={() => handleCheckboxToggle('serie', s.id)}
-                          className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                          className="rounded border-slate-300 text-tiandy-600 focus:ring-tiandy-500 dark:border-slate-700 dark:bg-slate-800"
                         />
                         <span>{s.label}</span>
                       </label>
@@ -159,13 +159,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       return (
                         <label
                           key={fmt}
-                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-tiandy-600 cursor-pointer"
                         >
                           <input
                             type="checkbox"
                             checked={checked}
                             onChange={() => handleCheckboxToggle('formato', fmt)}
-                            className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                            className="rounded border-slate-300 text-tiandy-600 focus:ring-tiandy-500 dark:border-slate-700 dark:bg-slate-800"
                           />
                           <span>{fmt}</span>
                         </label>
@@ -182,7 +182,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   <div className="mt-2 space-y-1.5">
                     {[
                       { id: '2MP', label: '2 MP (1080p FHD)' },
-                      { id: '3MP', label: '3 MP' },
                       { id: '4MP', label: '4 MP (2K QHD)' },
                       { id: '5MP', label: '5 MP' },
                       { id: '8MP', label: '8 MP (4K UHD)' }
@@ -191,13 +190,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       return (
                         <label
                           key={res.id}
-                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-tiandy-600 cursor-pointer"
                         >
                           <input
                             type="checkbox"
                             checked={checked}
                             onChange={() => handleCheckboxToggle('resolucion_mp', res.id)}
-                            className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                            className="rounded border-slate-300 text-tiandy-600 focus:ring-tiandy-500 dark:border-slate-700 dark:bg-slate-800"
                           />
                           <span>{res.label}</span>
                         </label>
@@ -214,7 +213,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   <div className="mt-2 space-y-1.5">
                     {[
                       { id: 'COLORMAKER', label: 'ColorMaker (Color 24/7)' },
-                      { id: 'DUAL_LIGHT', label: 'Dual Light (IR + Cálida)' },
                       { id: 'POLAR_DAY', label: 'Polar Day (WDR Dinámico)' },
                       { id: 'EARLY_WARNING', label: 'Early Warning (Alerta Activa)' }
                     ].map((badge) => {
@@ -222,13 +220,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       return (
                         <label
                           key={badge.id}
-                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-tiandy-600 cursor-pointer"
                         >
                           <input
                             type="checkbox"
                             checked={checked}
                             onChange={() => handleCheckboxToggle('badges', badge.id)}
-                            className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                            className="rounded border-slate-300 text-tiandy-600 focus:ring-tiandy-500 dark:border-slate-700 dark:bg-slate-800"
                           />
                           <span>{badge.label}</span>
                         </label>
@@ -238,35 +236,26 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 )}
               </div>
 
-              {/* Hardware & Audio */}
+              {/* Audio / Almacenamiento */}
               <div className="pt-3">
-                {renderSectionHeader('Audio e Interfaces', 'audio')}
+                {renderSectionHeader('Audio / Almacenamiento', 'audio')}
                 {openSections.audio && (
                   <div className="mt-2 space-y-1.5">
-                    <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={filtros.microfono_incorporado || false}
-                        onChange={() => handleBooleanToggle('microfono_incorporado')}
-                        className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
-                      />
-                      <span>Micrófono Incorporado</span>
-                    </label>
-                    <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer">
+                    <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-tiandy-600 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={filtros.altavoz_incorporado || false}
                         onChange={() => handleBooleanToggle('altavoz_incorporado')}
-                        className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                        className="rounded border-slate-300 text-tiandy-600 focus:ring-tiandy-500 dark:border-slate-700 dark:bg-slate-800"
                       />
-                      <span>Altavoz / Audio 2 Vías</span>
+                      <span>Altavoz</span>
                     </label>
-                    <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer">
+                    <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-tiandy-600 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={filtros.slot_sd || false}
                         onChange={() => handleBooleanToggle('slot_sd')}
-                        className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                        className="rounded border-slate-300 text-tiandy-600 focus:ring-tiandy-500 dark:border-slate-700 dark:bg-slate-800"
                       />
                       <span>Ranura MicroSD</span>
                     </label>
@@ -288,13 +277,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       return (
                         <label
                           key={item.id}
-                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-tiandy-600 cursor-pointer"
                         >
                           <input
                             type="checkbox"
                             checked={checked}
                             onChange={() => handleCheckboxToggle('interfaces_es', item.id)}
-                            className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                            className="rounded border-slate-300 text-tiandy-600 focus:ring-tiandy-500 dark:border-slate-700 dark:bg-slate-800"
                           />
                           <span>{item.label}</span>
                         </label>
@@ -319,13 +308,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       return (
                         <label
                           key={ch}
-                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-tiandy-600 cursor-pointer"
                         >
                           <input
                             type="checkbox"
                             checked={checked}
                             onChange={() => handleCheckboxToggle('canales', ch)}
-                            className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                            className="rounded border-slate-300 text-tiandy-600 focus:ring-tiandy-500 dark:border-slate-700 dark:bg-slate-800"
                           />
                           <span>{ch}</span>
                         </label>
@@ -345,13 +334,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       return (
                         <label
                           key={b}
-                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-tiandy-600 cursor-pointer"
                         >
                           <input
                             type="checkbox"
                             checked={checked}
                             onChange={() => handleCheckboxToggle('bahias', b)}
-                            className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                            className="rounded border-slate-300 text-tiandy-600 focus:ring-tiandy-500 dark:border-slate-700 dark:bg-slate-800"
                           />
                           <span>{b}</span>
                         </label>
@@ -371,13 +360,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       return (
                         <label
                           key={opt}
-                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-tiandy-600 cursor-pointer"
                         >
                           <input
                             type="checkbox"
                             checked={checked}
                             onChange={() => handleCheckboxToggle('puertos_poe_nvr', opt)}
-                            className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                            className="rounded border-slate-300 text-tiandy-600 focus:ring-tiandy-500 dark:border-slate-700 dark:bg-slate-800"
                           />
                           <span>{opt}</span>
                         </label>
@@ -401,13 +390,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       return (
                         <label
                           key={item.id}
-                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                          className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-tiandy-600 cursor-pointer"
                         >
                           <input
                             type="checkbox"
                             checked={checked}
                             onChange={() => handleCheckboxToggle('interfaces_es', item.id)}
-                            className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                            className="rounded border-slate-300 text-tiandy-600 focus:ring-tiandy-500 dark:border-slate-700 dark:bg-slate-800"
                           />
                           <span>{item.label}</span>
                         </label>
@@ -435,13 +424,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                     return (
                       <label
                         key={p}
-                        className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-emerald-600 cursor-pointer"
+                        className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 hover:text-tiandy-600 cursor-pointer"
                       >
                         <input
                           type="checkbox"
                           checked={checked}
                           onChange={() => handleCheckboxToggle('puertos_poe', p)}
-                          className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800"
+                          className="rounded border-slate-300 text-tiandy-600 focus:ring-tiandy-500 dark:border-slate-700 dark:bg-slate-800"
                         />
                         <span>{p}</span>
                       </label>

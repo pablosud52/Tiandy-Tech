@@ -76,20 +76,20 @@ export const SellosGraficosOverlay: React.FC<SellosGraficosOverlayProps> = ({
   const getPositionClass = (pos?: PosicionSello) => {
     switch (pos) {
       case 'top-left':
-        return isCompact ? 'top-1.5 left-1.5' : 'top-1.5 left-1.5 sm:top-2 sm:left-2';
+        return isCompact ? 'top-0.5 left-0.5' : 'top-1 left-1 sm:top-1.5 sm:left-1.5';
       case 'top-right':
-        return isCompact ? 'top-1.5 right-1.5' : 'top-1.5 right-1.5 sm:top-2 sm:right-2';
+        return isCompact ? 'top-0.5 right-0.5' : 'top-1 right-1 sm:top-1.5 sm:right-1.5';
       case 'bottom-left':
         // En compact (tabla) se ancla al borde inferior
-        return isCompact ? 'bottom-1.5 left-1.5' : 'bottom-8 left-1.5 sm:bottom-8 sm:left-2';
+        return isCompact ? 'bottom-0.5 left-0.5' : 'bottom-8 left-1 sm:bottom-8 sm:left-1.5';
       case 'bottom-right':
-        return isCompact ? 'bottom-1.5 right-1.5' : 'bottom-1.5 right-1.5 sm:bottom-2 sm:right-2';
+        return isCompact ? 'bottom-0.5 right-0.5' : 'bottom-1 right-1 sm:bottom-1.5 sm:right-1.5';
       case 'bottom-center':
-        return isCompact ? 'bottom-1.5 left-1/2 -translate-x-1/2' : 'bottom-1.5 left-1/2 -translate-x-1/2 sm:bottom-2';
+        return isCompact ? 'bottom-0.5 left-1/2 -translate-x-1/2' : 'bottom-1 left-1/2 -translate-x-1/2 sm:bottom-1.5';
       case 'center':
         return 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
       default:
-        return 'top-1.5 left-1.5';
+        return isCompact ? 'top-0.5 left-0.5' : 'top-1 left-1';
     }
   };
 
@@ -115,26 +115,26 @@ export const SellosGraficosOverlay: React.FC<SellosGraficosOverlayProps> = ({
 
   const getSizeClass = (id: string) => {
     if (isCompact) {
-      if (id === 'NUEVO_MODELO') return 'w-8 h-8 sm:w-9 sm:h-9';
-      if (id === 'COLORMAKER') return 'w-10 h-auto max-h-6 sm:w-12 sm:max-h-7';
-      if (id === 'POLAR_DAY') return 'w-12 h-auto max-h-5 sm:w-14 sm:max-h-6';
-      if (id.startsWith('SMD_') || id === 'VCA') return 'w-9 h-auto max-h-5 sm:w-10 sm:max-h-6';
-      return 'w-8 h-auto';
+      if (id === 'NUEVO_MODELO') return 'w-7 h-7 sm:w-8 sm:h-8';
+      if (id === 'COLORMAKER') return 'w-8.5 h-auto max-h-5 sm:w-10 sm:max-h-5.5';
+      if (id === 'POLAR_DAY') return 'w-10 h-auto max-h-4 sm:w-12 sm:max-h-5';
+      if (id.startsWith('SMD_') || id === 'VCA') return 'w-7.5 h-auto max-h-4 sm:w-8.5 sm:max-h-4.5';
+      return 'w-7 h-auto';
     }
 
     if (id === 'NUEVO_MODELO') {
-      return isLarge ? 'w-24 h-24 sm:w-28 sm:h-28' : 'w-16 h-16 sm:w-20 sm:h-20';
+      return isLarge ? 'w-16 h-16 sm:w-18 sm:h-18' : 'w-13 h-13 sm:w-16 sm:h-16';
     }
     if (id === 'COLORMAKER') {
-      return isLarge ? 'w-28 h-auto max-h-16 sm:w-36 sm:max-h-20' : 'w-20 h-auto max-h-11 sm:w-24 sm:max-h-14';
+      return isLarge ? 'w-20 h-auto max-h-10 sm:w-24 sm:max-h-12' : 'w-16 h-auto max-h-9 sm:w-20 sm:max-h-11';
     }
     if (id === 'POLAR_DAY') {
-      return isLarge ? 'w-32 h-auto max-h-14 sm:w-44 sm:max-h-18' : 'w-24 h-auto max-h-9 sm:w-32 sm:max-h-12';
+      return isLarge ? 'w-24 h-auto max-h-9 sm:w-28 sm:max-h-11' : 'w-20 h-auto max-h-8 sm:w-26 sm:max-h-10';
     }
     if (id.startsWith('SMD_') || id === 'VCA') {
-      return isLarge ? 'w-28 h-auto max-h-12 sm:w-36 sm:max-h-14' : 'w-20 h-auto max-h-8 sm:w-24 sm:max-h-9';
+      return isLarge ? 'w-20 h-auto max-h-8 sm:w-24 sm:max-h-10' : 'w-16 h-auto max-h-7 sm:w-20 sm:max-h-8';
     }
-    return isLarge ? 'w-24 h-auto' : 'w-16 h-auto';
+    return isLarge ? 'w-18 h-auto' : 'w-14 h-auto';
   };
 
   return (

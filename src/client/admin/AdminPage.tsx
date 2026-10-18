@@ -24,7 +24,8 @@ import {
   Database,
   Sliders,
   Sun,
-  Moon
+  Moon,
+  Settings
 } from 'lucide-react';
 
 interface AdminPageProps {
@@ -174,24 +175,24 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               </div>
             </div>
 
-            {/* Ir al Catálogo Público (Ver Web) */}
-            <button
-              onClick={onBackToCatalog}
-              className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 transition-colors shadow-xs"
-              title="Volver a la vista del catálogo público"
-            >
-              <ArrowLeft className="h-3.5 w-3.5 text-slate-500" />
-              <span className="hidden sm:inline">Ver Web</span>
-            </button>
-
             {/* Cerrar Sesión */}
             <button
               onClick={onLogout}
-              className="flex items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-100 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-900/60 transition-colors"
+              className="flex items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-100 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-900/60 transition-colors shadow-xs"
               title="Cerrar sesión del panel"
             >
               <LogOut className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Salir</span>
+            </button>
+
+            {/* Volver a la Web (Posición gemela de Panel NAS en naranja) */}
+            <button
+              onClick={onBackToCatalog}
+              className="flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white px-3.5 py-1.5 text-xs font-bold transition-all shadow-xs"
+              title="Volver a la vista del catálogo público"
+            >
+              <Settings className="h-3.5 w-3.5" />
+              <span>Volver a Web</span>
             </button>
           </div>
         </div>

@@ -36,9 +36,9 @@ const getStockStyle = (stock?: string) => {
       };
     case 'PROXIMO_ARRIBO':
       return {
-        bg: 'bg-sky-50 dark:bg-sky-950/40',
-        border: 'border-sky-500 dark:border-sky-500',
-        text: 'text-sky-700 dark:text-sky-300'
+        bg: 'bg-yellow-50 dark:bg-yellow-950/40',
+        border: 'border-yellow-500 dark:border-yellow-500',
+        text: 'text-yellow-700 dark:text-yellow-400'
       };
     case 'AGOTADO':
       return {
@@ -49,9 +49,9 @@ const getStockStyle = (stock?: string) => {
     case 'CONSULTAR':
     default:
       return {
-        bg: 'bg-purple-50 dark:bg-purple-950/40',
-        border: 'border-purple-500 dark:border-purple-500',
-        text: 'text-purple-700 dark:text-purple-300'
+        bg: 'bg-slate-100 dark:bg-slate-800',
+        border: 'border-slate-400 dark:border-slate-600',
+        text: 'text-slate-700 dark:text-slate-300'
       };
   }
 };
@@ -531,10 +531,9 @@ export const AdminBatchModule: React.FC<AdminBatchModuleProps> = ({
                           >
                             <option value="ENTREGA_INMEDIATA" className="bg-white text-emerald-700 dark:bg-slate-900 dark:text-emerald-300 font-bold">ENTREGA INMEDIATA</option>
                             <option value="POCAS_UNIDADES" className="bg-white text-amber-700 dark:bg-slate-900 dark:text-amber-300 font-bold">POCAS UNIDADES</option>
-                            <option value="ULTIMA_UNIDAD" className="bg-white text-amber-700 dark:bg-slate-900 dark:text-amber-300 font-bold">ÚLTIMA UNIDAD</option>
-                            <option value="PROXIMO_ARRIBO" className="bg-white text-sky-700 dark:bg-slate-900 dark:text-sky-300 font-bold">PRÓXIMO ARRIBO</option>
+                            <option value="PROXIMO_ARRIBO" className="bg-white text-yellow-700 dark:bg-slate-900 dark:text-yellow-400 font-bold">PRÓXIMO ARRIBO</option>
                             <option value="AGOTADO" className="bg-white text-rose-700 dark:bg-slate-900 dark:text-rose-300 font-bold">AGOTADO</option>
-                            <option value="CONSULTAR" className="bg-white text-purple-700 dark:bg-slate-900 dark:text-purple-300 font-bold">CONSULTAR</option>
+                            <option value="CONSULTAR" className="bg-white text-slate-700 dark:bg-slate-900 dark:text-slate-300 font-bold">CONSULTAR</option>
                           </select>
                         );
                       })()}
