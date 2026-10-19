@@ -286,16 +286,18 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({
                 </button>
 
                 <button
-                  onClick={handlePrint}
-                  className="flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 shadow-sm transition-all"
+                  disabled
+                  title="Función en desarrollo"
+                  className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-100 px-4 py-2 text-xs font-bold text-slate-400 dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-500 cursor-not-allowed opacity-60 select-none"
                 >
                   <Printer className="h-3.5 w-3.5" />
                   Imprimir
                 </button>
 
                 <button
-                  onClick={onClose}
-                  className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-5 py-2 text-xs font-bold text-white hover:bg-emerald-500 shadow-md shadow-emerald-600/20 transition-all"
+                  disabled
+                  title="Función en desarrollo"
+                  className="flex items-center gap-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 px-5 py-2 text-xs font-bold text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60 select-none shadow-none"
                 >
                   Continuar
                   <ArrowRight className="h-3.5 w-3.5" />

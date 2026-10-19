@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "secciones": {
+    "CAMARA": true,
+    "NVR": true,
+    "SWITCH": true,
+    "ACCESORIO": true,
+    "WIKI": false,
+    "HERRAMIENTAS": false,
+    "HERRAMIENTAS_UPS": true,
+    "HERRAMIENTAS_ALMACENAMIENTO": true
+  }
+}

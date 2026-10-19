@@ -127,7 +127,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {/* Sellos de fondo (detrás del producto) */}
         <SellosGraficosOverlay sellos={sellosGraficos} capaFiltro="back" />
 
-        <BadgeOverlay badges={badges_detectados} hasTopRightSello={hasTopRightSello} />
+        <BadgeOverlay badges={badges_detectados} activeSellos={sellosGraficos} hasTopRightSello={hasTopRightSello} />
 
         {/* Imagen real del producto o placeholder vectorial técnico */}
         {imagen_principal && !imgError ? (

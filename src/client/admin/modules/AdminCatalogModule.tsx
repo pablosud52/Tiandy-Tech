@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Producto, TipoDispositivo, EstadoStock } from '../../../shared/types.js';
-import { getProductSpecs, formatCurrency, parseModelAndSpec } from '../../../shared/helpers.js';
+import { getProductSpecs, formatCurrency, parseModelAndSpec, matchesSearchQuery } from '../../../shared/helpers.js';
 import { ProductEditForm } from '../components/ProductEditForm.js';
 import { 
   Search, 
@@ -186,15 +186,9 @@ export const AdminCatalogModule: React.FC<AdminCatalogModuleProps> = ({
         if (!m1 && !m2) return false;
       }
 
-      // Buscador General de Catálogo
+      // Buscador General de Catálogo (Motor Universal con Datasheet Corpus y operador AND)
       if (busqueda.trim()) {
-        const q = busqueda.toLowerCase().trim();
-        const specs = getProductSpecs(p);
-        const matchModelo = p.modelo.toLowerCase().includes(q);
-        const matchSerie = (p.serie || '').toLowerCase().includes(q);
-        const matchSub = (p.subtipo || '').toLowerCase().includes(q);
-        const matchSpec = (specs.resolucion + ' ' + specs.formato).toLowerCase().includes(q);
-        if (!matchModelo && !matchSerie && !matchSub && !matchSpec) return false;
+        if (!matchesSearchQuery(p, busqueda)) return false;
       }
 
       return true;

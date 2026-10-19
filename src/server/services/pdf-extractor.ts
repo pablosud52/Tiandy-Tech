@@ -512,16 +512,23 @@ export async function extractFromPdf(pdfBuffer: Buffer, fileName: string): Promi
 
   // 4. Badges tecnológicos detectados
   const badges: string[] = [];
-  if (/Polar\s*Day/i.test(text) || /0\.000[1-5]\s*Lux/i.test(text)) badges.push('Polar Day');
-  if (/ColorMaker/i.test(text) || (/F1\.0/i.test(text) && /White\s*LED/i.test(text))) badges.push('ColorMaker');
-  if (/Early\s*Warning/i.test(text) || /red\s*and\s*blue\s*alarm/i.test(text)) badges.push('Early Warning');
-  if (/180°|Dual\s*Sensor|Dual\s*Lens|Panorami/i.test(text)) badges.push('180° Panorámica');
-  if (/4K|8MP|3840\s*[×x]\s*2160/i.test(text)) badges.push('4K Ultra HD');
-  if (/SMD\s*2\.0/i.test(text)) badges.push('SMD 2.0');
-  if (/Face\s*Recognition|Reconocimiento\s*Facial/i.test(text)) badges.push('Face Recognition');
-  if (/Wi-Fi|WIFI/i.test(text)) badges.push('Wi-Fi');
-  if (/4G|Solar/i.test(text)) badges.push('4G Solar');
-  if (/250m|PoE\s*Watchdog/i.test(text)) badges.push('PoE Watchdog');
+  if (tipo === 'CAMARA') {
+    if (/Polar\s*Day/i.test(text) || /0\.000[1-5]\s*Lux/i.test(text)) badges.push('Polar Day');
+    if (/ColorMaker/i.test(text) || (/F1\.0/i.test(text) && /White\s*LED/i.test(text))) badges.push('ColorMaker');
+    if (/Early\s*Warning/i.test(text) || /red\s*and\s*blue\s*alarm/i.test(text)) badges.push('Early Warning');
+    if (/180°|Dual\s*Sensor|Dual\s*Lens|Panorami/i.test(text)) badges.push('180° Panorámica');
+    if (/4K|8MP|3840\s*[×x]\s*2160/i.test(text)) badges.push('4K Ultra HD');
+    if (/SMD\s*2\.0/i.test(text)) badges.push('SMD 2.0');
+    if (/Face\s*Recognition|Reconocimiento\s*Facial/i.test(text)) badges.push('Face Recognition');
+    if (/Wi-Fi|WIFI/i.test(text)) badges.push('Wi-Fi');
+    if (/4G|Solar/i.test(text)) badges.push('4G Solar');
+    if (/Dual\s*Light|Warm\s*LED\s*\+\s*IR/i.test(text)) badges.push('Dual Light');
+  } else if (tipo === 'NVR') {
+    if (/4K|8MP|3840\s*[×x]\s*2160|12MP/i.test(text)) badges.push('4K Ultra HD');
+    if (/Face\s*Recognition|Reconocimiento\s*Facial/i.test(text)) badges.push('Face Recognition');
+  } else if (tipo === 'SWITCH') {
+    if (/PoE\s*Watchdog|Watchdog/i.test(text)) badges.push('PoE Watchdog');
+  }
 
   // 5. Extracción de subtipo
   let subtipo = '';

@@ -28,6 +28,8 @@ import {
   cleanupProductFilesOnDelete, 
   cleanupReplacedImage 
 } from '../services/storage-cleaner.js';
+import { executePublish, getLastPublishStatus } from '../services/publisher.js';
+import { getResolvedGlobalBadges, saveGlobalBadges } from '../services/badges-service.js';
 import { Producto, TipoDispositivo, EstadoStock } from '../../shared/types.js';
 
 const uploadDir = path.resolve(process.cwd(), 'data/uploads');
@@ -312,155 +314,10 @@ apiRouter.get('/badges', (req, res) => {
   }
 });
 
-// 7b. Configuración Global de Etiquetas Centralizadas (ubicación, tamaño, anclaje, imagen opcional y activación)
-const defaultGlobalBadges = [
-  {
-    id: 'NUEVO_MODELO',
-    nombre: 'Nuevo Modelo',
-    descripcion: 'Sello para destacar lanzamientos y novedades',
-    imagen_url: '/data/badges/nuevo-modelo.png',
-    posicion: 'top-left',
-    capa: 'front',
-    tamano: 100,
-    anclaje: 'esquina',
-    opacidad: 1,
-    activo_global: true,
-    es_sello_grafico: true
-  },
-  {
-    id: 'COLORMAKER',
-    nombre: 'Color Maker',
-    descripcion: 'Tecnología Tiandy para captura a todo color 24/7 con apertura F1.0 / F1.6',
-    imagen_url: '/data/badges/colormaker.png',
-    posicion: 'bottom-right',
-    capa: 'front',
-    tamano: 100,
-    anclaje: 'esquina',
-    opacidad: 1,
-    activo_global: true,
-    es_sello_grafico: true
-  },
-  {
-    id: 'POLAR_DAY',
-    nombre: 'Polar day',
-    descripcion: 'Sensibilidad extrema para visión nocturna ultra clara a color sin reflectores',
-    imagen_url: '/data/badges/polarday.png',
-    posicion: 'bottom-center',
-    capa: 'front',
-    tamano: 100,
-    anclaje: 'esquina',
-    opacidad: 1,
-    activo_global: true,
-    es_sello_grafico: true
-  },
-  {
-    id: 'SMD_1',
-    nombre: 'SMD 1.0',
-    descripcion: 'Smart Motion Detection v1.0 para filtrado de falsas alarmas de movimiento básico',
-    imagen_url: '/data/badges/smd-1.svg',
-    posicion: 'top-right',
-    capa: 'front',
-    tamano: 100,
-    anclaje: 'esquina',
-    opacidad: 1,
-    activo_global: true,
-    es_sello_grafico: true
-  },
-  {
-    id: 'SMD_2',
-    nombre: 'SMD 2.0',
-    descripcion: 'Smart Motion Detection v2.0 con clasificación precisa de humanos y vehículos',
-    imagen_url: '/data/badges/smd-2.svg',
-    posicion: 'top-right',
-    capa: 'front',
-    tamano: 100,
-    anclaje: 'esquina',
-    opacidad: 1,
-    activo_global: true,
-    es_sello_grafico: true
-  },
-  {
-    id: 'SMD_3',
-    nombre: 'SMD 3.0',
-    descripcion: 'Smart Motion Detection v3.0 Deep Learning Pro con máxima precisión y largo alcance',
-    imagen_url: '/data/badges/smd-3.svg',
-    posicion: 'top-right',
-    capa: 'front',
-    tamano: 100,
-    anclaje: 'esquina',
-    opacidad: 1,
-    activo_global: true,
-    es_sello_grafico: true
-  },
-  {
-    id: 'VCA',
-    nombre: 'VCA',
-    descripcion: 'Video Content Analytics (Tripwire, Perímetro, Objeto Abandonado, etc.)',
-    imagen_url: '/data/badges/vca.svg',
-    posicion: 'top-right',
-    capa: 'front',
-    tamano: 100,
-    anclaje: 'esquina',
-    opacidad: 1,
-    activo_global: true,
-    es_sello_grafico: true
-  },
-  {
-    id: 'DUAL_LIGHT',
-    nombre: 'Dual Light',
-    descripcion: 'Iluminación híbrida inteligente IR + Luz blanca cálida',
-    imagen_url: '',
-    posicion: 'top-right',
-    capa: 'front',
-    tamano: 100,
-    anclaje: 'esquina',
-    opacidad: 1,
-    activo_global: true,
-    es_sello_grafico: false
-  },
-  {
-    id: 'PARLANTE_INCORPORADO',
-    nombre: 'Parlante incorporado',
-    descripcion: 'Altavoz de alta potencia integrado para audio bidireccional y mensajes',
-    imagen_url: '',
-    posicion: 'top-right',
-    capa: 'front',
-    tamano: 100,
-    anclaje: 'esquina',
-    opacidad: 1,
-    activo_global: true,
-    es_sello_grafico: false
-  },
-  {
-    id: 'EARLY_WARNING',
-    nombre: 'Early Warning (EW)',
-    descripcion: 'Disuasión activa con estroboscópico rojo/azul y sirena ante intrusión',
-    imagen_url: '',
-    posicion: 'top-right',
-    capa: 'front',
-    tamano: 100,
-    anclaje: 'esquina',
-    opacidad: 1,
-    activo_global: true,
-    es_sello_grafico: false
-  }
-];
-
+// 7b. Configuración Global de Etiquetas Centralizadas
 apiRouter.get('/configuracion/badges', (req, res) => {
   try {
-    const raw = getConfiguracion('global_badges_config', '');
-    let badges = defaultGlobalBadges;
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          // Fusionar con defaults para garantizar que nuevos badges existan siempre
-          const idsExistentes = new Set(parsed.map((b: any) => b.id));
-          const faltantes = defaultGlobalBadges.filter(d => !idsExistentes.has(d.id));
-          badges = [...parsed, ...faltantes];
-        }
-      } catch (_) {}
-    }
+    const badges = getResolvedGlobalBadges();
     res.json({ success: true, badges });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
@@ -473,7 +330,7 @@ apiRouter.post('/configuracion/badges', (req, res) => {
     if (!Array.isArray(badges) || badges.length === 0) {
       return res.status(400).json({ success: false, error: 'Lista de badges inválida' });
     }
-    setConfiguracion('global_badges_config', JSON.stringify(badges));
+    saveGlobalBadges(badges);
     res.json({ success: true, badges });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
@@ -487,6 +344,8 @@ const defaultSecciones = {
   SWITCH: true,
   ACCESORIO: true,
   WIKI: true,
+  COMPARADOR: true,
+  COTIZADOR: true,
   HERRAMIENTAS: true,
   HERRAMIENTAS_UPS: true,
   HERRAMIENTAS_ALMACENAMIENTO: true
@@ -652,3 +511,38 @@ apiRouter.delete('/auth/users/:id', (req, res) => {
     res.status(400).json({ success: false, error: error.message });
   }
 });
+
+// ==========================================
+// PUBLICACIÓN EN CLOUDFLARE PAGES
+// ==========================================
+
+// Consultar estado de publicación
+apiRouter.get('/admin/publish/status', (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+    if (!token || !validateSession(token)) {
+      return res.status(401).json({ success: false, error: 'No autorizado' });
+    }
+    const status = getLastPublishStatus();
+    res.json({ success: true, data: status });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Disparar publicación a Cloudflare Pages
+apiRouter.post('/admin/publish', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+    if (!token || !validateSession(token)) {
+      return res.status(401).json({ success: false, error: 'No autorizado' });
+    }
+    const result = await executePublish();
+    res.json(result);
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+

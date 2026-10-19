@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Producto, TipoDispositivo, FiltrosBusqueda, ItemCotizacion, BadgeGlobalConfig } from '../shared/types.js';
-import { getProductSpecs } from '../shared/helpers.js';
+import { getProductSpecs, matchesSearchQuery } from '../shared/helpers.js';
 import { Navbar } from './components/Navbar.js';
 import { ProductCard } from './components/ProductCard.js';
 import { ProductTable } from './components/ProductTable.js';
@@ -11,8 +11,17 @@ import { CompareFloatingBar, CompareModal } from './components/CompareModal.js';
 import { CompareView } from './components/CompareView.js';
 import { QuotationModal, QuotationFloatingBar } from './components/QuotationModal.js';
 import { WikiPage } from './pages/WikiPage.js';
-import { AdminPage } from './admin/AdminPage.js';
-import { AdminLogin } from './admin/AdminLogin.js';
+// Detección estricta de compilación pública para Cloudflare Pages
+const isPublicBuild = import.meta.env.VITE_PUBLIC_BUILD === 'true';
+
+// Lazy loading condicional: Vite y Rollup omiten y no generan chunks del panel en build público
+const AdminPage = !isPublicBuild
+  ? React.lazy(() => import('./admin/AdminPage.js').then((m) => ({ default: m.AdminPage })))
+  : null;
+const AdminLogin = !isPublicBuild
+  ? React.lazy(() => import('./admin/AdminLogin.js').then((m) => ({ default: m.AdminLogin })))
+  : null;
+
 import { Filter, SlidersHorizontal, Loader2, AlertCircle, ArrowUpDown, Barcode, X, Calculator, BatteryCharging, Database, LayoutGrid, Table } from 'lucide-react';
 
 export default function App() {
@@ -23,8 +32,16 @@ export default function App() {
   const [busqueda, setBusqueda] = useState<string>('');
   const [busquedaCodigo, setBusquedaCodigo] = useState<string>('');
 
-  // Admin Authentication State (almacenado en sessionStorage para exigir credenciales al cerrar pestaña/navegador)
+  // Salvaguarda: En build público nunca permitir vista 'admin'
+  useEffect(() => {
+    if (isPublicBuild && activeView === 'admin') {
+      setActiveView('catalog');
+    }
+  }, [activeView]);
+
+  // Admin Authentication State (solo activo en entorno local/NAS con admin habilitado)
   const [adminUser, setAdminUser] = useState<any>(() => {
+    if (isPublicBuild) return null;
     try {
       // Limpiar residuos antiguos permanentes de localStorage
       localStorage.removeItem('tiandy_admin_token');
@@ -36,11 +53,13 @@ export default function App() {
     }
   });
   const [adminToken, setAdminToken] = useState<string | null>(() => {
+    if (isPublicBuild) return null;
     return sessionStorage.getItem('tiandy_admin_token') || null;
   });
 
-  // Validar sesión activa en el backend al montar o cambiar token
+  // Validar sesión activa en el backend al montar o cambiar token (solo en modo local / NAS)
   useEffect(() => {
+    if (isPublicBuild) return;
     if (adminToken) {
       fetch('/api/auth/me', {
         headers: { Authorization: `Bearer ${adminToken}` }
@@ -92,9 +111,26 @@ export default function App() {
     ACCESORIO: true,
     WIKI: true,
     HERRAMIENTAS: true,
+    COMPARADOR: true,
+    COTIZADOR: true,
     HERRAMIENTAS_UPS: true,
     HERRAMIENTAS_ALMACENAMIENTO: true
   });
+
+  // Redirigir al catálogo principal si la sección activa fue deshabilitada
+  useEffect(() => {
+    if (activeView === 'wiki' && seccionesVisibles?.WIKI === false) {
+      setActiveView('catalog');
+    } else if (activeView === 'compare' && seccionesVisibles?.COMPARADOR === false) {
+      setActiveView('catalog');
+    } else if (
+      activeView === 'herramientas' &&
+      (seccionesVisibles?.HERRAMIENTAS === false ||
+        (seccionesVisibles?.HERRAMIENTAS_UPS === false && seccionesVisibles?.HERRAMIENTAS_ALMACENAMIENTO === false))
+    ) {
+      setActiveView('catalog');
+    }
+  }, [activeView, seccionesVisibles]);
 
   // Configuración Centralizada de Etiquetas Globales con persistencia inmediata para evitar parpadeos
   const [globalBadges, setGlobalBadges] = useState<BadgeGlobalConfig[]>(() => {
@@ -246,7 +282,7 @@ export default function App() {
     }
   };
 
-  // Fetch Products con anti-caché y soporte para refresco en tiempo real
+  // Fetch Products con anti-caché y soporte para refresco en tiempo real + fallback autónomo
   const fetchProductos = async (silent: boolean = false) => {
     if (!silent) setIsLoading(true);
     setError(null);
@@ -258,11 +294,22 @@ export default function App() {
           'Pragma': 'no-cache'
         }
       });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       const list = Array.isArray(data) ? data : data.data || [];
       setProductos(list);
     } catch (err: any) {
-      if (!silent) setError(`Error de conexión con el servidor: ${err.message}`);
+      // Fallback a snapshot estático de datos para despliegues autónomos en Cloudflare Pages
+      try {
+        const staticRes = await fetch(`/data/productos.json?_t=${Date.now()}`);
+        if (staticRes.ok) {
+          const staticData = await staticRes.json();
+          const list = Array.isArray(staticData) ? staticData : staticData.data || [];
+          setProductos(list);
+          return;
+        }
+      } catch {}
+      if (!silent) setError(`Error al cargar catálogo: ${err.message}`);
     } finally {
       if (!silent) setIsLoading(false);
     }
@@ -270,7 +317,10 @@ export default function App() {
 
   const fetchSecciones = async () => {
     try {
-      const res = await fetch(`/api/configuracion/secciones?_t=${Date.now()}`);
+      let res = await fetch(`/api/configuracion/secciones?_t=${Date.now()}`);
+      if (!res.ok) {
+        res = await fetch(`/data/sections.json?_t=${Date.now()}`);
+      }
       const data = await res.json();
       if (data.success && data.secciones) {
         setSeccionesVisibles(data.secciones);
@@ -285,12 +335,23 @@ export default function App() {
           return prev;
         });
       }
-    } catch {}
+    } catch {
+      try {
+        const staticRes = await fetch(`/data/sections.json?_t=${Date.now()}`);
+        if (staticRes.ok) {
+          const data = await staticRes.json();
+          if (data.success && data.secciones) setSeccionesVisibles(data.secciones);
+        }
+      } catch {}
+    }
   };
 
   const fetchGlobalBadges = async () => {
     try {
-      const res = await fetch(`/api/configuracion/badges?_t=${Date.now()}`);
+      let res = await fetch(`/api/configuracion/badges?_t=${Date.now()}`);
+      if (!res.ok) {
+        res = await fetch(`/data/badges.json?_t=${Date.now()}`);
+      }
       const data = await res.json();
       if (data.success && Array.isArray(data.badges)) {
         setGlobalBadges(data.badges);
@@ -298,7 +359,15 @@ export default function App() {
           localStorage.setItem('tiandy_global_badges', JSON.stringify(data.badges));
         } catch {}
       }
-    } catch {}
+    } catch {
+      try {
+        const staticRes = await fetch(`/data/badges.json?_t=${Date.now()}`);
+        if (staticRes.ok) {
+          const data = await staticRes.json();
+          if (data.success && Array.isArray(data.badges)) setGlobalBadges(data.badges);
+        }
+      } catch {}
+    }
   };
 
   useEffect(() => {
@@ -411,38 +480,9 @@ export default function App() {
 
       const specs = getProductSpecs(prod);
 
-      // 2. Buscador General de Catálogo (Modelo, Serie, Descripción, Especificaciones y Analíticas)
+      // 2. Buscador General de Catálogo (Motor Universal con Datasheet Corpus y operador AND)
       if (busqueda.trim()) {
-        const query = busqueda.toLowerCase().trim();
-        const matchModelo = prod.modelo.toLowerCase().includes(query);
-        const matchSerie = (prod.serie || '').toLowerCase().includes(query);
-        const matchDesc = (prod.subtipo || prod.especificacion_completa || '').toLowerCase().includes(query);
-        const matchFormato = (specs.formato || '').toLowerCase().includes(query);
-        const matchRes = (specs.resolucion || '').toLowerCase().includes(query);
-
-        // Analíticas y Badges (SMD, VCA, etc. excluyendo expresamente "nuevo" y "modelo")
-        const isGenericQuery = query === 'nuevo' || query === 'modelo' || query === 'nuevo modelo';
-        const cam = (prod.datos_tecnicos as any)?.camara;
-        const cp = (prod.datos_tecnicos as any)?.caracteristicas_principales;
-        const smdVal = cp?.smd || cam?.analiticas_ia?.version_smd || (prod.badges_detectados?.find((b: string) => /SMD/i.test(b)));
-        const matchSmd = Boolean(smdVal && String(smdVal).toLowerCase().includes(query));
-        const matchVca = Boolean((cp?.vca || cam?.analiticas_ia?.vca_funciones) && 'vca'.includes(query));
-        const matchBadges = !isGenericQuery && (prod.badges_detectados || []).some((b: string) => 
-          !b.toLowerCase().includes('nuevo') && !b.toLowerCase().includes('modelo') && b.toLowerCase().includes(query)
-        );
-        const matchSellos = !isGenericQuery && getProductSellos(prod, globalBadges).some((s) => 
-          s.activo && s.id !== 'NUEVO_MODELO' && s.nombre.toLowerCase().includes(query)
-        );
-
-        // Búsqueda por "alarma" / "alarm" en entradas/salidas de cámaras y NVRs
-        const isAlarmQuery = query.includes('alarm') || query.includes('alarma');
-        const matchAlarma = isAlarmQuery && (
-          Boolean(specs.entrada_alarma) ||
-          Boolean(specs.salida_alarma) ||
-          JSON.stringify(prod.datos_tecnicos || {}).toLowerCase().includes('alarm')
-        );
-
-        if (!matchModelo && !matchSerie && !matchDesc && !matchFormato && !matchRes && !matchSmd && !matchVca && !matchBadges && !matchSellos && !matchAlarma) {
+        if (!matchesSearchQuery(prod, busqueda, globalBadges)) {
           return false;
         }
       }
@@ -654,44 +694,47 @@ export default function App() {
       )}
 
       {/* Main Content Area */}
-      {activeView === 'admin' ? (
+      {(!isPublicBuild && activeView === 'admin' && AdminPage && AdminLogin) ? (
         <main className="flex-1">
-          {!adminUser || !adminToken ? (
-            <AdminLogin
-              onLoginSuccess={(user, token) => {
-                setAdminUser(user);
-                setAdminToken(token);
-              }}
-              onBackToCatalog={() => setActiveView('catalog')}
-            />
-          ) : (
-            <AdminPage
-              currentUser={adminUser}
-              darkMode={darkMode}
-              setDarkMode={setDarkMode}
-              onLogout={() => {
-                if (adminToken) {
-                  fetch('/api/auth/logout', {
-                    method: 'POST',
-                    headers: { Authorization: `Bearer ${adminToken}` }
-                  }).catch(() => {});
-                }
-                sessionStorage.removeItem('tiandy_admin_token');
-                sessionStorage.removeItem('tiandy_admin_user');
-                localStorage.removeItem('tiandy_admin_token');
-                localStorage.removeItem('tiandy_admin_user');
-                setAdminUser(null);
-                setAdminToken(null);
-                fetchProductos(true);
-                setActiveView('catalog');
-              }}
-              onBackToCatalog={() => {
-                fetchProductos(true);
-                setActiveView('catalog');
-              }}
-              onRefreshCatalog={() => fetchProductos(true)}
-            />
-          )}
+          <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-900 text-white font-mono text-sm">Cargando panel...</div>}>
+            {!adminUser || !adminToken ? (
+              <AdminLogin
+                onLoginSuccess={(user, token) => {
+                  setAdminUser(user);
+                  setAdminToken(token);
+                }}
+                onBackToCatalog={() => setActiveView('catalog')}
+              />
+            ) : (
+              <AdminPage
+                currentUser={adminUser}
+                adminToken={adminToken}
+                darkMode={darkMode}
+                setDarkMode={setDarkMode}
+                onLogout={() => {
+                  if (adminToken) {
+                    fetch('/api/auth/logout', {
+                      method: 'POST',
+                      headers: { Authorization: `Bearer ${adminToken}` }
+                    }).catch(() => {});
+                  }
+                  sessionStorage.removeItem('tiandy_admin_token');
+                  sessionStorage.removeItem('tiandy_admin_user');
+                  localStorage.removeItem('tiandy_admin_token');
+                  localStorage.removeItem('tiandy_admin_user');
+                  setAdminUser(null);
+                  setAdminToken(null);
+                  fetchProductos(true);
+                  setActiveView('catalog');
+                }}
+                onBackToCatalog={() => {
+                  fetchProductos(true);
+                  setActiveView('catalog');
+                }}
+                onRefreshCatalog={() => fetchProductos(true)}
+              />
+            )}
+          </React.Suspense>
         </main>
       ) : activeView === 'wiki' ? (
         <main className="flex-1">
@@ -972,7 +1015,7 @@ export default function App() {
 
       {/* Floating Action Bars (Cotizador & Comparador con vista rápida y acceso directo) */}
       <div className="fixed bottom-5 sm:bottom-6 left-1/2 z-40 -translate-x-1/2 transform flex flex-col-reverse items-center gap-2.5 max-w-[95vw] pointer-events-none">
-        {cotizacion.length > 0 && (
+        {seccionesVisibles?.COTIZADOR !== false && cotizacion.length > 0 && (
           <div className="pointer-events-auto">
             <QuotationFloatingBar
               items={cotizacion}
@@ -984,7 +1027,7 @@ export default function App() {
             />
           </div>
         )}
-        {comparedProducts.length > 0 && (
+        {seccionesVisibles?.COMPARADOR !== false && comparedProducts.length > 0 && (
           <div className="pointer-events-auto">
             <CompareFloatingBar
               productos={comparedProducts}

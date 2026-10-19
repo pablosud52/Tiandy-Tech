@@ -58,6 +58,11 @@ export const TabsNav: React.FC<TabsNavProps> = ({
     return seccionesVisibles[tab.id] !== false;
   });
 
+  const showComparador = seccionesVisibles ? seccionesVisibles.COMPARADOR !== false : true;
+  const showHerramientas = (seccionesVisibles ? seccionesVisibles.HERRAMIENTAS !== false : true) &&
+    (seccionesVisibles ? (seccionesVisibles.HERRAMIENTAS_UPS !== false || seccionesVisibles.HERRAMIENTAS_ALMACENAMIENTO !== false) : true);
+  const showWiki = seccionesVisibles ? seccionesVisibles.WIKI !== false : true;
+
   const allRightTabs = [
     {
       id: 'HERRAMIENTAS' as const,
@@ -65,7 +70,7 @@ export const TabsNav: React.FC<TabsNavProps> = ({
       icon: Calculator,
       count: null,
       desc: 'Cálculo UPS & Discos HDD',
-      visible: seccionesVisibles ? seccionesVisibles.HERRAMIENTAS !== false : true
+      visible: showHerramientas
     },
     {
       id: 'COMPARE' as const,
@@ -73,7 +78,7 @@ export const TabsNav: React.FC<TabsNavProps> = ({
       icon: ArrowLeftRight,
       count: compareCount > 0 ? compareCount : null,
       desc: 'Matriz Técnica DORI & PoE',
-      visible: true
+      visible: showComparador
     },
     {
       id: 'WIKI' as const,
@@ -81,7 +86,7 @@ export const TabsNav: React.FC<TabsNavProps> = ({
       icon: BookOpen,
       count: null,
       desc: 'Glosario & Tecnologías',
-      visible: seccionesVisibles ? seccionesVisibles.WIKI !== false : true
+      visible: showWiki
     }
   ];
 

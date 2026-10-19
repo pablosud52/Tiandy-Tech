@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Producto, TipoDispositivo, EstadoStock, SelloGraficoConfig, PosicionSello, CapaSello, BadgeGlobalConfig } from '../../../shared/types.js';
 import { formatCurrency, parseModelAndSpec } from '../../../shared/helpers.js';
 import { optimizeImageToWebP, formatFileSize } from '../../utils/imageOptimizer.js';
-import { SellosGraficosOverlay } from '../../components/Badges.js';
+import { SellosGraficosOverlay, BadgeOverlay, DEFAULT_BADGE_SVGS } from '../../components/Badges.js';
 import { 
   Cctv, 
   HardDrive, 
@@ -19,19 +19,19 @@ import {
   DollarSign, 
   CheckCircle2, 
   Eye, 
-  EyeOff,
-  ShieldCheck,
-  Volume2,
-  Mic,
-  Database,
-  Sparkles,
-  FileText,
-  RotateCcw,
-  Move,
-  ChevronDown,
-  ChevronRight,
-  Plus,
-  Trash2,
+  EyeOff, 
+  ShieldCheck, 
+  Volume2, 
+  Mic, 
+  Database, 
+  Sparkles, 
+  FileText, 
+  RotateCcw, 
+  Move, 
+  ChevronDown, 
+  ChevronRight, 
+  Plus, 
+  Trash2, 
   FileSpreadsheet
 } from 'lucide-react';
 
@@ -112,10 +112,78 @@ export const DEFAULT_SELLOS_GRAFICOS: SelloGraficoConfig[] = [
   }
 ];
 
-export const AVAILABLE_TECH_BADGES: { id: string; label: string; desc: string }[] = [
-  { id: 'DUAL_LIGHT', label: 'Dual Light', desc: 'Iluminación híbrida IR + Luz blanca' },
-  { id: 'PARLANTE_INCORPORADO', label: 'Altavoz / Parlante', desc: 'Audio bidireccional y sirenas' },
-  { id: 'EARLY_WARNING', label: 'Early Warning (EW)', desc: 'Disuasión activa con estrobo y sirena' }
+export interface TechBadgeDef {
+  id: string;
+  label: string;
+  canonicalBadge: string;
+  desc: string;
+  matches: (badgeText: string) => boolean;
+}
+
+export const AVAILABLE_TECH_BADGES: TechBadgeDef[] = [
+  {
+    id: '4K_ULTRA_HD',
+    label: '4K Ultra HD',
+    canonicalBadge: '4K Ultra HD',
+    desc: 'Resolución 4K Ultra HD (8MP / 3840×2160)',
+    matches: (b) => /4K|3840\s*[x×]\s*2160|8MP/i.test(b)
+  },
+  {
+    id: 'POE_WATCHDOG',
+    label: 'PoE Watchdog',
+    canonicalBadge: 'PoE Watchdog',
+    desc: 'Reinicio automático inteligente de cámaras colgadas',
+    matches: (b) => /Watchdog/i.test(b)
+  },
+  {
+    id: 'DUAL_LIGHT',
+    label: 'Dual Light',
+    canonicalBadge: 'Dual Light',
+    desc: 'Iluminación híbrida IR + Luz blanca cálida',
+    matches: (b) => /Dual\s*Light|DUAL_LIGHT/i.test(b)
+  },
+  {
+    id: 'PARLANTE_INCORPORADO',
+    label: 'Altavoz / Parlante',
+    canonicalBadge: 'Altavoz',
+    desc: 'Audio bidireccional y sirenas disuasorias',
+    matches: (b) => /Parlante|Altavoz|PARLANTE_INCORPORADO/i.test(b)
+  },
+  {
+    id: 'EARLY_WARNING',
+    label: 'Early Warning (EW)',
+    canonicalBadge: 'Early Warning',
+    desc: 'Disuasión activa con estrobo rojo/azul y sirena',
+    matches: (b) => /Early\s*Warning|EARLY_WARNING|\bEW\b/i.test(b)
+  },
+  {
+    id: 'PANORAMICA_180',
+    label: '180° Panorámica',
+    canonicalBadge: '180° Panorámica',
+    desc: 'Lente o sensor dual ultra gran angular 180°',
+    matches: (b) => /180°?|Panor[aá]mi/i.test(b)
+  },
+  {
+    id: 'FACE_RECOGNITION',
+    label: 'Face Recognition',
+    canonicalBadge: 'Face Recognition',
+    desc: 'Captura y reconocimiento facial asistido por IA',
+    matches: (b) => /Face|Facial/i.test(b)
+  },
+  {
+    id: 'WIFI',
+    label: 'Wi-Fi',
+    canonicalBadge: 'Wi-Fi',
+    desc: 'Conectividad inalámbrica Wi-Fi integrada',
+    matches: (b) => /Wi-?Fi/i.test(b)
+  },
+  {
+    id: 'SOLAR_4G',
+    label: '4G Solar',
+    canonicalBadge: '4G Solar',
+    desc: 'Alimentación solar y enlace 4G LTE autónomo',
+    matches: (b) => /4G|Solar/i.test(b)
+  }
 ];
 
 export const ProductEditForm: React.FC<ProductEditFormProps> = ({
@@ -196,6 +264,7 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
     Lens: true
   });
   const [newCategoryName, setNewCategoryName] = useState<string>('');
+  const [customBadgeInput, setCustomBadgeInput] = useState<string>('');
 
   const toggleCategory = (cat: string) => {
     setExpandedCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
@@ -392,18 +461,23 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
       if (Array.isArray(rawSellos) && rawSellos.length > 0) {
         sellosList = DEFAULT_SELLOS_GRAFICOS.map((def) => {
           const found = rawSellos.find((s: any) => s.id === def.id);
-          return found ? { ...def, ...found } : def;
+          const resolvedImg = (found?.imagen_url && found.imagen_url.trim() !== '') ? found.imagen_url : (def.imagen_url || DEFAULT_BADGE_SVGS[def.id] || '');
+          return found ? { ...def, ...found, imagen_url: resolvedImg } : def;
         });
       } else {
+        const bDet = initialData.badges_detectados || [];
+        const cAna = (initialData.datos_tecnicos as any)?.camara?.analiticas_ia;
+        const vSmd = cAna?.version_smd || '';
+        const vFunc = cAna?.vca_funciones;
         sellosList = DEFAULT_SELLOS_GRAFICOS.map((def) => {
           let activo = false;
           if (def.id === 'NUEVO_MODELO' && initialData.badge_nuevo) activo = true;
-          if (def.id === 'COLORMAKER' && (initialData.badges_detectados || []).some((b: string) => b.toUpperCase().includes('COLORMAKER'))) activo = true;
-          if (def.id === 'POLAR_DAY' && (initialData.badges_detectados || []).some((b: string) => b.toUpperCase().includes('POLAR'))) activo = true;
-          if (def.id === 'SMD_1' && (initialData.badges_detectados || []).some((b: string) => /SMD\s*1/i.test(b))) activo = true;
-          if (def.id === 'SMD_2' && (initialData.badges_detectados || []).some((b: string) => /SMD\s*2/i.test(b))) activo = true;
-          if (def.id === 'SMD_3' && (initialData.badges_detectados || []).some((b: string) => /SMD\s*3/i.test(b))) activo = true;
-          if (def.id === 'VCA' && (initialData.badges_detectados || []).some((b: string) => /VCA/i.test(b))) activo = true;
+          if (def.id === 'COLORMAKER' && bDet.some((b: string) => b.toUpperCase().includes('COLORMAKER'))) activo = true;
+          if (def.id === 'POLAR_DAY' && bDet.some((b: string) => b.toUpperCase().includes('POLAR'))) activo = true;
+          if (def.id === 'SMD_1' && (bDet.some((b: string) => /SMD\s*1/i.test(b)) || /1(\.0)?/i.test(vSmd))) activo = true;
+          if (def.id === 'SMD_2' && (bDet.some((b: string) => /SMD\s*2/i.test(b)) || /2(\.0)?/i.test(vSmd))) activo = true;
+          if (def.id === 'SMD_3' && (bDet.some((b: string) => /SMD\s*3/i.test(b)) || /3(\.0)?/i.test(vSmd))) activo = true;
+          if (def.id === 'VCA' && (bDet.some((b: string) => /VCA/i.test(b)) || (Array.isArray(vFunc) ? vFunc.length > 0 : Boolean(vFunc)))) activo = true;
           return { ...def, activo };
         });
       }
@@ -506,7 +580,7 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
         id: gb.id,
         nombre: gb.nombre,
         activo: false,
-        imagen_url: gb.imagen_url,
+        imagen_url: (gb.imagen_url && gb.imagen_url.trim() !== '') ? gb.imagen_url : (DEFAULT_BADGE_SVGS[gb.id] || ''),
         posicion: gb.posicion,
         capa: gb.capa,
         tamano: gb.tamano,
@@ -524,7 +598,10 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
     if (Array.isArray(raw) && raw.length > 0) {
       return baseSellos.map((def) => {
         const found = raw.find((s: any) => s.id === def.id);
-        return found ? { ...def, activo: Boolean(found.activo) } : def;
+        const resolvedImg = (found?.imagen_url && found.imagen_url.trim() !== '') 
+          ? found.imagen_url 
+          : (def.imagen_url || DEFAULT_BADGE_SVGS[def.id] || '');
+        return found ? { ...def, activo: Boolean(found.activo), imagen_url: resolvedImg } : def;
       });
     }
     return baseSellos;
@@ -532,14 +609,34 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
 
   const handleUpdateSellos = (newSellos: SelloGraficoConfig[]) => {
     const isNuevoActivo = Boolean(newSellos.find((s) => s.id === 'NUEVO_MODELO')?.activo);
-    setFormData((prev) => ({
-      ...prev,
-      badge_nuevo: isNuevoActivo,
-      datos_tecnicos: {
-        ...prev.datos_tecnicos,
-        sellos_graficos: newSellos
-      }
-    }));
+    const isColorMakerActivo = Boolean(newSellos.find((s) => s.id === 'COLORMAKER')?.activo);
+    const isPolarDayActivo = Boolean(newSellos.find((s) => s.id === 'POLAR_DAY')?.activo);
+    const isSmd1Activo = Boolean(newSellos.find((s) => s.id === 'SMD_1')?.activo);
+    const isSmd2Activo = Boolean(newSellos.find((s) => s.id === 'SMD_2')?.activo);
+    const isSmd3Activo = Boolean(newSellos.find((s) => s.id === 'SMD_3')?.activo);
+    const isVcaActivo = Boolean(newSellos.find((s) => s.id === 'VCA')?.activo);
+
+    setFormData((prev) => {
+      let badges = [...(prev.badges_detectados || [])].filter(
+        (b) => !['COLORMAKER', 'ColorMaker', 'POLAR_DAY', 'Polar Day', 'SMD 1.0', 'SMD_1', 'SMD 2.0', 'SMD_2', 'SMD 3.0', 'SMD_3', 'VCA'].some(x => b.toUpperCase().includes(x.toUpperCase()))
+      );
+      if (isColorMakerActivo) badges.push('COLORMAKER');
+      if (isPolarDayActivo) badges.push('POLAR_DAY');
+      if (isSmd1Activo) badges.push('SMD 1.0');
+      if (isSmd2Activo) badges.push('SMD 2.0');
+      if (isSmd3Activo) badges.push('SMD 3.0');
+      if (isVcaActivo) badges.push('VCA');
+
+      return {
+        ...prev,
+        badge_nuevo: isNuevoActivo,
+        badges_detectados: badges,
+        datos_tecnicos: {
+          ...prev.datos_tecnicos,
+          sellos_graficos: newSellos
+        }
+      };
+    });
   };
 
   const handleToggleSello = (id: string) => {
@@ -551,6 +648,74 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
     });
     handleUpdateSellos(updated);
   };
+
+  const isTechBadgeActive = (badgeDef: TechBadgeDef): boolean => {
+    return (formData.badges_detectados || []).some(
+      (b) => badgeDef.matches(b) || b.toUpperCase() === badgeDef.id || b.toUpperCase() === badgeDef.canonicalBadge.toUpperCase()
+    );
+  };
+
+  const handleToggleTechBadge = (badgeDef: TechBadgeDef) => {
+    setFormData((prev) => {
+      const current = prev.badges_detectados || [];
+      const isActive = isTechBadgeActive(badgeDef);
+      let updated: string[];
+      if (isActive) {
+        updated = current.filter(
+          (b) => !badgeDef.matches(b) && b.toUpperCase() !== badgeDef.id && b.toUpperCase() !== badgeDef.canonicalBadge.toUpperCase()
+        );
+      } else {
+        updated = [...current, badgeDef.canonicalBadge];
+      }
+      return { ...prev, badges_detectados: updated };
+    });
+  };
+
+  const handleRemoveBadge = (badgeToRemove: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      badges_detectados: (prev.badges_detectados || []).filter((b) => b !== badgeToRemove)
+    }));
+  };
+
+  const handleAddCustomBadge = () => {
+    const trimmed = customBadgeInput.trim();
+    if (!trimmed) return;
+    setFormData((prev) => {
+      const current = prev.badges_detectados || [];
+      if (current.some((b) => b.toUpperCase() === trimmed.toUpperCase())) return prev;
+      return { ...prev, badges_detectados: [...current, trimmed] };
+    });
+    setCustomBadgeInput('');
+  };
+
+  const handleClearAllTextBadges = () => {
+    if (window.confirm('¿Deseas desactivar y remover todas las etiquetas de texto de este producto?')) {
+      setFormData((prev) => ({
+        ...prev,
+        badges_detectados: []
+      }));
+    }
+  };
+
+  // Otras etiquetas detectadas del PDF o personalizadas que no son sellos ni distintivos tecnológicos estándar
+  const otherDetectedBadges = useMemo(() => {
+    const sellosKeywords = ['COLORMAKER', 'POLAR_DAY', 'POLAR DAY', 'NUEVO_MODELO', 'NUEVO MODELO', 'SMD 1.0', 'SMD 2.0', 'SMD 3.0', 'SMD', 'VCA'];
+    return (formData.badges_detectados || []).filter((b) => {
+      const upper = b.toUpperCase().trim();
+      const inTech = AVAILABLE_TECH_BADGES.some((tb) => tb.matches(b) || tb.id === upper || tb.canonicalBadge.toUpperCase() === upper);
+      if (inTech) return false;
+      const inSellos = sellosKeywords.some((s) => upper.includes(s));
+      if (inSellos) return false;
+      return true;
+    });
+  }, [formData.badges_detectados]);
+
+  const hasTopRightSello = useMemo(() => {
+    return currentSellos.some(
+      (s) => s.activo && s.posicion === 'top-right' && Boolean(s.imagen_url || DEFAULT_BADGE_SVGS[s.id])
+    );
+  }, [currentSellos]);
 
   // Procesar archivo de imagen con compresión WebP, preview instantáneo y subida
   const processImageFile = async (file: File) => {
@@ -631,6 +796,23 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
       if (res.ok && result.success && result.data) {
         const extracted: Producto = result.data;
 
+        const extractedBadges = extracted.badges_detectados || [];
+        const extractedCam = (extracted.datos_tecnicos as any)?.camara?.analiticas_ia;
+        const extVersionSmd = extractedCam?.version_smd || '';
+        const extVca = extractedCam?.vca_funciones;
+
+        // Si el PDF detectó tecnologías, reflejar la activación en sellos_graficos para que los chips se marquen automáticamente
+        const updatedSellos = currentSellos.map(s => {
+          let activo = s.activo;
+          if (s.id === 'COLORMAKER' && extractedBadges.some(b => b.toUpperCase().includes('COLORMAKER'))) activo = true;
+          if (s.id === 'POLAR_DAY' && extractedBadges.some(b => b.toUpperCase().includes('POLAR'))) activo = true;
+          if (s.id === 'SMD_1' && (extractedBadges.some(b => /SMD\s*1/i.test(b)) || /1(\.0)?/i.test(extVersionSmd))) activo = true;
+          if (s.id === 'SMD_2' && (extractedBadges.some(b => /SMD\s*2/i.test(b)) || /2(\.0)?/i.test(extVersionSmd))) activo = true;
+          if (s.id === 'SMD_3' && (extractedBadges.some(b => /SMD\s*3/i.test(b)) || /3(\.0)?/i.test(extVersionSmd))) activo = true;
+          if (s.id === 'VCA' && (extractedBadges.some(b => /VCA/i.test(b)) || (Array.isArray(extVca) ? extVca.length > 0 : Boolean(extVca)))) activo = true;
+          return { ...s, activo };
+        });
+
         setFormData((prev) => ({
           ...prev,
           modelo: extracted.modelo || prev.modelo,
@@ -641,10 +823,11 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
           codigo_1: extracted.codigo_1 || prev.codigo_1,
           codigo_2: extracted.codigo_2 || prev.codigo_2,
           datasheet_pdf: extracted.datasheet_pdf || prev.datasheet_pdf,
-          badges_detectados: Array.from(new Set([...(prev.badges_detectados || []), ...(extracted.badges_detectados || [])])),
+          badges_detectados: Array.from(new Set([...(prev.badges_detectados || []), ...extractedBadges])),
           datos_tecnicos: {
             ...prev.datos_tecnicos,
-            ...(extracted.datos_tecnicos || {})
+            ...(extracted.datos_tecnicos || {}),
+            sellos_graficos: updatedSellos
           }
         }));
 
@@ -941,7 +1124,7 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
           }`}
         >
           <Tag className="h-4 w-4" />
-          3. Etiquetas del Producto ({formData.badges_detectados?.length || 0})
+          3. Etiquetas y Sellos ({(formData.badges_detectados?.length || 0) + currentSellos.filter(s => s.activo).length})
         </button>
 
         <button
@@ -1874,7 +2057,7 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                   </div>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2.5">
                   <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700 dark:text-slate-200">
                     <input
                       type="checkbox"
@@ -1883,6 +2066,16 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                       className="rounded text-tiandy-700 focus:ring-tiandy-600 h-4 w-4"
                     />
                     <span>Soporta Modo Extendido (250m a 10Mbps)</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700 dark:text-slate-200">
+                    <input
+                      type="checkbox"
+                      checked={switchSpecs.poe_watchdog !== false}
+                      onChange={(e) => handleTechnicalChange('switch', 'poe_watchdog', e.target.checked)}
+                      className="rounded text-tiandy-700 focus:ring-tiandy-600 h-4 w-4"
+                    />
+                    <span>Soporta Función PoE Watchdog Automático</span>
                   </label>
                 </div>
               </div>
@@ -1902,7 +2095,7 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                     Gestión Centralizada y Uniforme de Etiquetas
                   </span>
                   <p className="text-slate-500 dark:text-slate-400 mt-0.5">
-                    Activa o desactiva las etiquetas y sellos para este producto. La ubicación, anclaje, tamaño y sellos se configuran de forma única y uniforme en el menú <strong>Gestor de Etiquetas</strong>.
+                    Activa o desactiva las etiquetas, sellos gráficos y distintivos tecnológicos para este producto. Todos los textos y distintivos automáticos del PDF pueden marcarse o desmarcarse individualmente aquí.
                   </p>
                 </div>
               </div>
@@ -1910,14 +2103,14 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
               {/* Columna Izquierda: Activación de Sellos y Distintivos (7 cols) */}
-              <div className="lg:col-span-7 space-y-5">
+              <div className="lg:col-span-7 space-y-6">
                 
                 {/* 1. SELLOS GRÁFICOS SOBRE LA IMAGEN */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
                       <Tag className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                      Sellos Gráficos sobre Imagen (Activar / Desactivar)
+                      1. Sellos Gráficos sobre Imagen (Activar / Desactivar)
                     </h4>
                     <span className="text-[10px] text-slate-400">
                       Ubicación y tamaño uniformes
@@ -1981,18 +2174,23 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
 
                 {/* 2. DISTINTIVOS TECNOLÓGICOS FUNCIONALES */}
                 <div className="space-y-3 pt-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                    <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                    Distintivos Tecnológicos Funcionales
-                  </h4>
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                      <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                      2. Distintivos Tecnológicos Funcionales (Pastillas sobre Imagen)
+                    </h4>
+                    <span className="text-[10px] text-slate-400">
+                      Activa o desmarca para mostrar u ocultar
+                    </span>
+                  </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                     {AVAILABLE_TECH_BADGES.map((b) => {
-                      const isActive = (formData.badges_detectados || []).includes(b.id);
+                      const isActive = isTechBadgeActive(b);
                       return (
                         <div
                           key={b.id}
-                          onClick={() => handleToggleBadge(b.id)}
+                          onClick={() => handleToggleTechBadge(b)}
                           className={`cursor-pointer rounded-2xl p-3 border transition-all flex flex-col justify-between ${
                             isActive
                               ? 'border-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/30 dark:border-emerald-700 text-slate-900 dark:text-white shadow-sm'
@@ -2016,6 +2214,86 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                   </div>
                 </div>
 
+                {/* 3. OTRAS ETIQUETAS DETECTADAS DEL PDF / PERSONALIZADAS */}
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                      <Layers className="h-4 w-4 text-emerald-600" />
+                      3. Otras Etiquetas Detectadas y Personalizadas
+                    </h4>
+                    {(formData.badges_detectados && formData.badges_detectados.length > 0) && (
+                      <button
+                        type="button"
+                        onClick={handleClearAllTextBadges}
+                        className="text-[10px] font-bold text-rose-600 hover:text-rose-700 dark:text-rose-400 hover:underline flex items-center gap-1"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        Limpiar todas las etiquetas
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-3.5 space-y-3">
+                    {otherDetectedBadges.length === 0 ? (
+                      <p className="text-[11px] text-slate-400 italic">
+                        No hay etiquetas adicionales de texto detectadas para este producto.
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">
+                          Etiquetas activas adicionales (haz clic en × para quitar):
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          {otherDetectedBadges.map((badge) => (
+                            <span
+                              key={badge}
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 shadow-2xs"
+                            >
+                              <span>{badge}</span>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveBadge(badge);
+                                }}
+                                className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-0.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                title={`Quitar etiqueta "${badge}"`}
+                              >
+                                <X className="h-3.5 w-3.5" />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Agregar nueva etiqueta personalizada */}
+                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={customBadgeInput}
+                        onChange={(e) => setCustomBadgeInput(e.target.value)}
+                        placeholder="Nueva etiqueta personalizada (ej. Hi-PoE, Full-Color...)"
+                        className="flex-1 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddCustomBadge();
+                          }
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddCustomBadge}
+                        className="rounded-xl bg-tiandy-700 text-white hover:bg-tiandy-600 px-3 py-1.5 text-xs font-bold flex items-center gap-1 transition-all shadow-xs cursor-pointer"
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                        <span>Agregar</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
               {/* Columna Derecha: Previsualización en Vivo de la Tarjeta con Sellos (5 cols) */}
@@ -2032,9 +2310,12 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                   </div>
 
                   {/* Cuadro simulador idéntico a ProductCard */}
-                  <div className="relative aspect-[16/10] bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700/80 flex items-center justify-center p-4 overflow-hidden shadow-inner">
+                  <div className="relative aspect-[16/10] bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700/80 flex items-center justify-center p-4 overflow-hidden shadow-inner select-none">
                     {/* Sellos detrás */}
                     <SellosGraficosOverlay sellos={currentSellos} capaFiltro="back" tamano="normal" />
+
+                    {/* Badges de texto funcionales superpuestos */}
+                    <BadgeOverlay badges={formData.badges_detectados} activeSellos={currentSellos} hasTopRightSello={hasTopRightSello} />
 
                     {/* Imagen principal */}
                     {localImagePreview || formData.imagen_principal ? (
@@ -2059,23 +2340,44 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                     </span>
                   </div>
 
-                  {/* Resumen de sellos activos */}
-                  <div className="text-[11px] text-slate-500 dark:text-slate-400 space-y-1 pt-1">
-                    <div className="font-semibold text-slate-700 dark:text-slate-300">
-                      Sellos aplicados en este producto:
-                    </div>
-                    {currentSellos.filter(s => s.activo).length === 0 ? (
-                      <div className="text-[10px] italic text-slate-400">Ningún sello gráfico activo</div>
-                    ) : (
-                      currentSellos.filter(s => s.activo).map(s => (
-                        <div key={s.id} className="text-[10px] flex items-center justify-between font-mono bg-white dark:bg-slate-900/60 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-800">
-                          <span className="font-bold text-slate-800 dark:text-slate-200">• {s.nombre}</span>
-                          <span className="text-slate-400">
-                            {s.posicion} ({s.capa === 'front' ? 'delante' : 'fondo'})
-                          </span>
+                  {/* Resumen de elementos aplicados */}
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 space-y-2 pt-1">
+                    <div>
+                      <div className="font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                        Sellos gráficos activos:
+                      </div>
+                      {currentSellos.filter(s => s.activo).length === 0 ? (
+                        <div className="text-[10px] italic text-slate-400">Ningún sello gráfico activo</div>
+                      ) : (
+                        <div className="space-y-1">
+                          {currentSellos.filter(s => s.activo).map(s => (
+                            <div key={s.id} className="text-[10px] flex items-center justify-between font-mono bg-white dark:bg-slate-900/60 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-800">
+                              <span className="font-bold text-slate-800 dark:text-slate-200">• {s.nombre}</span>
+                              <span className="text-slate-400">
+                                {s.posicion} ({s.capa === 'front' ? 'delante' : 'fondo'})
+                              </span>
+                            </div>
+                          ))}
                         </div>
-                      ))
-                    )}
+                      )}
+                    </div>
+
+                    <div>
+                      <div className="font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                        Etiquetas de texto activas sobre imagen:
+                      </div>
+                      {(!formData.badges_detectados || formData.badges_detectados.length === 0) ? (
+                        <div className="text-[10px] italic text-slate-400">Ninguna etiqueta de texto activa</div>
+                      ) : (
+                        <div className="flex flex-wrap gap-1">
+                          {formData.badges_detectados.map(b => (
+                            <span key={b} className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-slate-800 text-white border border-white/20">
+                              {b}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

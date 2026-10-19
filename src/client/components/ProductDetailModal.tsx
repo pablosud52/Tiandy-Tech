@@ -153,7 +153,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             {/* Foto del Producto con Sellos Gráficos y Badges Funcionales */}
             <div className="w-56 h-56 sm:w-64 sm:h-64 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 p-3 sm:p-4 flex items-center justify-center shrink-0 shadow-sm relative group overflow-hidden">
               <SellosGraficosOverlay sellos={sellosGraficos} capaFiltro="back" tamano="large" />
-              <BadgeOverlay badges={producto.badges_detectados} hasTopRightSello={hasTopRightSello} />
+              <BadgeOverlay badges={producto.badges_detectados} activeSellos={sellosGraficos} hasTopRightSello={hasTopRightSello} />
               {producto.imagen_principal && !modalImgError ? (
                 <img
                   src={producto.imagen_principal}
@@ -475,14 +475,25 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     <span className="font-semibold text-slate-500 dark:text-slate-400">Estándar PoE:</span>
                     <span className="sm:col-span-2 font-medium text-slate-900 dark:text-white">{cp.estandar_poe || 'IEEE802.3af (15.4W) / IEEE802.3at (30W)'}</span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 p-3 sm:px-5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
-                    <span className="font-semibold text-slate-500 dark:text-slate-400">Modo CCTV Extend 250m:</span>
-                    <span className="sm:col-span-2 font-medium text-slate-900 dark:text-white">{cp.modo_extend || 'Soporta hasta 250m con PoE Watchdog'}</span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 p-3 sm:px-5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
-                    <span className="font-semibold text-slate-500 dark:text-slate-400">PoE Watchdog:</span>
-                    <span className="sm:col-span-2 font-medium text-slate-900 dark:text-white">{cp.poe_watchdog || 'Sí (Watchdog automático)'}</span>
-                  </div>
+                  {(() => {
+                    const sw: any = dt.switch || {};
+                    const hasWatchdog = sw.poe_watchdog !== false && (
+                      Boolean(sw.poe_watchdog) || 
+                      (producto.badges_detectados || []).some((b: string) => /watchdog/i.test(b))
+                    );
+                    return (
+                      <>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 p-3 sm:px-5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                          <span className="font-semibold text-slate-500 dark:text-slate-400">Modo CCTV Extend 250m:</span>
+                          <span className="sm:col-span-2 font-medium text-slate-900 dark:text-white">{cp.modo_extend || (hasWatchdog ? 'Soporta hasta 250m con PoE Watchdog' : 'Soporta hasta 250m')}</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 p-3 sm:px-5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                          <span className="font-semibold text-slate-500 dark:text-slate-400">PoE Watchdog:</span>
+                          <span className="sm:col-span-2 font-medium text-slate-900 dark:text-white">{hasWatchdog ? (cp.poe_watchdog || 'Sí (Watchdog automático)') : 'No disponible'}</span>
+                        </div>
+                      </>
+                    );
+                  })()}
                   <div className="grid grid-cols-1 sm:grid-cols-3 p-3 sm:px-5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
                     <span className="font-semibold text-slate-500 dark:text-slate-400">Alimentación:</span>
                     <span className="sm:col-span-2 font-medium text-slate-900 dark:text-white">{cp.alimentacion || specs.alimentacion || 'AC 100-240V'}</span>

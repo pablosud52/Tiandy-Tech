@@ -25,8 +25,10 @@ import {
   Sliders,
   Sun,
   Moon,
-  Settings
+  Settings,
+  CloudUpload
 } from 'lucide-react';
+import { PublishModal } from './components/PublishModal.js';
 
 interface AdminPageProps {
   onBackToCatalog: () => void;
@@ -35,6 +37,7 @@ interface AdminPageProps {
   onRefreshCatalog?: () => void;
   darkMode?: boolean;
   setDarkMode?: (dm: boolean) => void;
+  adminToken?: string | null;
 }
 
 export type AdminModuleType = 'dashboard' | 'catalog' | 'batch' | 'extractor' | 'badges' | 'sections' | 'users';
@@ -45,12 +48,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   onLogout,
   onRefreshCatalog,
   darkMode,
-  setDarkMode
+  setDarkMode,
+  adminToken
 }) => {
   const [activeModule, setActiveModule] = useState<AdminModuleType>('dashboard');
   const [productos, setProductos] = useState<Producto[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState<boolean>(false);
 
   // Cargar productos completos (incluyendo ocultos) con anti-caché
   const loadProductos = async () => {
@@ -183,6 +188,16 @@ export const AdminPage: React.FC<AdminPageProps> = ({
             >
               <LogOut className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Salir</span>
+            </button>
+
+            {/* Botón PUBLICAR en Cloudflare Pages */}
+            <button
+              onClick={() => setIsPublishModalOpen(true)}
+              className="flex items-center gap-1.5 rounded-xl bg-tiandy-700 hover:bg-tiandy-600 text-white px-3 sm:px-3.5 py-1.5 text-xs font-bold transition-all shadow-xs"
+              title="Publicar catálogo web en Cloudflare Pages"
+            >
+              <CloudUpload className="h-3.5 w-3.5" />
+              <span>PUBLICAR</span>
             </button>
 
             {/* Volver a la Web (Posición gemela de Panel NAS en naranja) */}
@@ -333,6 +348,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({
           </main>
         </div>
       </div>
+
+      {/* Modal de Publicación en Cloudflare Pages */}
+      <PublishModal
+        isOpen={isPublishModalOpen}
+        onClose={() => setIsPublishModalOpen(false)}
+        adminToken={adminToken || (typeof window !== 'undefined' ? sessionStorage.getItem('tiandy_admin_token') : null)}
+        totalProducts={productos.filter(p => p.visible !== false).length || productos.length}
+      />
     </div>
   );
 };

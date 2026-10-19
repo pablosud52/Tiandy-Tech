@@ -202,6 +202,8 @@ export interface SeccionesWebConfig {
   SWITCH: boolean;
   ACCESORIO: boolean;
   WIKI: boolean;
+  COMPARADOR: boolean;
+  COTIZADOR: boolean;
   HERRAMIENTAS: boolean;
   HERRAMIENTAS_UPS: boolean;
   HERRAMIENTAS_ALMACENAMIENTO: boolean;

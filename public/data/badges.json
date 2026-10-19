@@ -1,0 +1,118 @@
+{
+  "success": true,
+  "badges": [
+    {
+      "id": "NUEVO_MODELO",
+      "nombre": "Nuevo Modelo",
+      "descripcion": "Sello festoneado rojo para destacar lanzamientos y novedades",
+      "imagen_url": "/data/images/Nuevo_Modelo_v3-1792196579497-88598.png",
+      "posicion": "top-left",
+      "capa": "front",
+      "tamano": 125,
+      "activo_global": true,
+      "es_sello_grafico": true,
+      "opacidad": 0.7
+    },
+    {
+      "id": "COLORMAKER",
+      "nombre": "Color Maker",
+      "descripcion": "Tecnología Tiandy para captura a todo color 24/7 con apertura F1.0 / F1.6",
+      "imagen_url": "/data/images/color_maker_v3-1792190122422-613031.png",
+      "posicion": "bottom-right",
+      "capa": "front",
+      "tamano": 170,
+      "activo_global": true,
+      "es_sello_grafico": true,
+      "opacidad": 0.85
+    },
+    {
+      "id": "POLAR_DAY",
+      "nombre": "Polar day",
+      "descripcion": "Sensibilidad extrema para visión nocturna ultra clara a color sin reflectores",
+      "imagen_url": "/data/images/Polar_day_v3-1792190135325-112865.png",
+      "posicion": "bottom-right",
+      "capa": "front",
+      "tamano": 170,
+      "activo_global": true,
+      "es_sello_grafico": true,
+      "opacidad": 0.85
+    },
+    {
+      "id": "SMD_1",
+      "nombre": "SMD 1.0",
+      "descripcion": "Smart Motion Detection v1.0 para filtrado de falsas alarmas de movimiento básico",
+      "imagen_url": "/data/badges/smd-1.svg",
+      "posicion": "top-right",
+      "capa": "front",
+      "tamano": 100,
+      "activo_global": true,
+      "es_sello_grafico": true
+    },
+    {
+      "id": "SMD_2",
+      "nombre": "SMD 2.0",
+      "descripcion": "Smart Motion Detection v2.0 con clasificación precisa de humanos y vehículos",
+      "imagen_url": "/data/badges/smd-2.svg",
+      "posicion": "top-right",
+      "capa": "front",
+      "tamano": 100,
+      "activo_global": true,
+      "es_sello_grafico": true
+    },
+    {
+      "id": "SMD_3",
+      "nombre": "SMD 3.0",
+      "descripcion": "Smart Motion Detection v3.0 Deep Learning Pro con máxima precisión y largo alcance",
+      "imagen_url": "/data/badges/smd-3.svg",
+      "posicion": "top-right",
+      "capa": "front",
+      "tamano": 100,
+      "activo_global": true,
+      "es_sello_grafico": true
+    },
+    {
+      "id": "VCA",
+      "nombre": "VCA",
+      "descripcion": "Video Content Analytics (Tripwire, Perímetro, Objeto Abandonado, etc.)",
+      "imagen_url": "/data/badges/vca.svg",
+      "posicion": "top-right",
+      "capa": "front",
+      "tamano": 100,
+      "activo_global": true,
+      "es_sello_grafico": true
+    },
+    {
+      "id": "DUAL_LIGHT",
+      "nombre": "Dual Light",
+      "descripcion": "Iluminación híbrida inteligente IR + Luz blanca cálida",
+      "imagen_url": "",
+      "posicion": "top-right",
+      "capa": "front",
+      "tamano": 100,
+      "activo_global": true,
+      "es_sello_grafico": false
+    },
+    {
+      "id": "PARLANTE_INCORPORADO",
+      "nombre": "Parlante incorporado",
+      "descripcion": "Altavoz de alta potencia integrado para audio bidireccional y mensajes",
+      "imagen_url": "",
+      "posicion": "top-right",
+      "capa": "front",
+      "tamano": 100,
+      "activo_global": true,
+      "es_sello_grafico": false
+    },
+    {
+      "id": "EARLY_WARNING",
+      "nombre": "Early Warning (EW)",
+      "descripcion": "Disuasión activa con estroboscópico rojo/azul y sirena ante intrusión",
+      "imagen_url": "",
+      "posicion": "top-right",
+      "capa": "front",
+      "tamano": 100,
+      "activo_global": true,
+      "es_sello_grafico": false
+    }
+  ]
+}
