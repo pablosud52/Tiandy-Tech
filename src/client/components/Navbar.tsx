@@ -270,11 +270,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* 4. Acciones y Utilidades Técnicas */}
-          {/* Botón Wiki Técnica (Separado e independiente) */}
+          {/* Botón Wiki Técnica (Separado e independiente en escritorio; en móvil se accede desde la cinta desplazable) */}
           {seccionesVisibles?.WIKI !== false && (
             <button
               onClick={() => setActiveView('wiki')}
-              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 ${
+              className={`hidden md:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 ${
                 activeView === 'wiki'
                   ? 'bg-tiandy-600 text-white shadow-xs font-bold'
                   : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -286,8 +286,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
-          {/* 5. Herramientas Dropdown Automático (estilo en.tiandy.com) */}
-          {seccionesVisibles?.HERRAMIENTAS !== false && (
+          {/* 5. Herramientas Dropdown Automático (Visible en versión de escritorio cuando alguna herramienta esté habilitada) */}
+          {(
             (seccionesVisibles?.COMPARADOR !== false) ||
             (seccionesVisibles?.COTIZADOR !== false) ||
             (seccionesVisibles?.HERRAMIENTAS_UPS !== false) ||
@@ -295,7 +295,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           ) && (
             <div
               ref={toolsMenuRef}
-              className="relative shrink-0"
+              className="relative shrink-0 hidden md:block"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >

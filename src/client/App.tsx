@@ -125,8 +125,8 @@ export default function App() {
       setActiveView('catalog');
     } else if (
       activeView === 'herramientas' &&
-      (seccionesVisibles?.HERRAMIENTAS === false ||
-        (seccionesVisibles?.HERRAMIENTAS_UPS === false && seccionesVisibles?.HERRAMIENTAS_ALMACENAMIENTO === false))
+      seccionesVisibles?.HERRAMIENTAS_UPS === false &&
+      seccionesVisibles?.HERRAMIENTAS_ALMACENAMIENTO === false
     ) {
       setActiveView('catalog');
     }
