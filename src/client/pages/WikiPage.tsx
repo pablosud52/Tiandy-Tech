@@ -1,21 +1,10 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   BookOpen,
-  Calculator,
-  Sun,
-  Eye,
-  ShieldAlert,
-  HardDrive,
-  Zap,
-  Cpu,
-  ShieldCheck,
-  Check,
   Layers,
   Search,
   ChevronRight,
-  Hash,
-  ArrowUp,
-  Info
+  ArrowUp
 } from 'lucide-react';
 
 interface WikiTopic {
@@ -28,15 +17,21 @@ interface WikiTopic {
 const WIKI_TOPICS: WikiTopic[] = [
   {
     id: 'dori',
-    title: 'Calculadora y Estándar DORI (EN 62676-4)',
-    shortDesc: 'Cálculo de alcances ópticos normativos para detección, reconocimiento e identificación.',
-    badge: 'Norma EN 62676-4'
+    title: 'DORI',
+    shortDesc: 'Detección, Observación, Reconocimiento e Identificación (IEC EN62676-4)',
+    badge: ''
+  },
+  {
+    id: 'smd',
+    title: 'SMD',
+    shortDesc: 'Smart Motion Detection: Clasificación de humanos, vehículos y versiones 1.0 a 3.0.',
+    badge: ''
   },
   {
     id: 'colormaker',
-    title: 'Tecnología ColorMaker (Visión a Color 24/7)',
-    shortDesc: 'Apertura F1.0, sensores BSI de alta sensibilidad y luz cálida de apoyo.',
-    badge: 'Hardware Óptico'
+    title: 'Color Maker',
+    shortDesc: 'Grabación a color real las 24 horas sin pasar nunca a blanco y negro.',
+    badge: ''
   },
   {
     id: 'polar-day',
@@ -63,9 +58,9 @@ const WIKI_TOPICS: WikiTopic[] = [
     badge: 'Infraestructura PoE'
   },
   {
-    id: 'ia-smd-vca',
-    title: 'Inteligencia Artificial: SMD y Analíticas VCA',
-    shortDesc: 'Filtrado de falsas alarmas de humanos y vehículos, Tripwire y protección perimetral.',
+    id: 'vca',
+    title: 'VCA - Analíticas de Video (Video Content Analytics)',
+    shortDesc: 'Reglas perimetrales avanzadas: Tripwire, intrusión, objeto abandonado y deambuleo.',
     badge: 'Deep Learning'
   },
   {
@@ -77,28 +72,19 @@ const WIKI_TOPICS: WikiTopic[] = [
 ];
 
 export const WikiPage: React.FC = () => {
-  // Calculadora DORI interactiva
-  const [resolucionMP, setResolucionMP] = useState<number>(2); // 2, 4, 5, 8 MP
-  const [focalMm, setFocalMm] = useState<number>(2.8); // 2.8, 4.0, 6.0, 12.0 mm
-
   // Filtro de búsqueda del índice
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeSectionId, setActiveSectionId] = useState<string>('dori');
-  const [copiedId, setCopiedId] = useState<string | null>(null);
-
-  // Estimación DORI basada en sensor 1/2.8"
-  const baseFactor = focalMm * Math.sqrt(resolucionMP / 2);
-  const doriDetectar = Math.round(baseFactor * 14.5);
-  const doriObservar = Math.round(doriDetectar * 0.40);
-  const doriReconocer = Math.round(doriDetectar * 0.20);
-  const doriIdentificar = Math.round(doriDetectar * 0.10);
 
   // Filtrado de temas en el índice
   const filteredTopics = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return WIKI_TOPICS;
     return WIKI_TOPICS.filter(
-      (t) => t.title.toLowerCase().includes(q) || t.shortDesc.toLowerCase().includes(q) || t.badge.toLowerCase().includes(q)
+      (t) =>
+        t.title.toLowerCase().includes(q) ||
+        t.shortDesc.toLowerCase().includes(q) ||
+        (t.badge && t.badge.toLowerCase().includes(q))
     );
   }, [searchQuery]);
 
@@ -137,13 +123,6 @@ export const WikiPage: React.FC = () => {
         behavior: 'smooth'
       });
     }
-  };
-
-  const handleCopyLink = (id: string) => {
-    const url = `${window.location.origin}${window.location.pathname}#${id}`;
-    navigator.clipboard?.writeText(url);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
   };
 
   return (
@@ -225,11 +204,13 @@ export const WikiPage: React.FC = () => {
                         <div className="truncate text-xs leading-snug">
                           {topic.title}
                         </div>
-                        <div className={`text-[10px] truncate mt-0.5 font-normal ${
-                          isActive ? 'text-slate-300 dark:text-slate-400' : 'text-slate-400'
-                        }`}>
-                          {topic.badge}
-                        </div>
+                        {topic.badge ? (
+                          <div className={`text-[10px] truncate mt-0.5 font-normal ${
+                            isActive ? 'text-slate-300 dark:text-slate-400' : 'text-slate-400'
+                          }`}>
+                            {topic.badge}
+                          </div>
+                        ) : null}
                       </div>
                       <ChevronRight className={`w-3.5 h-3.5 shrink-0 mt-0.5 transition-transform ${
                         isActive ? 'translate-x-0.5 text-white' : 'opacity-0 group-hover:opacity-100 text-slate-400'
@@ -259,229 +240,307 @@ export const WikiPage: React.FC = () => {
         {/* ========================================================= */}
         <main className="flex-1 min-w-0 w-full space-y-6">
 
-          {/* TEMA 1: CALCULADORA Y ESTÁNDAR DORI */}
+          {/* TEMA 1: DORI */}
           <section
             id="dori"
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
           >
             {/* Header del Tema */}
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                    Norma EN 62676-4
-                  </span>
-                  <span className="text-xs text-slate-400">• Sección 01</span>
-                </div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Calculator className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-                  Calculadora y Estándar DORI (EN 62676-4)
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleCopyLink('dori')}
-                className="text-xs font-mono text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center gap-1 shrink-0 self-start"
-                title="Copiar enlace a este tema"
-              >
-                <Hash className="w-3.5 h-3.5" />
-                <span>{copiedId === 'dori' ? 'Copiado' : '#dori'}</span>
-              </button>
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                DORI - Detección Observación Reconocimiento Identificación
+              </h2>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              El estándar europeo <strong>EN 62676-4</strong> define los niveles de densidad de píxeles necesarios según el objetivo de seguridad en escena: Detectar (25 px/m), Observar (63 px/m), Reconocer (125 px/m) e Identificar (250 px/m).
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Es un estándar internacional (basado en la norma <strong>IEC EN62676-4</strong>) que define las capacidades de distancia y nivel de detalle que puede ofrecer una cámara de videovigilancia CCTV según la densidad de píxeles por metro (<strong>PPM</strong>).
             </p>
 
-            {/* Selector de Parámetros de Cálculo */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-950/60 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-2">
-                  Resolución del Sensor (Megapíxeles)
-                </label>
-                <div className="grid grid-cols-4 gap-1.5">
-                  {[
-                    { val: 2, label: '2 MP' },
-                    { val: 4, label: '4 MP' },
-                    { val: 5, label: '5 MP' },
-                    { val: 8, label: '8 MP (4K)' }
-                  ].map((res) => (
-                    <button
-                      key={res.val}
-                      onClick={() => setResolucionMP(res.val)}
-                      className={`rounded-lg py-1.5 px-2 text-xs font-mono font-bold transition-all ${
-                        resolucionMP === res.val
-                          ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs'
-                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-slate-400'
-                      }`}
-                    >
-                      {res.label}
-                    </button>
-                  ))}
+            {/* Cuadrícula de Niveles DORI */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
+              {/* D - Detección */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg font-black text-sm bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs">
+                      D
+                    </span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                      25 PPM
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Detección <span className="font-normal text-slate-400 dark:text-slate-500">(Detection)</span>
+                  </h3>
+                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Permite saber con total certeza si hay una persona o un objeto en la escena, aunque no se distingan sus rasgos.
+                  </p>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-2">
-                  Distancia Focal del Lente
-                </label>
-                <div className="grid grid-cols-4 gap-1.5">
-                  {[
-                    { val: 2.8, label: '2.8 mm' },
-                    { val: 4.0, label: '4.0 mm' },
-                    { val: 6.0, label: '6.0 mm' },
-                    { val: 12.0, label: '12.0 mm' }
-                  ].map((len) => (
-                    <button
-                      key={len.val}
-                      onClick={() => setFocalMm(len.val)}
-                      className={`rounded-lg py-1.5 px-2 text-xs font-mono font-bold transition-all ${
-                        focalMm === len.val
-                          ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs'
-                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-slate-400'
-                      }`}
-                    >
-                      {len.label}
-                    </button>
-                  ))}
+              {/* O - Observación */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg font-black text-sm bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs">
+                      O
+                    </span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                      62 PPM
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Observación <span className="font-normal text-slate-400 dark:text-slate-500">(Observation)</span>
+                  </h3>
+                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Ofrece detalles generales, como el color de la ropa de una persona o el tipo de vehículo, y permite ver el entorno.
+                  </p>
+                </div>
+              </div>
+
+              {/* R - Reconocimiento */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg font-black text-sm bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs">
+                      R
+                    </span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                      125 PPM
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Reconocimiento <span className="font-normal text-slate-400 dark:text-slate-500">(Recognition)</span>
+                  </h3>
+                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Permite verificar si la persona que aparece en pantalla es alguien que ya conoces o has visto antes.
+                  </p>
+                </div>
+              </div>
+
+              {/* I - Identificación */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg font-black text-sm bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs">
+                      I
+                    </span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+                      250 PPM
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Identificación <span className="font-normal text-slate-400 dark:text-slate-500">(Identification)</span>
+                  </h3>
+                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Es el nivel de mayor detalle. Permite identificar a un desconocido de forma indiscutible (por ejemplo, para reconocimiento facial o leer una matrícula).
+                  </p>
                 </div>
               </div>
             </div>
 
-            {/* Resultados DORI con Tarjetas Sobrias */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-1">
-              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-3.5 space-y-1">
-                <div className="text-[10px] font-bold uppercase text-slate-500 font-mono">
-                  Detectar (25 px/m)
+            {/* Recuadro Resumen */}
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-4">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <strong>En resumen:</strong> Sirve para que los usuarios sepan exactamente a qué distancia una cámara es capaz de detectar, observar, reconocer o identificar un objetivo.
+              </p>
+            </div>
+          </section>
+
+          {/* TEMA 2: SMD (SMART MOTION DETECTION) */}
+          <section
+            id="smd"
+            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
+          >
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                SMD - Smart Motion Detection (Detección de Movimiento Inteligente)
+              </h2>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Tecnología de análisis neuronal mediante algoritmos de Deep Learning diseñada para clasificar objetivos en escena, priorizar eventos relevantes y filtrar drásticamente falsas alarmas provocadas por factores ambientales o animales.
+            </p>
+
+            {/* Evolución de Versiones SMD */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+              {/* SMD 1.0 */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      SMD 1.0
+                    </span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                      95% reducción
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Clasificación Esencial
+                  </h3>
+                  <ul className="mt-2 space-y-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 mt-1">•</span>
+                      <span>Clasificación básica: humanos y vehículos a motor.</span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 mt-1">•</span>
+                      <span><strong>95%</strong> de reducción de falsos positivos (falsas alarmas &lt; 5%).</span>
+                    </li>
+                  </ul>
                 </div>
-                <div className="font-mono text-2xl font-black text-slate-900 dark:text-white">
-                  {doriDetectar} m
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
-                  Determina presencia humana o vehicular en el encuadre.
-                </p>
               </div>
 
-              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-3.5 space-y-1">
-                <div className="text-[10px] font-bold uppercase text-slate-500 font-mono">
-                  Observar (63 px/m)
+              {/* SMD 2.0 */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      SMD 2.0
+                    </span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                      98% efectividad
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Precisión y Perímetro
+                  </h3>
+                  <ul className="mt-2 space-y-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 mt-1">•</span>
+                      <span>Mayor distancia focal y precisión mejorada en humanos y vehículos.</span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 mt-1">•</span>
+                      <span>Añade Cruce de línea y perímetro (Tripwire / Perimeter).</span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 mt-1">•</span>
+                      <span><strong>98%</strong> de efectividad (falsas alarmas &lt; 2%).</span>
+                    </li>
+                  </ul>
                 </div>
-                <div className="font-mono text-2xl font-black text-slate-900 dark:text-white">
-                  {doriObservar} m
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
-                  Permite distinguir color de vestimenta y sentido de movimiento.
-                </p>
               </div>
 
-              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-3.5 space-y-1">
-                <div className="text-[10px] font-bold uppercase text-slate-500 font-mono">
-                  Reconocer (125 px/m)
+              {/* SMD 3.0 */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      SMD 3.0
+                    </span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                      99% efectividad
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Multi-Objetivo y Fuego
+                  </h3>
+                  <ul className="mt-2 space-y-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 mt-1">•</span>
+                      <span>Suma vehículos no motorizados (bicicletas/motos) y mascotas (perros/gatos).</span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 mt-1">•</span>
+                      <span>Detección óptica temprana de fuego.</span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 mt-1">•</span>
+                      <span>Elimina casi la totalidad de disparos erróneos por animales.</span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-slate-400 mt-1">•</span>
+                      <span><strong>99%</strong> de efectividad (falsas alarmas &lt; 1%).</span>
+                    </li>
+                  </ul>
                 </div>
-                <div className="font-mono text-2xl font-black text-slate-900 dark:text-white">
-                  {doriReconocer} m
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
-                  Permite verificar con certeza si se trata de un conocido o empleado.
-                </p>
-              </div>
-
-              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-3.5 space-y-1">
-                <div className="text-[10px] font-bold uppercase text-slate-500 font-mono">
-                  Identificar (250 px/m)
-                </div>
-                <div className="font-mono text-2xl font-black text-slate-900 dark:text-white">
-                  {doriIdentificar} m
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
-                  Resolución forense facial apta para evidencia judicial y patentes.
-                </p>
               </div>
             </div>
           </section>
 
-          {/* TEMA 2: COLORMAKER */}
+          {/* TEMA 3: COLOR MAKER */}
           <section
             id="colormaker"
-            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
+            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
           >
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                    Hardware Óptico
-                  </span>
-                  <span className="text-xs text-slate-400">• Sección 02</span>
-                </div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Sun className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-                  Tecnología ColorMaker (Visión a Color 24/7)
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                  Color Maker
                 </h2>
+                <img
+                  src="/data/images/color_maker_v3-1792460706851-51818.png"
+                  alt="Logo Color Maker"
+                  className="h-6 sm:h-7 w-auto object-contain drop-shadow-2xs select-none"
+                  onError={(e) => {
+                    const img = e.currentTarget;
+                    img.onerror = null;
+                    img.src = '/data/badges/colormaker.png';
+                  }}
+                />
               </div>
-              <button
-                type="button"
-                onClick={() => handleCopyLink('colormaker')}
-                className="text-xs font-mono text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center gap-1 shrink-0 self-start"
-              >
-                <Hash className="w-3.5 h-3.5" />
-                <span>{copiedId === 'colormaker' ? 'Copiado' : '#colormaker'}</span>
-              </button>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              A diferencia de las cámaras infrarrojas convencionales que conmutan a blanco y negro durante la noche perdiendo información cromática crítica, la tecnología <strong>ColorMaker de Tiandy</strong> mantiene imágenes en color nítidas las 24 horas del día.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Tecnología de Tiandy que graba en color real las 24 horas, sin pasar nunca a blanco y negro. Combina un lente de apertura ultra amplia, un sensor que exprime la poca luz ambiental y luz LED cálida para responder en oscuridad total.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40">
-                <div className="text-xs font-bold text-slate-900 dark:text-white mb-1">Apertura Súper Amplia F1.0</div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Permite hasta 4 veces más entrada de flujo lumínico al sensor en comparación con lentes tradicionales de apertura F2.0.
-                </p>
-              </div>
+            {/* Ventajas */}
+            <div className="space-y-3 pt-1">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Ventajas
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Ventaja 1: Identificación exacta */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Identificación exacta
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Muestra el color real de autos, ropa y rasgos sin pasar a blanco y negro.
+                  </p>
+                </div>
 
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40">
-                <div className="text-xs font-bold text-slate-900 dark:text-white mb-1">Sensor BSI de Gran Tamaño</div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Sensores retroiluminados con mayor área por fotodiodo, reduciendo drásticamente el ruido térmico en penumbra.
-                </p>
-              </div>
+                {/* Ventaja 2: Cero deslumbramientos */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Cero deslumbramientos
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Elimina el clásico destello blanco del infrarrojo que vuelve irreconocibles los rostros.
+                  </p>
+                </div>
 
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40">
-                <div className="text-xs font-bold text-slate-900 dark:text-white mb-1">Luz Cálida Antideslumbrante 3000K</div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Iluminación suave que evita el encandilamiento ocular y no genera sobreexposición blanca sobre patentes o rostros.
-                </p>
+                {/* Ventaja 3: Disuasión activa */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Disuasión activa
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Su iluminación tenue acompaña la escena y hace notar la presencia de la cámara.
+                  </p>
+                </div>
               </div>
+            </div>
+
+            {/* Recuadro de Aplicación Ideal */}
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-4">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <strong>Ideal para implementar en:</strong> Entradas de comercios, accesos residenciales, fachadas y estacionamientos donde la iluminación es baja y reconocer personas o vehículos con claridad es clave.
+              </p>
             </div>
           </section>
 
-          {/* TEMA 3: POLAR DAY & SUPER WDR */}
+          {/* TEMA 4: POLAR DAY & SUPER WDR */}
           <section
             id="polar-day"
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
           >
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                    Procesamiento ISP
-                  </span>
-                  <span className="text-xs text-slate-400">• Sección 03</span>
-                </div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Eye className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-                  Polar Day y Super WDR (120dB a 140dB)
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleCopyLink('polar-day')}
-                className="text-xs font-mono text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center gap-1 shrink-0 self-start"
-              >
-                <Hash className="w-3.5 h-3.5" />
-                <span>{copiedId === 'polar-day' ? 'Copiado' : '#polar-day'}</span>
-              </button>
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                Polar Day y Super WDR (120dB a 140dB)
+              </h2>
             </div>
 
             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -505,32 +564,15 @@ export const WikiPage: React.FC = () => {
             </div>
           </section>
 
-          {/* TEMA 4: EARLY WARNING (EW) */}
+          {/* TEMA 5: EARLY WARNING (EW) */}
           <section
             id="early-warning"
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
           >
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                    Disuasión Activa
-                  </span>
-                  <span className="text-xs text-slate-400">• Sección 04</span>
-                </div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <ShieldAlert className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-                  Early Warning (EW) - Disuasión Activa
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleCopyLink('early-warning')}
-                className="text-xs font-mono text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center gap-1 shrink-0 self-start"
-              >
-                <Hash className="w-3.5 h-3.5" />
-                <span>{copiedId === 'early-warning' ? 'Copiado' : '#early-warning'}</span>
-              </button>
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                Early Warning (EW) - Disuasión Activa
+              </h2>
             </div>
 
             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -561,32 +603,15 @@ export const WikiPage: React.FC = () => {
             </div>
           </section>
 
-          {/* TEMA 5: COMPRESIÓN S+265 */}
+          {/* TEMA 6: COMPRESIÓN S+265 */}
           <section
             id="codec-s265"
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
           >
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                    Compresión de Video
-                  </span>
-                  <span className="text-xs text-slate-400">• Sección 05</span>
-                </div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <HardDrive className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-                  Compresión y Códec S+265 (Smart H.265)
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleCopyLink('codec-s265')}
-                className="text-xs font-mono text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center gap-1 shrink-0 self-start"
-              >
-                <Hash className="w-3.5 h-3.5" />
-                <span>{copiedId === 'codec-s265' ? 'Copiado' : '#codec-s265'}</span>
-              </button>
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                Compresión y Códec S+265 (Smart H.265)
+              </h2>
             </div>
 
             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -620,32 +645,15 @@ export const WikiPage: React.FC = () => {
             </div>
           </section>
 
-          {/* TEMA 6: ALIMENTACIÓN POE Y MODO EXTENDIDO 250M */}
+          {/* TEMA 7: ALIMENTACIÓN POE Y MODO EXTENDIDO 250M */}
           <section
             id="poe-switches"
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
           >
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                    Infraestructura PoE
-                  </span>
-                  <span className="text-xs text-slate-400">• Sección 06</span>
-                </div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-                  Alimentación PoE y Modo CCTV Extend 250m
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleCopyLink('poe-switches')}
-                className="text-xs font-mono text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center gap-1 shrink-0 self-start"
-              >
-                <Hash className="w-3.5 h-3.5" />
-                <span>{copiedId === 'poe-switches' ? 'Copiado' : '#poe-switches'}</span>
-              </button>
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                Alimentación PoE y Modo CCTV Extend 250m
+              </h2>
             </div>
 
             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -679,84 +687,38 @@ export const WikiPage: React.FC = () => {
             </div>
           </section>
 
-          {/* TEMA 7: INTELIGENCIA ARTIFICIAL SMD & VCA */}
+          {/* TEMA 8: VCA (VIDEO CONTENT ANALYTICS) */}
           <section
-            id="ia-smd-vca"
+            id="vca"
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
           >
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                    Deep Learning
-                  </span>
-                  <span className="text-xs text-slate-400">• Sección 07</span>
-                </div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Cpu className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-                  Inteligencia Artificial: SMD y Analíticas VCA
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleCopyLink('ia-smd-vca')}
-                className="text-xs font-mono text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center gap-1 shrink-0 self-start"
-              >
-                <Hash className="w-3.5 h-3.5" />
-                <span>{copiedId === 'ia-smd-vca' ? 'Copiado' : '#ia-smd-vca'}</span>
-              </button>
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                VCA - Analíticas de Video (Video Content Analytics)
+              </h2>
             </div>
 
             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Las cámaras y NVRs Tiandy integran coprocesadores NPU dedicados al análisis de video mediante redes neuronales profundas (Deep Learning) para eliminar hasta el 98% de las falsas alarmas provocadas por lluvia, animales pequeños, ramas o sombras.
+              Conjunto de reglas algorítmicas de análisis inteligente sobre secuencias de video para la detección automática y precisa de comportamientos perimetrales sospechosos.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-1.5">
-                <span className="text-xs font-bold text-slate-900 dark:text-white block">SMD (Smart Motion Detection)</span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Clasifica en tiempo real los objetivos en <strong>Humanos</strong> y <strong>Vehículos</strong>. Al filtrar eventos en grabaciones, permite encontrar incidentes en segundos sin revisar horas de metraje.
-                </p>
-                <div className="text-[10px] font-mono text-slate-400 pt-1">
-                  Versiones: SMD 1.0 (Básico) • SMD 2.0 (Clasificación dual) • SMD 3.0 (Largo alcance y multi-objetivo)
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-1.5">
-                <span className="text-xs font-bold text-slate-900 dark:text-white block">VCA (Video Content Analytics)</span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Reglas perimetrales avanzadas configurables: <strong>Cruce de línea (Tripwire)</strong> unidireccional o bidireccional, <strong>Doble cruce de línea</strong>, <strong>Intrusión en perímetro</strong>, <strong>Objeto abandonado / retirado</strong> y <strong>Deambuleo (Loitering)</strong>.
-                </p>
-              </div>
+            <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-2">
+              <span className="text-xs font-bold text-slate-900 dark:text-white block">Reglas Perimetrales Configurables</span>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                Incluye <strong>Cruce de línea (Tripwire)</strong> unidireccional o bidireccional, <strong>Doble cruce de línea</strong>, <strong>Intrusión en perímetro</strong>, <strong>Objeto abandonado / retirado</strong> y <strong>Deambuleo (Loitering)</strong>.
+              </p>
             </div>
           </section>
 
-          {/* TEMA 8: GRADOS IP & IK */}
+          {/* TEMA 9: GRADOS IP & IK */}
           <section
             id="grados-ip-ik"
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
           >
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                    Resistencia Física
-                  </span>
-                  <span className="text-xs text-slate-400">• Sección 08</span>
-                </div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-                  Grados de Protección Intemperie e Impacto (IP67 / IK10)
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleCopyLink('grados-ip-ik')}
-                className="text-xs font-mono text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center gap-1 shrink-0 self-start"
-              >
-                <Hash className="w-3.5 h-3.5" />
-                <span>{copiedId === 'grados-ip-ik' ? 'Copiado' : '#grados-ip-ik'}</span>
-              </button>
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                Grados de Protección Intemperie e Impacto (IP67 / IK10)
+              </h2>
             </div>
 
             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
