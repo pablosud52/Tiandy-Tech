@@ -35,9 +35,9 @@ const WIKI_TOPICS: WikiTopic[] = [
   },
   {
     id: 'polar-day',
-    title: 'Polar Day y Super WDR (120dB a 140dB)',
-    shortDesc: 'Compensación de contraluces severos y muestreo multicuadro sincronizado.',
-    badge: 'Procesamiento ISP'
+    title: 'Polar Day',
+    shortDesc: 'Visión a todo color en penumbra extrema sin reflectores de luz visible.',
+    badge: ''
   },
   {
     id: 'early-warning',
@@ -469,16 +469,18 @@ export const WikiPage: React.FC = () => {
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">
                   Color Maker
                 </h2>
-                <img
-                  src="/data/images/color_maker_v3-1792460706851-51818.png"
-                  alt="Logo Color Maker"
-                  className="h-6 sm:h-7 w-auto object-contain drop-shadow-2xs select-none"
-                  onError={(e) => {
-                    const img = e.currentTarget;
-                    img.onerror = null;
-                    img.src = '/data/badges/colormaker.png';
-                  }}
-                />
+                <div className="h-7 flex items-center shrink-0">
+                  <img
+                    src="/data/images/color_maker_v3-1792460706851-51818.png"
+                    alt="Logo Color Maker"
+                    className="h-6 sm:h-7 w-auto object-contain drop-shadow-2xs select-none scale-[1.75] origin-left ml-2 mr-6"
+                    onError={(e) => {
+                      const img = e.currentTarget;
+                      img.onerror = null;
+                      img.src = '/data/badges/colormaker.png';
+                    }}
+                  />
+                </div>
               </div>
             </div>
 
@@ -532,35 +534,78 @@ export const WikiPage: React.FC = () => {
             </div>
           </section>
 
-          {/* TEMA 4: POLAR DAY & SUPER WDR */}
+          {/* TEMA 4: POLAR DAY */}
           <section
             id="polar-day"
-            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
+            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
           >
-            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                Polar Day y Super WDR (120dB a 140dB)
-              </h2>
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                  Polar Day
+                </h2>
+                <div className="h-7 flex items-center shrink-0">
+                  <img
+                    src="/data/images/Polar_day_v3-1792190135325-112865.png"
+                    alt="Logo Polar Day"
+                    className="h-6 sm:h-7 w-auto object-contain drop-shadow-2xs select-none scale-[1.75] origin-left ml-2 mr-6"
+                    onError={(e) => {
+                      const img = e.currentTarget;
+                      img.onerror = null;
+                      img.src = '/data/badges/polarday.png';
+                    }}
+                  />
+                </div>
+              </div>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              El algoritmo <strong>Polar Day / Super WDR</strong> compensa escenas con diferencias extremas de iluminación mediante doble exposición sincronizada a nivel de píxel en el procesador ISP.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Tecnología de Tiandy diseñada para lograr imágenes a todo color en entornos nocturnos extremadamente oscuros sin depender de reflectores de luz visible. Utiliza sensores de gran tamaño, lentes de apertura extrema y procesamiento avanzado de imagen asistido por algoritmos de IA para convertir la noche en día de forma silenciosa.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-1">
-                <span className="text-xs font-bold text-slate-900 dark:text-white">True WDR Físico (120dB ~ 140dB)</span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Fusiona en un solo cuadro una toma con tiempo de obturación ultrarrápido (para zonas muy iluminadas) y otra prolongada (para zonas oscuras), evitando siluetas negras en accesos vidriados.
-                </p>
-              </div>
+            {/* Ventajas */}
+            <div className="space-y-3 pt-1">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Ventajas
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Ventaja 1: Color sin contaminación lumínica */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Color sin contaminación lumínica
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Captura video en color real sin encender luces LED visibles, evitando molestias a vecinos o encandilar a conductores.
+                  </p>
+                </div>
 
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-1">
-                <span className="text-xs font-bold text-slate-900 dark:text-white">Casos de Uso Recomendados</span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Ingresos principales de bancos y oficinas con ventanales hacia la calle, portones de depósitos logísticos, peajes y accesos vehiculares a contraluz del sol.
-                </p>
+                {/* Ventaja 2: Vigilancia 100% discreta */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Vigilancia 100% discreta
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    No delata la posición exacta del equipo ni altera el entorno nocturno, ideal para monitoreo encubierto.
+                  </p>
+                </div>
+
+                {/* Ventaja 3: Rendimiento ultra sensible */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Rendimiento ultra sensible
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Extrae información cromática y nitidez incluso con luz estelar mínima donde otras cámaras forzarían el modo infrarrojo.
+                  </p>
+                </div>
               </div>
+            </div>
+
+            {/* Recuadro de Aplicación Ideal */}
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-4">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <strong>Ideal para implementar en:</strong> Zonas residenciales privadas, plazas públicas, áreas rurales, perímetros extensos y cualquier espacio donde se exija visión a color pero esté prohibida o desaconsejada la luz artificial continua.
+              </p>
             </div>
           </section>
 
