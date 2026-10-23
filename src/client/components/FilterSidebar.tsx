@@ -120,11 +120,11 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                         { id: 'PTZ', label: 'PTZ' }
                       ]
                     : [
-                        { id: 'AK', label: 'AK' },
-                        { id: 'SK', label: 'SK' },
+                        { id: 'AK', label: 'AK Series' },
+                        { id: 'SK', label: 'SK Series' },
                         { id: 'LIGHT_AI', label: 'Light AI' },
-                        { id: 'LK', label: 'LK' },
-                        { id: 'AI', label: 'AI' }
+                        { id: 'LK', label: 'LK Series' },
+                        { id: 'AI_NVR', label: 'AI NVR' }
                       ]
                   ).map((s) => {
                     const checked = filtros.serie?.includes(s.id) || false;

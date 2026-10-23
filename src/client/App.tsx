@@ -282,11 +282,34 @@ export default function App() {
     }
   };
 
+  // Helper para reasignar activeTab si la categoría activa fue deshabilitada
+  const applyActiveTabFallback = (secciones: Record<string, boolean>) => {
+    setActiveTab((prev) => {
+      if (secciones[prev] === false) {
+        const available = (['CAMARA', 'NVR', 'SWITCH', 'ACCESORIO'] as TipoDispositivo[]).find(
+          (cat) => secciones[cat] !== false
+        );
+        return available || 'CAMARA';
+      }
+      return prev;
+    });
+  };
+
   // Fetch Products con anti-caché y soporte para refresco en tiempo real + fallback autónomo
   const fetchProductos = async (silent: boolean = false) => {
     if (!silent) setIsLoading(true);
     setError(null);
     try {
+      if (isPublicBuild) {
+        const staticRes = await fetch(`/data/productos.json?_t=${Date.now()}`);
+        if (staticRes.ok) {
+          const staticData = await staticRes.json();
+          const list = Array.isArray(staticData) ? staticData : staticData.data || [];
+          setProductos(list);
+          return;
+        }
+      }
+
       const res = await fetch(`/api/productos?limit=500&_t=${Date.now()}`, {
         cache: 'no-store',
         headers: {
@@ -294,7 +317,7 @@ export default function App() {
           'Pragma': 'no-cache'
         }
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok || res.headers.get('content-type')?.includes('text/html')) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       const list = Array.isArray(data) ? data : data.data || [];
       setProductos(list);
@@ -317,30 +340,36 @@ export default function App() {
 
   const fetchSecciones = async () => {
     try {
+      if (isPublicBuild) {
+        const staticRes = await fetch(`/data/sections.json?_t=${Date.now()}`);
+        if (staticRes.ok) {
+          const data = await staticRes.json();
+          if (data.success && data.secciones) {
+            setSeccionesVisibles(data.secciones);
+            applyActiveTabFallback(data.secciones);
+          }
+        }
+        return;
+      }
+
       let res = await fetch(`/api/configuracion/secciones?_t=${Date.now()}`);
-      if (!res.ok) {
+      if (!res.ok || res.headers.get('content-type')?.includes('text/html')) {
         res = await fetch(`/data/sections.json?_t=${Date.now()}`);
       }
       const data = await res.json();
       if (data.success && data.secciones) {
         setSeccionesVisibles(data.secciones);
-        // Si la sección activa quedó oculta, reasignar a la primera visible
-        setActiveTab((prev) => {
-          if (data.secciones[prev] === false) {
-            const available = (['CAMARA', 'NVR', 'SWITCH', 'ACCESORIO'] as TipoDispositivo[]).find(
-              (cat) => data.secciones[cat] !== false
-            );
-            return available || 'CAMARA';
-          }
-          return prev;
-        });
+        applyActiveTabFallback(data.secciones);
       }
     } catch {
       try {
         const staticRes = await fetch(`/data/sections.json?_t=${Date.now()}`);
         if (staticRes.ok) {
           const data = await staticRes.json();
-          if (data.success && data.secciones) setSeccionesVisibles(data.secciones);
+          if (data.success && data.secciones) {
+            setSeccionesVisibles(data.secciones);
+            applyActiveTabFallback(data.secciones);
+          }
         }
       } catch {}
     }
@@ -348,8 +377,22 @@ export default function App() {
 
   const fetchGlobalBadges = async () => {
     try {
+      if (isPublicBuild) {
+        const staticRes = await fetch(`/data/badges.json?_t=${Date.now()}`);
+        if (staticRes.ok) {
+          const data = await staticRes.json();
+          if (data.success && Array.isArray(data.badges)) {
+            setGlobalBadges(data.badges);
+            try {
+              localStorage.setItem('tiandy_global_badges', JSON.stringify(data.badges));
+            } catch {}
+          }
+        }
+        return;
+      }
+
       let res = await fetch(`/api/configuracion/badges?_t=${Date.now()}`);
-      if (!res.ok) {
+      if (!res.ok || res.headers.get('content-type')?.includes('text/html')) {
         res = await fetch(`/data/badges.json?_t=${Date.now()}`);
       }
       const data = await res.json();
@@ -513,8 +556,9 @@ export default function App() {
           if (s === 'LK') {
             return prodSerieLower.includes('lk') || prodSerieLower.includes('lite');
           }
-          if (s === 'AI') {
+          if (s === 'AI' || s === 'AI_NVR') {
             return (
+              prodSerieLower.includes('ai nvr') ||
               ((prodSerieLower.includes('ai') || prodModelLower.includes('ai') || prodDescLower.includes('ai')) &&
                 !prodSerieLower.includes('light') &&
                 !prodModelLower.includes('light') &&

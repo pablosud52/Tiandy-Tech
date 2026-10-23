@@ -443,18 +443,7 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
       return ['AK Series', 'SK Series', 'LK Series', 'WIFI / 4G Solar', 'PTZ'];
     }
     if (formData.tipo_dispositivo === 'NVR') {
-      return [
-        'AK',
-        'SK',
-        'Light AI',
-        'LK',
-        'AI',
-        'AK Series',
-        'SK Series',
-        'Light AI Series',
-        'LK Series',
-        'AI Series'
-      ];
+      return ['AK Series', 'SK Series', 'Light AI', 'LK Series', 'AI NVR'];
     }
     return ['General'];
   }, [formData.tipo_dispositivo]);
@@ -1253,7 +1242,7 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                       let updatedSerie = prev.serie || '';
                       if (newTipo === 'SWITCH' || newTipo === 'ACCESORIO') {
                         updatedSerie = '';
-                      } else if (newTipo === 'NVR' && !['AK', 'SK', 'Light AI', 'LK', 'AI', 'AK Series', 'SK Series', 'Light AI Series', 'LK Series', 'AI Series'].includes(updatedSerie)) {
+                      } else if (newTipo === 'NVR' && !['AK Series', 'SK Series', 'Light AI', 'LK Series', 'AI NVR', 'AK', 'SK', 'LK', 'AI', 'Light AI Series', 'AI Series'].includes(updatedSerie)) {
                         updatedSerie = '';
                       }
                       return {

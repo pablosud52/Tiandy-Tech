@@ -367,6 +367,19 @@ apiRouter.post('/configuracion/secciones', (req, res) => {
     const current = JSON.parse(raw);
     const updated = { ...defaultSecciones, ...current, ...(req.body || {}) };
     setConfiguracion('secciones_visibles', JSON.stringify(updated));
+
+    // Sincronizar inmediatamente el snapshot estático para Cloudflare Pages
+    try {
+      const publicSectionsPath = path.resolve(process.cwd(), 'public/data/sections.json');
+      fs.writeFileSync(publicSectionsPath, JSON.stringify({ success: true, secciones: updated }, null, 2), 'utf-8');
+      const distSectionsPath = path.resolve(process.cwd(), 'dist/public/data/sections.json');
+      if (fs.existsSync(path.dirname(distSectionsPath))) {
+        fs.writeFileSync(distSectionsPath, JSON.stringify({ success: true, secciones: updated }, null, 2), 'utf-8');
+      }
+    } catch (syncErr) {
+      console.error('[SYNC] Error al sincronizar sections.json estático:', syncErr);
+    }
+
     res.json({ success: true, secciones: updated });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
