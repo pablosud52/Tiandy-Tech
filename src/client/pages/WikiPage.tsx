@@ -47,9 +47,9 @@ const WIKI_TOPICS: WikiTopic[] = [
   },
   {
     id: 'codec-s265',
-    title: 'Compresión y Códec S+265 (Smart H.265)',
-    shortDesc: 'Ahorro de hasta 75% en almacenamiento y consumo de ancho de banda de red.',
-    badge: 'Compresión de Video'
+    title: 'S+265 (Smart H.265)',
+    shortDesc: 'Compresión inteligente por regiones de interés con hasta 75% de ahorro en almacenamiento.',
+    badge: ''
   },
   {
     id: 'poe-switches',
@@ -352,10 +352,22 @@ export const WikiPage: React.FC = () => {
             id="smd"
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
           >
-            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                SMD - Smart Motion Detection (Detección de Movimiento Inteligente)
-              </h2>
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <img
+                  src="/data/images/smd-tight.png"
+                  alt="SMD"
+                  className="h-6 sm:h-7 w-auto object-contain drop-shadow-2xs select-none shrink-0"
+                  onError={(e) => {
+                    const img = e.currentTarget;
+                    img.onerror = null;
+                    img.src = '/data/badges/smd-tight.png';
+                  }}
+                />
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                  SMD - Smart Motion Detection (Detección de Movimiento Inteligente)
+                </h2>
+              </div>
             </div>
 
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -669,42 +681,61 @@ export const WikiPage: React.FC = () => {
           {/* TEMA 6: COMPRESIÓN S+265 */}
           <section
             id="codec-s265"
-            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
+            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
           >
             <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                Compresión y Códec S+265 (Smart H.265)
+                S+265 (Smart H.265)
               </h2>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              El algoritmo propietario <strong>S+265</strong> optimiza el estándar H.265 mediante codificación adaptativa por regiones de interés (ROI): comprime drásticamente las zonas estáticas de fondo y reserva la máxima tasa de bits y nitidez para los objetos en movimiento.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Tecnología de compresión avanzada de Tiandy que optimiza el estándar H.265 mediante codificación inteligente por regiones de interés (ROI). El algoritmo analiza la escena para comprimir drásticamente las zonas estáticas de fondo y concentrar la máxima tasa de bits y nitidez en los objetos, personas o vehículos en movimiento.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 text-center">
-                <span className="text-[10px] font-mono font-bold uppercase text-slate-500 block mb-0.5">Ahorro en Disco</span>
-                <span className="text-2xl font-black font-mono text-slate-900 dark:text-white">Hasta -75%</span>
-                <p className="text-[11px] text-slate-500 mt-1">
-                  Cuadruplica los días de retención en el mismo disco duro SATA.
-                </p>
-              </div>
+            {/* Ventajas */}
+            <div className="space-y-3 pt-1">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Ventajas
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Ventaja 1: Ahorro masivo de almacenamiento */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Ahorro masivo de almacenamiento
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Reduce hasta un 75% el espacio en disco frente al códec convencional, multiplicando los días de grabación sin cambiar de disco duro.
+                  </p>
+                </div>
 
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 text-center">
-                <span className="text-[10px] font-mono font-bold uppercase text-slate-500 block mb-0.5">Ancho de Banda</span>
-                <span className="text-2xl font-black font-mono text-slate-900 dark:text-white">Bajo Bitrate</span>
-                <p className="text-[11px] text-slate-500 mt-1">
-                  Menor carga en enlaces de red, switches PoE y conexiones móviles 4G.
-                </p>
-              </div>
+                {/* Ventaja 2: Bajo consumo de ancho de banda */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Bajo consumo de ancho de banda
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Alivia notablemente el tráfico en la red local y permite una visualización remota fluida incluso en conexiones móviles o enlaces limitados.
+                  </p>
+                </div>
 
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 text-center">
-                <span className="text-[10px] font-mono font-bold uppercase text-slate-500 block mb-0.5">Compatibilidad</span>
-                <span className="text-2xl font-black font-mono text-slate-900 dark:text-white">ONVIF Profile S/T</span>
-                <p className="text-[11px] text-slate-500 mt-1">
-                  Compatible de retroceso con NVRs y software VMS multimarca.
-                </p>
+                {/* Ventaja 3: Calidad donde importa */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Calidad donde importa
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Mantiene intacta la definición en rostros, matrículas y movimientos clave sin desperdiciar recursos en fondos fijos.
+                  </p>
+                </div>
               </div>
+            </div>
+
+            {/* Recuadro de Aplicación Ideal */}
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-4">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <strong>Ideal para implementar en:</strong> Proyectos de videovigilancia continua que requieran largos periodos de grabación, instalaciones con múltiples cámaras de alta resolución o sistemas con enlaces de red y capacidad de almacenamiento limitados.
+              </p>
             </div>
           </section>
 
