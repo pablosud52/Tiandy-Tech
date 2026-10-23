@@ -501,8 +501,27 @@ export default function App() {
           if (s === 'SK') {
             return prodSerieLower.includes('sk') || prodSerieLower.includes('spark');
           }
+          if (s === 'LIGHT_AI') {
+            return (
+              prodSerieLower.includes('light ai') ||
+              prodSerieLower.includes('light-ai') ||
+              prodSerieLower.includes('lightai') ||
+              prodModelLower.includes('light ai') ||
+              prodDescLower.includes('light ai')
+            );
+          }
           if (s === 'LK') {
             return prodSerieLower.includes('lk') || prodSerieLower.includes('lite');
+          }
+          if (s === 'AI') {
+            return (
+              ((prodSerieLower.includes('ai') || prodModelLower.includes('ai') || prodDescLower.includes('ai')) &&
+                !prodSerieLower.includes('light') &&
+                !prodModelLower.includes('light') &&
+                !prodDescLower.includes('light')) ||
+              prodSerieLower === 'ai' ||
+              prodSerieLower === 'ai series'
+            );
           }
           if (s === 'WIFI_4G') {
             const cam = (prod.datos_tecnicos as any)?.camara;

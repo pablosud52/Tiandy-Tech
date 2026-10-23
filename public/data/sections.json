@@ -6,8 +6,10 @@
     "SWITCH": true,
     "ACCESORIO": true,
     "WIKI": false,
-    "HERRAMIENTAS": false,
-    "HERRAMIENTAS_UPS": true,
-    "HERRAMIENTAS_ALMACENAMIENTO": true
+    "COMPARADOR": true,
+    "COTIZADOR": true,
+    "HERRAMIENTAS": true,
+    "HERRAMIENTAS_UPS": false,
+    "HERRAMIENTAS_ALMACENAMIENTO": false
   }
 }
