@@ -32,7 +32,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/02-DOCS/datasheets-ejemplo ./02-DOCS/datasheets-ejemplo
 
 # Crear directorio de datos persistente
-RUN mkdir -p /app/data/docs /app/data/img
+RUN mkdir -p /app/data/docs /app/data/img /app/data/images /app/data/badges /app/data/uploads
 
 # Puerto oficial para NAS
 EXPOSE 1030

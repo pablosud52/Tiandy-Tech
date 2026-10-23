@@ -13,12 +13,16 @@ services:
     environment:
       - PORT=1030
       - NODE_ENV=production
+      # Sincronización automática con Cloudflare Pages
+      - CLOUDFLARE_PROJECT_NAME=${CLOUDFLARE_PROJECT_NAME:-tiandy-tech}
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN:-cfut_Za20iLtIyfOJmt52yChpV3R82pT5oUQAfQIl2dvH38c76c73}
+      - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID:-6234da9e387b58ea70e06b6214ec2ef4}
     volumes:
-      # Persistencia de base de datos SQLite y datasheets PDF
+      # Persistencia total: SQLite (tiandy.db), PDFs (docs), fotos (images) y sellos (badges)
       - ./data:/app/data
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:1030/api/stats"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 15s
