@@ -65,8 +65,8 @@ const WIKI_TOPICS: WikiTopic[] = [
   },
   {
     id: 'vca',
-    title: 'VCA - Analíticas de Video (Video Content Analytics)',
-    shortDesc: 'Reglas perimetrales avanzadas: Tripwire, intrusión, objeto abandonado y deambuleo.',
+    title: 'VCA - Video Content Analytics (Analíticas de Video)',
+    shortDesc: 'Reglas algorítmicas avanzadas: Perímetro, comportamiento, biometría, EHS, retail y analítica vehicular.',
     badge: 'Deep Learning'
   }
 ];
@@ -1040,27 +1040,541 @@ export const WikiPage: React.FC = () => {
             </div>
           </section>
 
-          {/* TEMA 7: VCA (VIDEO CONTENT ANALYTICS) */}
+          {/* TEMA 9: VCA (VIDEO CONTENT ANALYTICS) */}
           <section
             id="vca"
-            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
+            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-6 scroll-mt-24"
           >
             <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                VCA - Analíticas de Video (Video Content Analytics)
+                VCA — Video Content Analytics (Analíticas de Video)
               </h2>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Conjunto de reglas algorítmicas de análisis inteligente sobre secuencias de video para la detección automática y precisa de comportamientos perimetrales sospechosos.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Conjunto de reglas algorítmicas de análisis inteligente sobre secuencias de video para la detección automática y precisa de eventos perimetrales, comportamiento humano, métricas comerciales, seguridad ocupacional y condiciones operativas.
             </p>
 
-            <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-2">
-              <span className="text-xs font-bold text-slate-900 dark:text-white block">Reglas Perimetrales Configurables</span>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Incluye <strong>Cruce de línea (Tripwire)</strong> unidireccional o bidireccional, <strong>Doble cruce de línea</strong>, <strong>Intrusión en perímetro</strong>, <strong>Objeto abandonado / retirado</strong> y <strong>Deambuleo (Loitering)</strong>.
-              </p>
+            {/* 1. Seguridad Perimetral y Control de Intrusión */}
+            <div className="space-y-3 pt-1">
+              <div className="flex items-center gap-2 pb-1.5 border-b border-slate-100 dark:border-slate-800/80">
+                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                  01
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Seguridad Perimetral y Control de Intrusión
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {/* Tripwire */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Tripwire</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Cruce de línea</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Detecta cuando una persona o vehículo atraviesa una línea virtual dibujada en la pantalla, configurando el sentido del cruce (bidireccional, solo entrada o solo salida).
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Muros perimetrales, accesos vehiculares, pasillos de sentido único y límites de propiedad donde el cruce esté prohibido.</span>
+                  </div>
+                </div>
+
+                {/* Perimeter Intrusion */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Perimeter Intrusion</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Intrusión perimetral</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Monitorea un área cerrada en pantalla y dispara una alerta si una persona o vehículo entra o permanece dentro de esa zona delimitada.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Zonas de acceso restringido, patios internos, predios cerrados y depósitos de mercadería durante la noche.</span>
+                  </div>
+                </div>
+
+                {/* Double Tripwire */}
+                <div className="md:col-span-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Double Tripwire</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Doble cruce de línea</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Activa la alarma únicamente si un objetivo cruza dos líneas virtuales consecutivas en un orden y tiempo predefinidos.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Falsos perímetros, cruces de vías férreas, vías de alta velocidad y filtros de accesos para evitar falsas alarmas provocadas por personas que solo rozan un cerco.</span>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            {/* 2. Comportamiento y Orden Público */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center gap-2 pb-1.5 border-b border-slate-100 dark:border-slate-800/80">
+                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                  02
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Comportamiento y Orden Público
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {/* Loitering */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Loitering</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Merodeo</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Identifica cuando un individuo permanece o deambula dentro de un área específica durante más tiempo del límite fijado.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Zonas de cajeros automáticos, veredas bancarias, entradas a condominios residenciales y paradas de transporte en horarios de bajo movimiento.</span>
+                  </div>
+                </div>
+
+                {/* Running */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Running</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Carrera (persona corriendo)</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Reconoce aceleraciones bruscas en la velocidad de desplazamiento de una persona, diferenciando el paso regular de una huida o persecución.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Andenes de estaciones, pasillos escolares o universitarios, centros comerciales y perímetros industriales para detectar fugas o emergencias.</span>
+                  </div>
+                </div>
+
+                {/* Crowd Detection */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Crowd Detection</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección de aglomeraciones</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Mide la densidad y concentración de personas en una zona delimitada, disparando una alerta si se supera el umbral previsto.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Plazas, ingresos a eventos masivos, andenes de transporte público y accesos comerciales para control de aforo y prevención de incidentes.</span>
+                  </div>
+                </div>
+
+                {/* Parking */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Parking</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Estacionamiento indebido</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Detecta vehículos detenidos en áreas no autorizadas cuando superan el tiempo de tolerancia establecido.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Dársenas de carga y descarga, carriles de emergencia, rampas de cocheras y accesos a hospitales.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Vigilancia de Objetos y Protección del Dispositivo */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center gap-2 pb-1.5 border-b border-slate-100 dark:border-slate-800/80">
+                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                  03
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Vigilancia de Objetos y Protección del Dispositivo
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {/* Object Abandoned */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Object Abandoned</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Objeto abandonado</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Detecta si un elemento u objeto es depositado y desatendido en una zona delimitada durante un lapso de tiempo configurable.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Salas de espera, aeropuertos, terminales de buses, recepciones corporativas y salidas de emergencia para prevenir bloqueos o paquetes sospechosos.</span>
+                  </div>
+                </div>
+
+                {/* Object Lost (Missing) */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Object Lost (Missing)</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Objeto removido (desaparecido)</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Dispara un evento inmediato si un objeto predeterminado de la escena es retirado o desplazado de su ubicación original.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Museos, galerías de arte, salas de servidores, exhibidores comerciales y áreas de herramientas o instrumental de alto valor.</span>
+                  </div>
+                </div>
+
+                {/* Video Abnormal (Scene Change) */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Video Abnormal (Scene Change)</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Alteración de video (cambio de escena)</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Identifica si la cámara fue desenfocada, bloqueada con pintura o movida manualmente por actos vandálicos.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Cámaras en vía pública al alcance de personas, garajes, túneles y perímetros vulnerables a sabotaje.</span>
+                  </div>
+                </div>
+
+                {/* Abnormal Audio Detection */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Abnormal Audio Detection</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección de audio anómalo</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Monitorea el entorno acústico a través de micrófono para alertar ante picos de decibeles o ruidos inusuales (gritos, impactos, disparos o rotura de cristales).
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Aulas, estacionamientos subterráneos, ventanillas de atención al público y entidades bancarias donde la escena queda fuera del ángulo visual.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 4. Inteligencia Comercial y Métricas de Negocio */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center gap-2 pb-1.5 border-b border-slate-100 dark:border-slate-800/80">
+                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                  04
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Inteligencia Comercial y Métricas de Negocio
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {/* People Counting */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">People Counting</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Conteo de personas</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Registra entradas y salidas de personas a través de una línea de control, generando estadísticas de afluencia y cálculo de ocupación neta en tiempo real.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Tiendas minoristas para calcular tasas de conversión comercial, recintos públicos y centros culturales con límite de aforo estricto.</span>
+                  </div>
+                </div>
+
+                {/* Heat Map */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Heat Map</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Mapa de calor</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Muestra gráficamente por colores los puntos de mayor permanencia y flujo de personas durante lapsos determinados.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Supermercados y locales comerciales para evaluar el impacto de góndolas, promociones y diseñar la circulación de pasillos.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 5. Seguridad Ocupacional (EHS) y Supervisión Laboral */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center gap-2 pb-1.5 border-b border-slate-100 dark:border-slate-800/80">
+                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                  05
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Seguridad Ocupacional (EHS) y Supervisión Laboral
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {/* Helmet (Hardhat) Detection */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Helmet (Hardhat) Detection</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección de uso de casco</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Verifica que el personal porte el casco de seguridad obligatorio en la cabeza, generando una alarma inmediata ante operarios sin protección.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Obras en construcción, fábricas, minería, plantas químicas y talleres industriales para auditoría de prevención de riesgos.</span>
+                  </div>
+                </div>
+
+                {/* High-Visibility Vest Detection */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">High-Visibility Vest Detection</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección de chaleco reflectivo</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Comprueba que operarios o visitas que ingresen a un área operativa peligrosa lleven puesto el chaleco o indumentaria reflectiva exigida.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Centros de distribución logística con autoelevadores, pistas aeroportuarias, obras viales y depósitos.</span>
+                  </div>
+                </div>
+
+                {/* On-Duty Detection */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">On-Duty Detection</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección de abandono de puesto</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Monitorea una estación de trabajo crítica y dispara una alerta si el operador responsable deja su puesto o se ausenta más tiempo del tolerado.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Garitas de guardia, centros de monitoreo CCTV, cajas de cobro, recepciones y puestos de operación de maquinaria peligrosa.</span>
+                  </div>
+                </div>
+
+                {/* Sleeping Detection */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Sleeping Detection</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección de somnolencia o sueño en puesto</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Identifica patrones posturales prolongados (cabeza apoyada sobre la mesa o inclinación anormal) que indiquen que el personal se durmió en su turno.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Garitas de seguridad perimetral nocturna, puestos de vigilancia física y salas de control de alarmas.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 6. Reconocimiento Biométrico y Estructuración de Objetos */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center gap-2 pb-1.5 border-b border-slate-100 dark:border-slate-800/80">
+                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                  06
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Reconocimiento Biométrico y Estructuración de Objetos
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {/* Face Recognition & Comparison */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Face Recognition &amp; Comparison</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Reconocimiento y comparación facial</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Extrae la biometría del rostro y la compara contra bases de datos en tiempo real (listas blancas para acceso o listas negras para alerta).
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Accesos de personal sin contacto, oficinas corporativas, zonas VIP, casinos y comercios para detección de infractores recurrentes.</span>
+                  </div>
+                </div>
+
+                {/* Face Capture & Attribute Extraction */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Face Capture &amp; Attribute Extraction</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Captura de rostros y atributos</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Recorta la imagen facial y detecta atributos demográficos aproximados (rango de edad, género, uso de gafas o mascarilla).
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Informes demográficos de clientes en retail y soporte para búsquedas forenses posteriores.</span>
+                  </div>
+                </div>
+
+                {/* Vehicle & Human Metadata */}
+                <div className="md:col-span-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Vehicle &amp; Human Metadata</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Metadatos estructurados de objetivos</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Descompone el video en datos estructurados de personas (color de ropa superior e inferior, bolso, paraguas) y vehículos (tipo, color), permitiendo búsquedas por filtros en segundos.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Auditoría forense en NVRs AI y software Easy7 sobre grabaciones extensas sin necesidad de revisar horas de video continuo.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 7. Tránsito y Analíticas Vehiculares (LPR / ANPR) */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center gap-2 pb-1.5 border-b border-slate-100 dark:border-slate-800/80">
+                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                  07
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Tránsito y Analíticas Vehiculares (LPR / ANPR)
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {/* ANPR / LPR */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">ANPR / LPR</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Lectura automática de matrículas</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Captura, lee y almacena caracteres alfanuméricos de matrículas vehiculares en tiempo real, contrastándolos con listas de acceso.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Peajes, entradas a barrios cerrados, edificios residenciales y estacionamientos tarifados para apertura automática de barreras.</span>
+                  </div>
+                </div>
+
+                {/* Vehicle Counting & Flow */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Vehicle Counting &amp; Flow</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Conteo y sentido vehicular</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Cuantifica el volumen de tránsito vehicular, clasifica tipos de vehículos y determina sentidos de circulación o giros prohibidos.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Gestión de tráfico urbano, accesos a parques industriales y auditoría de capacidad en aparcamientos de varios niveles.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 8. Detección Térmica y Protección contra Incendios */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center gap-2 pb-1.5 border-b border-slate-100 dark:border-slate-800/80">
+                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                  08
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Detección Térmica y Protección contra Incendios
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {/* Fire & Smoke Detection */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Fire &amp; Smoke Detection</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección visual de humo y fuego</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Identifica visualmente patrones de llamas o columnas de humo mediante procesamiento de imagen antes de que el calor alcance un detector tradicional.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Naves industriales con techos altos, madereras, depósitos de reciclaje y predios abiertos donde no aplican detectores de humo estándar.</span>
+                  </div>
+                </div>
+
+                {/* Thermal Early Warning */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Thermal Early Warning</h4>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Advertencia térmica temprana</span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <strong>Qué hace:</strong> Monitorea por radiación infrarroja la temperatura de superficies o equipamiento eléctrico, alertando ante sobrecalentamientos antes de que se inicie fuego.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
+                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Tableros de media tensión, transformadores, subestaciones eléctricas y salas de racks de baterías.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </section>
 
         </main>
