@@ -25,12 +25,17 @@
 - [x] Actualizar `scrollToTopic` para asegurar la apertura automática de la sección clickeada.
 - [x] Convertir las 9 secciones (`#gamas-camaras`, `#gamas-nvr`, `#smd`, `#colormaker`, `#polar-day`, `#codec-s265`, `#early-warning`, `#dori`, `#vca`) al formato colapsable.
 - [x] Ejecutar `npm run build` y comprobar compilación exitosa (código 0).
-- [ ] Commitear y pushear cambios a GitHub (`origin/master`).
-- [ ] Ejecutar la publicación pública a Cloudflare Pages mediante `executePublish()`.
+- [x] Commitear y pushear cambios a GitHub (`origin/master`).
+- [x] Ejecutar la publicación pública a Cloudflare Pages mediante `executePublish()`.
 
 ## 4. Evidencia (Evidence)
 - Compilación `npm run build` completada con exit code 0.
-- 9 tarjetas configuradas con cabecera interactiva, rotación fluida de chevron e integración directa con el índice lateral.
+- Commiteado y pusheado a GitHub (`origin/master` commit `030717a`).
+- Despliegue en Cloudflare Pages completado con éxito:
+  - Estado: `deployed`
+  - URL de despliegue: `https://3d3dd6d9.tiandy-tech.pages.dev`
+  - Proyecto: `tiandy-tech`
+  - Estadísticas: 59 productos, 10 badges.
 
 ## 5. Siguiente Paso (Next Step)
-- Commitear y hacer push a GitHub, y luego ejecutar el despliegue a Cloudflare Pages.
+- Notificar al usuario con el reporte completo y el bloque de orientación.
