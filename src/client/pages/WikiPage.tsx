@@ -465,15 +465,15 @@ export const WikiPage: React.FC = () => {
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
           >
             <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3.5">
+              <div className="flex items-center gap-3">
                 <img
-                  src="/data/images/color_maker_v3-1792460706851-51818.png"
-                  alt="Logo Color Maker"
-                  className="h-11 sm:h-12 w-auto object-contain drop-shadow-2xs select-none shrink-0"
+                  src="/data/images/colormaker-tight.png"
+                  alt="Color Maker"
+                  className="h-6 sm:h-7 w-auto object-contain drop-shadow-2xs select-none shrink-0"
                   onError={(e) => {
                     const img = e.currentTarget;
                     img.onerror = null;
-                    img.src = '/data/badges/colormaker.png';
+                    img.src = '/data/badges/colormaker-tight.png';
                   }}
                 />
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">
@@ -538,15 +538,15 @@ export const WikiPage: React.FC = () => {
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
           >
             <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3.5">
+              <div className="flex items-center gap-3">
                 <img
-                  src="/data/images/Polar_day_v3-1792190135325-112865.png"
-                  alt="Logo Polar Day"
-                  className="h-8 sm:h-9 w-auto object-contain drop-shadow-2xs select-none shrink-0"
+                  src="/data/images/polarday-tight.png"
+                  alt="Polar Day"
+                  className="h-6 sm:h-7 w-auto object-contain drop-shadow-2xs select-none shrink-0"
                   onError={(e) => {
                     const img = e.currentTarget;
                     img.onerror = null;
-                    img.src = '/data/badges/polarday.png';
+                    img.src = '/data/badges/polarday-tight.png';
                   }}
                 />
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">
