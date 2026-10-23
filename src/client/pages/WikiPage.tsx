@@ -16,9 +16,15 @@ interface WikiTopic {
 
 const WIKI_TOPICS: WikiTopic[] = [
   {
-    id: 'dori',
-    title: 'DORI',
-    shortDesc: 'Detección, Observación, Reconocimiento e Identificación (IEC EN62676-4)',
+    id: 'gamas-camaras',
+    title: 'Gamas de Cámaras IP',
+    shortDesc: 'Series AK (Entry), SK (SMB), LK (Pro), Tian (Wi-Fi) y Sunflower (Solar 4G).',
+    badge: ''
+  },
+  {
+    id: 'gamas-nvr',
+    title: 'Gamas de Grabadores NVR',
+    shortDesc: 'Series AK (Entry), SK (SMB), Light AI, LK (Pro) y AI NVR (Servidores forenses).',
     badge: ''
   },
   {
@@ -40,15 +46,21 @@ const WIKI_TOPICS: WikiTopic[] = [
     badge: ''
   },
   {
+    id: 'codec-s265',
+    title: 'S+265 (Smart H.265)',
+    shortDesc: 'Compresión inteligente por regiones de interés con hasta 75% de ahorro en almacenamiento.',
+    badge: ''
+  },
+  {
     id: 'early-warning',
     title: 'Early Warning (EW)',
     shortDesc: 'Disuasión activa en tiempo real con estrobos bicolor, voz y salida de alarma.',
     badge: ''
   },
   {
-    id: 'codec-s265',
-    title: 'S+265 (Smart H.265)',
-    shortDesc: 'Compresión inteligente por regiones de interés con hasta 75% de ahorro en almacenamiento.',
+    id: 'dori',
+    title: 'DORI',
+    shortDesc: 'Detección, Observación, Reconocimiento e Identificación (IEC EN62676-4)',
     badge: ''
   },
   {
@@ -62,7 +74,7 @@ const WIKI_TOPICS: WikiTopic[] = [
 export const WikiPage: React.FC = () => {
   // Filtro de búsqueda del índice
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [activeSectionId, setActiveSectionId] = useState<string>('dori');
+  const [activeSectionId, setActiveSectionId] = useState<string>('gamas-camaras');
 
   // Filtrado de temas en el índice
   const filteredTopics = useMemo(() => {
@@ -228,110 +240,309 @@ export const WikiPage: React.FC = () => {
         {/* ========================================================= */}
         <main className="flex-1 min-w-0 w-full space-y-6">
 
-          {/* TEMA 1: DORI */}
+          {/* TEMA 1: GAMAS DE CÁMARAS IP */}
           <section
-            id="dori"
+            id="gamas-camaras"
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
           >
-            {/* Header del Tema */}
             <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                DORI - Detección Observación Reconocimiento Identificación
+                Gamas de Cámaras IP (Network Cameras)
               </h2>
             </div>
 
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Es un estándar internacional (basado en la norma <strong>IEC EN62676-4</strong>) que define las capacidades de distancia y nivel de detalle que puede ofrecer una cámara de videovigilancia CCTV según la densidad de píxeles por metro (<strong>PPM</strong>).
+              Estructura de gamas de videovigilancia IP Tiandy: desde soluciones iniciales para pequeños comercios hasta infraestructura crítica de alta exigencia y sistemas solares autónomos.
             </p>
 
-            {/* Cuadrícula de Niveles DORI */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
-              {/* D - Detección */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
+              {/* AK IPC */}
               <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg font-black text-sm bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs">
-                      D
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      AK IPC
                     </span>
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                      25 PPM
+                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                      Entry-level / Nivel de entrada
                     </span>
                   </div>
-                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
-                    Detección <span className="font-normal text-slate-400 dark:text-slate-500">(Detection)</span>
-                  </h3>
-                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                    Permite saber con total certeza si hay una persona o un objeto en la escena, aunque no se distingan sus rasgos.
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    La gama inicial pensada para presupuestos ajustados que buscan la confiabilidad de la marca sin costos elevados.
                   </p>
+                </div>
+                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Monitoreo estándar día/noche, compresión eficiente S+265 y configuración rápida tipo plug &amp; play.</span>
+                  </div>
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Pequeños comercios, hogares y oficinas que requieren videovigilancia básica y efectiva.</span>
+                  </div>
                 </div>
               </div>
 
-              {/* O - Observación */}
+              {/* SK IPC */}
               <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg font-black text-sm bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs">
-                      O
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      SK IPC
                     </span>
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                      62 PPM
+                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                      SMB / Pequeñas y medianas empresas
                     </span>
                   </div>
-                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
-                    Observación <span className="font-normal text-slate-400 dark:text-slate-500">(Observation)</span>
-                  </h3>
-                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                    Ofrece detalles generales, como el color de la ropa de una persona o el tipo de vehículo, y permite ver el entorno.
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    La serie intermedia y versátil, orientada al sector comercial que exige mayor rendimiento y resistencia.
                   </p>
+                </div>
+                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Mejor respuesta en baja luminosidad (compatible con Color Maker), analíticas inteligentes perimetrales (cruce de línea, intrusión) y carcasas más robustas.</span>
+                  </div>
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Depósitos, tiendas de alta rotación, parkings y accesos principales de empresas.</span>
+                  </div>
                 </div>
               </div>
 
-              {/* R - Reconocimiento */}
+              {/* LK IPC */}
               <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg font-black text-sm bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs">
-                      R
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      LK IPC
                     </span>
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-                      125 PPM
+                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                      Professional / Nivel profesional
                     </span>
                   </div>
-                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
-                    Reconocimiento <span className="font-normal text-slate-400 dark:text-slate-500">(Recognition)</span>
-                  </h3>
-                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                    Permite verificar si la persona que aparece en pantalla es alguien que ya conoces o has visto antes.
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    La línea de alta exigencia técnica diseñada para infraestructura crítica y proyectos de gran escala.
                   </p>
+                </div>
+                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Sensores de alta sensibilidad (Polar Day), rango dinámico amplio (WDR real), analíticas de video avanzadas (VCA) con clasificación de personas/vehículos y protección climática severa.</span>
+                  </div>
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Industrias, banca, predios logísticos, perímetros extensos y proyectos corporativos o públicos.</span>
+                  </div>
                 </div>
               </div>
 
-              {/* I - Identificación */}
+              {/* Tian */}
               <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg font-black text-sm bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs">
-                      I
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      Tian
                     </span>
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
-                      250 PPM
+                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                      Wireless Camera / Cámaras inalámbricas
                     </span>
                   </div>
-                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
-                    Identificación <span className="font-normal text-slate-400 dark:text-slate-500">(Identification)</span>
-                  </h3>
-                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                    Es el nivel de mayor detalle. Permite identificar a un desconocido de forma indiscutible (por ejemplo, para reconocimiento facial o leer una matrícula).
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Línea Wi-Fi pensada para resolver espacios donde tirar cable de red resulta costoso o invasivo.
                   </p>
+                </div>
+                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Conectividad Wi-Fi estable, audio bidireccional integrado y control directo desde la app EasyLive Plus.</span>
+                  </div>
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Oficinas temporales, locales comerciales pequeños y viviendas sin infraestructura de cableado UTP preinstalada.</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sunflower */}
+              <div className="md:col-span-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      Sunflower
+                    </span>
+                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                      Solar &amp; Battery Integrated / Solar con batería integrada
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Sistema de videovigilancia autónomo que integra en un solo equipo panel solar, batería recargable y conectividad inalámbrica o 4G.
+                  </p>
+                </div>
+                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Independencia total de red eléctrica y datos cableados, con gestión de bajo consumo para operar incluso en días nublados.</span>
+                  </div>
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Zonas rurales, campos, obras en construcción, predios abiertos o puntos remotos sin red eléctrica.</span>
+                  </div>
                 </div>
               </div>
             </div>
+          </section>
 
-            {/* Recuadro Resumen */}
-            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-4">
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                <strong>En resumen:</strong> Sirve para que los usuarios sepan exactamente a qué distancia una cámara es capaz de detectar, observar, reconocer o identificar un objetivo.
-              </p>
+          {/* TEMA 2: GAMAS DE GRABADORES NVR */}
+          <section
+            id="gamas-nvr"
+            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
+          >
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                Gamas de Grabadores de Red (NVR)
+              </h2>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Ecosistema de grabación y gestión Tiandy: desde grabadores compactos residenciales hasta servidores con Inteligencia Artificial forense para seguridad de misión crítica.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
+              {/* AK NVR */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      AK NVR
+                    </span>
+                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                      Entry-level / Nivel de entrada
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Grabadores compactos para proyectos de pocos canales y administración simple.
+                  </p>
+                </div>
+                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Operación silenciosa, bajo consumo eléctrico y soporte de compresión S+265 para maximizar los días de grabación en discos SATA convencionales.</span>
+                  </div>
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Residencias y pequeños comercios con sistemas de 4 a 8 cámaras.</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* SK NVR */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      SK NVR
+                    </span>
+                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                      SMB / Pequeñas y medianas empresas
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Grabadores equilibrados con mayor ancho de banda y capacidad de almacenamiento.
+                  </p>
+                </div>
+                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Mayor tasa de bits de entrada/salida, soporte para múltiples discos duros y recepción fluida de eventos generados por cámaras inteligentes.</span>
+                  </div>
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Sucursales, locales comerciales medianos y edificios corporativos con monitoreo permanente.</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Light AI NVR */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      Light AI NVR
+                    </span>
+                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                      Inteligencia artificial ligera integrada
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Grabadores con motor de IA en el propio equipo para agregar funciones avanzadas a cámaras estándar.
+                  </p>
+                </div>
+                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Clasificación inteligente de personas y vehículos directamente desde el grabador, reduciendo falsas alarmas y agilizando la búsqueda forense sin obligar a cambiar todas las cámaras por modelos costosos.</span>
+                  </div>
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Obras de modernización o instalaciones existentes que necesitan análisis inteligente con presupuesto controlado.</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* LK NVR */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      LK NVR
+                    </span>
+                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                      Professional / Nivel profesional
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Equipos de alto rendimiento diseñados para cargas continuas y demandas críticas de video.
+                  </p>
+                </div>
+                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Múltiples bahías de discos (soporte de arreglos RAID en modelos avanzados), decodificación multicanal en 4K y alto ancho de banda de red.</span>
+                  </div>
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Centros de monitoreo, plantas industriales, hospitales y centros de distribución con decenas de cámaras concurrentes.</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* AI NVR */}
+              <div className="md:col-span-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                      AI NVR
+                    </span>
+                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                      Inteligencia artificial avanzada
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Servidores NVR de máxima gama dedicados al análisis masivo y estructuración de datos en tiempo real.
+                  </p>
+                </div>
+                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Reconocimiento facial, comparación de rostros con listas de control (listas negras/blancas), conteo de personas, lectura de matrículas (LPR) y búsqueda forense por múltiples atributos simultáneos.</span>
+                  </div>
+                  <div>
+                    <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                    <span className="text-slate-600 dark:text-slate-400">Centros comerciales, terminales de transporte, estadios, campus universitarios y proyectos de seguridad urbana de alta densidad.</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -600,7 +811,68 @@ export const WikiPage: React.FC = () => {
             </div>
           </section>
 
-          {/* TEMA 5: EARLY WARNING (EW) */}
+          {/* TEMA 6: COMPRESIÓN S+265 */}
+          <section
+            id="codec-s265"
+            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
+          >
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                S+265 (Smart H.265)
+              </h2>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Tecnología de compresión avanzada de Tiandy que optimiza el estándar H.265 mediante codificación inteligente por regiones de interés (ROI). El algoritmo analiza la escena para comprimir drásticamente las zonas estáticas de fondo y concentrar la máxima tasa de bits y nitidez en los objetos, personas o vehículos en movimiento.
+            </p>
+
+            {/* Ventajas */}
+            <div className="space-y-3 pt-1">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Ventajas
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Ventaja 1: Ahorro masivo de almacenamiento */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Ahorro masivo de almacenamiento
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Reduce hasta un 75% el espacio en disco frente al códec convencional, multiplicando los días de grabación sin cambiar de disco duro.
+                  </p>
+                </div>
+
+                {/* Ventaja 2: Bajo consumo de ancho de banda */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Bajo consumo de ancho de banda
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Alivia notablemente el tráfico en la red local y permite una visualización remota fluida incluso en conexiones móviles o enlaces limitados.
+                  </p>
+                </div>
+
+                {/* Ventaja 3: Calidad donde importa */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Calidad donde importa
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Mantiene intacta la definición en rostros, matrículas y movimientos clave sin desperdiciar recursos en fondos fijos.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Recuadro de Aplicación Ideal */}
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-4">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <strong>Ideal para implementar en:</strong> Proyectos de videovigilancia continua que requieran largos periodos de grabación, instalaciones con múltiples cámaras de alta resolución o sistemas con enlaces de red y capacidad de almacenamiento limitados.
+              </p>
+            </div>
+          </section>
+
+          {/* TEMA 7: EARLY WARNING (EW) */}
           <section
             id="early-warning"
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
@@ -661,63 +933,109 @@ export const WikiPage: React.FC = () => {
             </div>
           </section>
 
-          {/* TEMA 6: COMPRESIÓN S+265 */}
+          {/* TEMA 8: DORI */}
           <section
-            id="codec-s265"
+            id="dori"
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
           >
+            {/* Header del Tema */}
             <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                S+265 (Smart H.265)
+                DORI - Detección Observación Reconocimiento Identificación
               </h2>
             </div>
 
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Tecnología de compresión avanzada de Tiandy que optimiza el estándar H.265 mediante codificación inteligente por regiones de interés (ROI). El algoritmo analiza la escena para comprimir drásticamente las zonas estáticas de fondo y concentrar la máxima tasa de bits y nitidez en los objetos, personas o vehículos en movimiento.
+              Es un estándar internacional (basado en la norma <strong>IEC EN62676-4</strong>) que define las capacidades de distancia y nivel de detalle que puede ofrecer una cámara de videovigilancia CCTV según la densidad de píxeles por metro (<strong>PPM</strong>).
             </p>
 
-            {/* Ventajas */}
-            <div className="space-y-3 pt-1">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Ventajas
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Ventaja 1: Ahorro masivo de almacenamiento */}
-                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
-                    Ahorro masivo de almacenamiento
-                  </h4>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                    Reduce hasta un 75% el espacio en disco frente al códec convencional, multiplicando los días de grabación sin cambiar de disco duro.
+            {/* Cuadrícula de Niveles DORI */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
+              {/* D - Detección */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg font-black text-sm bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs">
+                      D
+                    </span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                      25 PPM
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Detección <span className="font-normal text-slate-400 dark:text-slate-500">(Detection)</span>
+                  </h3>
+                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Permite saber con total certeza si hay una persona o un objeto en la escena, aunque no se distingan sus rasgos.
                   </p>
                 </div>
+              </div>
 
-                {/* Ventaja 2: Bajo consumo de ancho de banda */}
-                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
-                    Bajo consumo de ancho de banda
-                  </h4>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                    Alivia notablemente el tráfico en la red local y permite una visualización remota fluida incluso en conexiones móviles o enlaces limitados.
+              {/* O - Observación */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg font-black text-sm bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs">
+                      O
+                    </span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                      62 PPM
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Observación <span className="font-normal text-slate-400 dark:text-slate-500">(Observation)</span>
+                  </h3>
+                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Ofrece detalles generales, como el color de la ropa de una persona o el tipo de vehículo, y permite ver el entorno.
                   </p>
                 </div>
+              </div>
 
-                {/* Ventaja 3: Calidad donde importa */}
-                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
-                    Calidad donde importa
-                  </h4>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                    Mantiene intacta la definición en rostros, matrículas y movimientos clave sin desperdiciar recursos en fondos fijos.
+              {/* R - Reconocimiento */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg font-black text-sm bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs">
+                      R
+                    </span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                      125 PPM
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Reconocimiento <span className="font-normal text-slate-400 dark:text-slate-500">(Recognition)</span>
+                  </h3>
+                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Permite verificar si la persona que aparece en pantalla es alguien que ya conoces o has visto antes.
+                  </p>
+                </div>
+              </div>
+
+              {/* I - Identificación */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg font-black text-sm bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs">
+                      I
+                    </span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+                      250 PPM
+                    </span>
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Identificación <span className="font-normal text-slate-400 dark:text-slate-500">(Identification)</span>
+                  </h3>
+                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Es el nivel de mayor detalle. Permite identificar a un desconocido de forma indiscutible (por ejemplo, para reconocimiento facial o leer una matrícula).
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Recuadro de Aplicación Ideal */}
+            {/* Recuadro Resumen */}
             <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-4">
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                <strong>Ideal para implementar en:</strong> Proyectos de videovigilancia continua que requieran largos periodos de grabación, instalaciones con múltiples cámaras de alta resolución o sistemas con enlaces de red y capacidad de almacenamiento limitados.
+                <strong>En resumen:</strong> Sirve para que los usuarios sepan exactamente a qué distancia una cámara es capaz de detectar, observar, reconocer o identificar un objetivo.
               </p>
             </div>
           </section>
