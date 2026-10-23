@@ -41,9 +41,9 @@ const WIKI_TOPICS: WikiTopic[] = [
   },
   {
     id: 'early-warning',
-    title: 'Early Warning (EW) - Disuasión Activa',
-    shortDesc: 'Estrobos de luz roja y azul, altavoz disuasorio y alertas acústicas en tiempo real.',
-    badge: 'Disuasión Activa'
+    title: 'Early Warning (EW)',
+    shortDesc: 'Disuasión activa en tiempo real con estrobos bicolor, voz y salida de alarma.',
+    badge: ''
   },
   {
     id: 'codec-s265',
@@ -608,39 +608,61 @@ export const WikiPage: React.FC = () => {
           {/* TEMA 5: EARLY WARNING (EW) */}
           <section
             id="early-warning"
-            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
+            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
           >
             <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                Early Warning (EW) - Disuasión Activa
+                Early Warning (EW)
               </h2>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Mientras que los sistemas convencionales de videovigilancia solo registran lo ocurrido pasivamente, las cámaras con tecnología <strong>Early Warning (EW) de Tiandy</strong> intervienen activamente en el momento en que se produce una intrusión perimetral para disuadir al infractor.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Tecnología de disuasión activa de Tiandy que pasa de la vigilancia pasiva a la prevención en tiempo real. Al detectar una intrusión, el equipo interviene de forma automática combinando destellos de luz estroboscópica roja y azul, advertencias por altavoz integrado y activación de alarmas externas para frenar al intruso en el acto.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40">
-                <span className="text-xs font-bold text-slate-900 dark:text-white block mb-1">Estrobos Rojo y Azul</span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Luces intermitentes de alta intensidad que señalan al objetivo que ha sido detectado y enfocado por el sistema.
-                </p>
-              </div>
+            {/* Ventajas */}
+            <div className="space-y-3 pt-1">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Ventajas
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Ventaja 1: Prevención en el momento */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Prevención en el momento
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    No se limita a registrar el delito como testigo pasivo; actúa al instante para disuadir al sospechoso antes de que concrete el daño o robo.
+                  </p>
+                </div>
 
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40">
-                <span className="text-xs font-bold text-slate-900 dark:text-white block mb-1">Altavoz con Mensajes de Voz</span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Emisión inmediata de advertencias pregrabadas en español o mensajes personalizados desde la app móvil EasyLive Plus.
-                </p>
-              </div>
+                {/* Ventaja 2: Impacto visual y sonoro inmediato */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Impacto visual y sonoro inmediato
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Los estrobos bicolor y las alertas de voz (pregrabadas o en vivo desde la app) señalan directamente al infractor que fue detectado.
+                  </p>
+                </div>
 
-              <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40">
-                <span className="text-xs font-bold text-slate-900 dark:text-white block mb-1">Salida de Alarma de Relé</span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Contacto seco para vincular sirenas cableadas externas, reflectores perimetrales o paneles de intrusión existentes.
-                </p>
+                {/* Ventaja 3: Integración total con sistemas existentes */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Integración total con sistemas existentes
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Su salida de relé permite disparar sirenas adicionales, encender reflectores o enlazar paneles de alarma externos ante una intrusión.
+                  </p>
+                </div>
               </div>
+            </div>
+
+            {/* Recuadro de Aplicación Ideal */}
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-4">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <strong>Ideal para implementar en:</strong> Perímetros residenciales o industriales, depósitos de mercadería, estacionamientos abiertos, obras en construcción y accesos no autorizados donde se requiera frenar el ingreso antes de que ocurra el incidente.
+              </p>
             </div>
           </section>
 
