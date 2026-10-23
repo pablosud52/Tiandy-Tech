@@ -281,7 +281,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
               title="Wiki Técnica & Documentación"
             >
-              <BookOpen className={`w-3.5 h-3.5 ${activeView === 'wiki' ? 'text-white' : 'text-purple-500 dark:text-purple-400'}`} />
+              <BookOpen className={`w-3.5 h-3.5 ${activeView === 'wiki' ? 'text-white' : 'text-tiandy-500 dark:text-tiandy-400'}`} />
               <span className="hidden sm:inline">Wiki</span>
             </button>
           )}
@@ -540,7 +540,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800 shadow-2xs'
               }`}
             >
-              <BookOpen className={`w-3.5 h-3.5 ${activeView === 'wiki' ? 'text-white' : 'text-purple-500 dark:text-purple-400'}`} />
+              <BookOpen className={`w-3.5 h-3.5 ${activeView === 'wiki' ? 'text-white' : 'text-tiandy-500 dark:text-tiandy-400'}`} />
               <span>Wiki</span>
             </button>
           )}
