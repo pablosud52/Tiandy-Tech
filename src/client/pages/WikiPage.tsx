@@ -357,7 +357,7 @@ export const WikiPage: React.FC = () => {
                 <img
                   src="/data/images/smd-tight.png"
                   alt="SMD"
-                  className="h-6 sm:h-7 w-auto object-contain drop-shadow-2xs select-none shrink-0"
+                  className="h-4 sm:h-5 w-auto object-contain drop-shadow-2xs select-none shrink-0"
                   onError={(e) => {
                     const img = e.currentTarget;
                     img.onerror = null;
