@@ -52,22 +52,10 @@ const WIKI_TOPICS: WikiTopic[] = [
     badge: ''
   },
   {
-    id: 'poe-switches',
-    title: 'Alimentación PoE y Modo CCTV Extend 250m',
-    shortDesc: 'Presupuestos de potencia, estándares 802.3af/at y transmisión a larga distancia.',
-    badge: 'Infraestructura PoE'
-  },
-  {
     id: 'vca',
     title: 'VCA - Analíticas de Video (Video Content Analytics)',
     shortDesc: 'Reglas perimetrales avanzadas: Tripwire, intrusión, objeto abandonado y deambuleo.',
     badge: 'Deep Learning'
-  },
-  {
-    id: 'grados-ip-ik',
-    title: 'Grados de Protección Intemperie e Impacto (IP67 / IK10)',
-    shortDesc: 'Resistencia a polvo, inmersión y protección antivandálica mecánica.',
-    badge: 'Resistencia Física'
   }
 ];
 
@@ -353,7 +341,8 @@ export const WikiPage: React.FC = () => {
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
           >
             <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+                <span className="sr-only">SMD - </span>
                 <img
                   src="/data/images/smd-tight.png"
                   alt="SMD"
@@ -364,10 +353,8 @@ export const WikiPage: React.FC = () => {
                     img.src = '/data/badges/smd-tight.png';
                   }}
                 />
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                  SMD - Smart Motion Detection (Detección de Movimiento Inteligente)
-                </h2>
-              </div>
+                <span>— Smart Motion Detection (Detección de Movimiento Inteligente)</span>
+              </h2>
             </div>
 
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -477,21 +464,19 @@ export const WikiPage: React.FC = () => {
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
           >
             <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
+              <h2 className="flex items-center">
+                <span className="sr-only">Color Maker</span>
                 <img
                   src="/data/images/colormaker-tight.png"
                   alt="Color Maker"
-                  className="h-6 sm:h-7 w-auto object-contain drop-shadow-2xs select-none shrink-0"
+                  className="h-7 sm:h-8 w-auto object-contain drop-shadow-2xs select-none shrink-0"
                   onError={(e) => {
                     const img = e.currentTarget;
                     img.onerror = null;
                     img.src = '/data/badges/colormaker-tight.png';
                   }}
                 />
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                  Color Maker
-                </h2>
-              </div>
+              </h2>
             </div>
 
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -550,21 +535,19 @@ export const WikiPage: React.FC = () => {
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-5 scroll-mt-24"
           >
             <div className="border-b border-slate-100 dark:border-slate-800 pb-4 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
+              <h2 className="flex items-center">
+                <span className="sr-only">Polar Day</span>
                 <img
                   src="/data/images/polarday-tight.png"
                   alt="Polar Day"
-                  className="h-6 sm:h-7 w-auto object-contain drop-shadow-2xs select-none shrink-0"
+                  className="h-7 sm:h-8 w-auto object-contain drop-shadow-2xs select-none shrink-0"
                   onError={(e) => {
                     const img = e.currentTarget;
                     img.onerror = null;
                     img.src = '/data/badges/polarday-tight.png';
                   }}
                 />
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                  Polar Day
-                </h2>
-              </div>
+              </h2>
             </div>
 
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -739,49 +722,7 @@ export const WikiPage: React.FC = () => {
             </div>
           </section>
 
-          {/* TEMA 7: ALIMENTACIÓN POE Y MODO EXTENDIDO 250M */}
-          <section
-            id="poe-switches"
-            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
-          >
-            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                Alimentación PoE y Modo CCTV Extend 250m
-              </h2>
-            </div>
-
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Guía técnica sobre estándares de alimentación Power over Ethernet y el conmutador de larga distancia en switches Tiandy:
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
-              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-1">
-                <span className="text-xs font-bold text-slate-900 dark:text-white block">PoE Estándar (802.3af)</span>
-                <span className="font-mono text-sm font-bold text-slate-700 dark:text-slate-300">Hasta 15.4 Watts</span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 pt-1">
-                  Recomendado para cámaras fijas convencionales (Bullet y Domo de 2MP a 4MP con iluminación IR estándar).
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-1">
-                <span className="text-xs font-bold text-slate-900 dark:text-white block">PoE+ Alta Potencia (802.3at)</span>
-                <span className="font-mono text-sm font-bold text-slate-700 dark:text-slate-300">Hasta 30 Watts</span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 pt-1">
-                  Necesario para cámaras ColorMaker de luz blanca, modelos PTZ móviles, cámaras panorámicas duales y Early Warning.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-1">
-                <span className="text-xs font-bold text-slate-900 dark:text-white block">Modo CCTV Extend (250m)</span>
-                <span className="font-mono text-sm font-bold text-slate-700 dark:text-slate-300">10 Mbps / 250 Metros</span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 pt-1">
-                  Supera el límite Ethernet de 100 metros utilizando cable UTP 100% cobre Cat5e/Cat6 con PoE Watchdog automático.
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {/* TEMA 8: VCA (VIDEO CONTENT ANALYTICS) */}
+          {/* TEMA 7: VCA (VIDEO CONTENT ANALYTICS) */}
           <section
             id="vca"
             className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
@@ -801,46 +742,6 @@ export const WikiPage: React.FC = () => {
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Incluye <strong>Cruce de línea (Tripwire)</strong> unidireccional o bidireccional, <strong>Doble cruce de línea</strong>, <strong>Intrusión en perímetro</strong>, <strong>Objeto abandonado / retirado</strong> y <strong>Deambuleo (Loitering)</strong>.
               </p>
-            </div>
-          </section>
-
-          {/* TEMA 9: GRADOS IP & IK */}
-          <section
-            id="grados-ip-ik"
-            className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs p-6 sm:p-7 space-y-4 scroll-mt-24"
-          >
-            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                Grados de Protección Intemperie e Impacto (IP67 / IK10)
-              </h2>
-            </div>
-
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Normas internacionales que certifican la resistencia mecánica y climática del encapsulado para garantizar operación ininterrumpida a la intemperie:
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-900 dark:text-white">Estándar IP (IEC 60529)</span>
-                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">IP67</span>
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  <strong>6 (Primer dígito):</strong> Hermético al polvo. Totalmente protegido contra ingreso de partículas sólidas.<br/>
-                  <strong>7 (Segundo dígito):</strong> Resistente a inmersión temporal en agua hasta 1 metro de profundidad durante 30 minutos sin filtraciones. Apto para tormentas severas.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-900 dark:text-white">Estándar IK (IEC 62262)</span>
-                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">IK10</span>
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Protección antivandálica con carcasa metálica y domo de policarbonato reforzado.<br/>
-                  Resiste impactos mecánicos directos de hasta <strong>20 Joules</strong> (equivalente a la caída de una masa de 5 kg desde 40 cm de altura).
-                </p>
-              </div>
             </div>
           </section>
 
