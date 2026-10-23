@@ -7,6 +7,7 @@ import { AdminExtractorModule } from './modules/AdminExtractorModule.js';
 import { AdminBadgesModule } from './modules/AdminBadgesModule.js';
 import { AdminSectionsModule } from './modules/AdminSectionsModule.js';
 import { AdminUsersModule } from './modules/AdminUsersModule.js';
+import { AdminBackupModule } from './modules/AdminBackupModule.js';
 import {
   BarChart3,
   Package,
@@ -26,7 +27,8 @@ import {
   Sun,
   Moon,
   Settings,
-  CloudUpload
+  CloudUpload,
+  Archive
 } from 'lucide-react';
 import { PublishModal } from './components/PublishModal.js';
 
@@ -40,7 +42,7 @@ interface AdminPageProps {
   adminToken?: string | null;
 }
 
-export type AdminModuleType = 'dashboard' | 'catalog' | 'batch' | 'extractor' | 'badges' | 'sections' | 'users';
+export type AdminModuleType = 'dashboard' | 'catalog' | 'batch' | 'extractor' | 'badges' | 'sections' | 'users' | 'backup';
 
 export const AdminPage: React.FC<AdminPageProps> = ({
   onBackToCatalog,
@@ -108,6 +110,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       nombre: 'Visibilidad Web',
       descripcion: 'Secciones, Wiki y Herramientas',
       icono: Sliders
+    },
+    {
+      id: 'backup' as AdminModuleType,
+      nombre: 'Respaldos y Migración',
+      descripcion: 'Exportar e importar ZIP / NAS',
+      icono: Archive
     },
     {
       id: 'users' as AdminModuleType,
@@ -337,6 +345,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               <AdminSectionsModule
                 productos={productos}
                 onRefresh={loadProductos}
+              />
+            )}
+
+            {activeModule === 'backup' && (
+              <AdminBackupModule
+                currentUser={currentUser}
+                onRefreshCatalog={loadProductos}
               />
             )}
 

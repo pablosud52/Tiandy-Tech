@@ -14,7 +14,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C320N_1ANB-28-1792249837315-971733.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C320N 1ANB-28.pdf",
     "badges_detectados": [
       "COLORMAKER"
@@ -282,7 +282,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C320N_1CNB-28-1792249932566-165463.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C320N 1CNB-28.pdf",
     "badges_detectados": [],
     "datos_tecnicos": {
@@ -546,7 +546,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C321N_1ANB-28-1792248539587-508218.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C321N 1ANB-28.pdf",
     "badges_detectados": [
       "COLORMAKER"
@@ -814,7 +814,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C321N_1CNB-28-1792249242040-972646.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C321N 1CNB-28.pdf",
     "badges_detectados": [],
     "datos_tecnicos": {
@@ -1078,7 +1078,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C32KN_I3-A-E-Y-2_8-12mm-V4_2-1792029627284-134408.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C32KN I3-A-E-Y-2.8-12mm-V4.2.pdf",
     "badges_detectados": [],
     "datos_tecnicos": {
@@ -1345,7 +1345,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C32KN_I3-E-Y-C-2_8mm-V4_3-1792029682423-156612.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C32KN I3-E-Y-C-2.8mm-V4.3.pdf",
     "badges_detectados": [],
     "datos_tecnicos": {
@@ -1608,7 +1608,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C32KS_I3-E-Y-C-SD-2_8mm-V4_2-1792029731548-152955.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C32KS I3-E-Y-C-SD-2.8mm-V4.2.pdf",
     "badges_detectados": [],
     "datos_tecnicos": {
@@ -1874,7 +1874,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C32QN_2ENA-28-1792251192101-273741.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C32QN 2ENA-28.pdf",
     "badges_detectados": [
       "COLORMAKER",
@@ -2143,7 +2143,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C32QN_I5W-WIFI-Eu-4mm-V4_0-1792251267582-205444.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C32QN I5W-WIFI-Eu-2.8mm-V4.0.pdf",
     "badges_detectados": [
       "Wi-Fi"
@@ -2412,7 +2412,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C32QV_2FNA-28-1792251642751-451087.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C32QV 2FNA-28.pdf",
     "badges_detectados": [
       "POLAR_DAY",
@@ -2677,7 +2677,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C32WN_3ERA-28-1792251865338-81766.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C32WN 3ERA-28.pdf",
     "badges_detectados": [
       "COLORMAKER",
@@ -2948,7 +2948,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C32XN_2ENA-28-1792030033976-12422.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C32XN 2ENA-28.pdf",
     "badges_detectados": [
       "4K Ultra HD",
@@ -3218,7 +3218,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C32XN_3ERA-28-1792030052409-390882.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C32XN 3ERA-28.pdf",
     "badges_detectados": [
       "COLORMAKER",
@@ -3489,7 +3489,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C32XS_I3W-E-Y-S-2_8mm-V5_0-1792030088524-507892.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C32XS I3W-E-Y-S-2.8mm-V5.0.pdf",
     "badges_detectados": [
       "COLORMAKER",
@@ -3760,7 +3760,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C341N_1ANA-28-1792255064185-886899.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C341N 1ANA-28.pdf",
     "badges_detectados": [
       "COLORMAKER"
@@ -4029,7 +4029,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C345N_2ANA-28-1792030620841-63802.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C345N 2ANA-28.pdf",
     "badges_detectados": [
       "SMD 1.0"
@@ -4295,7 +4295,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C34KS_I3-E-Y-C-SD-2_8mm-V4_2-1792030171911-950454.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C34KS I3-E-Y-C-SD-2.8mm-V4.2.pdf",
     "badges_detectados": [],
     "datos_tecnicos": {
@@ -4561,7 +4561,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C34QN_2ENA-28-1792253362057-746146.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C34QN 2ENA-28.pdf",
     "badges_detectados": [
       "COLORMAKER",
@@ -4830,7 +4830,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C34QN_I5W-WIFI-Eu-4mm-V4_0-1792253447909-330973.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C34QN I5W-WIFI-Eu-2.8mm-V4.0.pdf",
     "badges_detectados": [
       "Wi-Fi"
@@ -5095,7 +5095,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C34UN-1792255299606-352273.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C34UN I8-A-E-Y-2.8-12mm-V4.2.pdf",
     "badges_detectados": [],
     "datos_tecnicos": {
@@ -5357,7 +5357,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C34UV_3FRB-4-1792255915114-618357.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C34UV 3FRB-4.pdf",
     "badges_detectados": [
       "POLAR_DAY",
@@ -5624,7 +5624,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C34UV_W-E-Y-M-S-4mm-1792273521004-363919.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C34UV W-E-Y-M-S-4mm.pdf",
     "badges_detectados": [
       "POLAR_DAY",
@@ -5892,7 +5892,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C34XN_2ENA-28-1792030292214-713986.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C34XN 2ENA-28.pdf",
     "badges_detectados": [
       "COLORMAKER"
@@ -6160,7 +6160,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C35US_3LRA-28-1792273848561-703497.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C35US 3LRA-28.pdf",
     "badges_detectados": [
       "COLORMAKER",
@@ -6431,7 +6431,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C35VN_I3-E-Y-1_4mm-V4_2-1792274337680-78174.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C35VN I3-E-Y-1.4mm-V4.2.pdf",
     "badges_detectados": [
       "180° Panorámica"
@@ -6701,7 +6701,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C35WP_3FRA-28-1792275443133-106302.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C35WP 3FRA-28.pdf",
     "badges_detectados": [
       "COLORMAKER",
@@ -6971,7 +6971,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C35WQ_I5W-E-Y-4mm-V4_2-1792275371541-163504.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C35WQ I5W-E-Y-4mm-V4.2.pdf",
     "badges_detectados": [
       "Early Warning",
@@ -7245,7 +7245,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C35WS_3ERA-28-1792275523978-204671.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C35WS 3ERA-28.pdf",
     "badges_detectados": [
       "COLORMAKER",
@@ -7519,7 +7519,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C35WS_I5-E-Y-M-H-2_8mm-V4_1-1792276118831-996573.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C35WS I5-E-Y-M-H-2.8mm-V4.1.pdf",
     "badges_detectados": [],
     "datos_tecnicos": {
@@ -7784,7 +7784,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C36QN_2ENA-28-1792276682143-878163.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C36QN 2ENA-28.pdf",
     "badges_detectados": [
       "COLORMAKER",
@@ -8060,7 +8060,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C382V_W-E-Y-S-H-2_8mm-1792277058054-648307.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C382V W-E-Y-S-H-2.8mm.pdf",
     "badges_detectados": [
       "Early Warning",
@@ -8331,7 +8331,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-C38RN_2ANA-28-1792277200239-762475.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C38RN 2ANA-28.pdf",
     "badges_detectados": [
       "COLORMAKER"
@@ -8597,7 +8597,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-H324S_25X-I-E-A-V-V3_0-1792030680027-517418.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-H324S 25X-I-E-A-V-V3.0.pdf",
     "badges_detectados": [
       "180° Panorámica"
@@ -8859,7 +8859,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-H332A_I2W-WIFI-Eu-4mm-1792030699278-416794.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-H332A I2W-WIFI-Eu-4mm.pdf",
     "badges_detectados": [
       "Wi-Fi"
@@ -9125,7 +9125,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-H333D_9DB-4-1792030711563-764627.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-H333D 9DB-4.pdf",
     "badges_detectados": [
       "Early Warning",
@@ -9396,7 +9396,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-H343K_9DA-4-1792030726231-752264.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-H343K 9DA-4.pdf",
     "badges_detectados": [
       "Early Warning",
@@ -9659,7 +9659,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-H363N_I5W-WIFI-Eu-4mm-V4_0-1792030815254-56432.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-H363N I5W-WIFI-Eu-4mm-V4.0.pdf",
     "badges_detectados": [
       "Early Warning",
@@ -9933,7 +9933,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-H366V_4MP-25X-IW-E-A-AM-2_8mm-1792030747727-641426.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-H366V 4MP-25X-IW-E-A-AM-2.8mm.pdf",
     "badges_detectados": [
       "Early Warning",
@@ -10181,7 +10181,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-R3104_I-B-P4-C-Eu-L-S-V2_0-1792366889328-207216.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-R3104 I-B-P4-C-Eu-L-S-V2.0.pdf",
     "badges_detectados": [
       "4K Ultra HD"
@@ -10413,7 +10413,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-R3105_I-B-L-S-1792366948973-158963.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-R3105 I-B-L-S.pdf",
     "badges_detectados": [],
     "datos_tecnicos": {
@@ -10635,7 +10635,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-R3108_I-B-P8-C-Eu-L-S-V2_0-1792366970191-808817.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-R3108 I-B-P8-C-Eu-L-S-V2.0.pdf",
     "badges_detectados": [],
     "datos_tecnicos": {
@@ -10864,7 +10864,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-R3110_4HA-1792366984703-461283.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-R3110 4HA.pdf",
     "badges_detectados": [
       "4K Ultra HD",
@@ -11100,7 +11100,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-R3110_I-B-L-Eu-V1_1-1792367005690-912180.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-R3110 I-B-L-Eu-V1.1.pdf",
     "badges_detectados": [
       "4K Ultra HD"
@@ -11332,7 +11332,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-R3116_I-B-L-Eu-V1_1-1792367023815-545530.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-R3116 I-B-L-Eu-V1.1.pdf",
     "badges_detectados": [
       "4K Ultra HD"
@@ -11562,7 +11562,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-R3120_2MC-1792367059525-470736.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-R3120 2MC.pdf",
     "badges_detectados": [
       "4K Ultra HD"
@@ -11792,7 +11792,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-R3120_4HA-1792367120600-48557.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-R3120 4HA.pdf",
     "badges_detectados": [
       "4K Ultra HD",
@@ -12027,7 +12027,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-R3210_I-F-1792367136335-991173.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-R3210 I-F.pdf",
     "badges_detectados": [
       "Face Recognition"
@@ -12261,7 +12261,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-R3232_4HA-1792367150403-128738.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-R3232 4HA.pdf",
     "badges_detectados": [
       "4K Ultra HD",
@@ -12497,7 +12497,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-R3232_I-B-K-V3_1-1792367165763-211959.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-R3232 I-B-K-V3.1.pdf",
     "badges_detectados": [
       "4K Ultra HD"
@@ -12696,7 +12696,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-R3240_4HB-1792367178986-459997.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-R3240 4HB.pdf",
     "badges_detectados": [
       "4K Ultra HD",
@@ -12932,7 +12932,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-R3880_4HB-1792367192234-638198.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-R3880 4HB.pdf",
     "badges_detectados": [
       "4K Ultra HD",
@@ -13180,7 +13180,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-P3S010_F-0820-AT-90-1792372508377-776838.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-P3S010 Spec-F-0820-AT-90.pdf",
     "badges_detectados": [
       "PoE Watchdog"
@@ -13407,7 +13407,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-P3S010_G-0820-AT-110-1792372529407-739242.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-P3S010 Spec-G-0820-AT-110.pdf",
     "badges_detectados": [
       "PoE Watchdog"
@@ -13633,7 +13633,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-P3S010_H-0820-AT-90-1792372542719-310277.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-P3S010 Spec-H-0820-AT-90.pdf",
     "badges_detectados": [
       "PoE Watchdog"
@@ -13860,7 +13860,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-P3S019_H-1621-AT-180-1792372560193-150746.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-P3S019 Spec-H-1621-AT-180.pdf",
     "badges_detectados": [],
     "datos_tecnicos": {
@@ -14081,7 +14081,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-P3S020_G-1622-AT-180-1792372593751-97158.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-P3S020 Spec-G-1622-AT-180.pdf",
     "badges_detectados": [
       "PoE Watchdog"
@@ -14310,7 +14310,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-P3S027_H-2421-AT-260-1792372607543-269442.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-P3S027 Spec-H-2421-AT-260.pdf",
     "badges_detectados": [],
     "datos_tecnicos": {
@@ -14530,7 +14530,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-P3S028_G-2422-AT-280-1792372619133-604004.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-P3S028 Spec-G-2422-AT-280.pdf",
     "badges_detectados": [
       "PoE Watchdog"
@@ -14759,7 +14759,7 @@
     "codigo_interno": null,
     "codigo_barras_ean": null,
     "imagen_principal": "/data/images/TC-P3S06_F-0420-AT-55-1792372633423-45763.webp",
-    "galeria": "[]",
+    "galeria": [],
     "datasheet_pdf": "/data/docs/TC-P3S06 Spec-F-0420-AT-55.pdf",
     "badges_detectados": [
       "PoE Watchdog"

@@ -22,12 +22,13 @@ import {
   Loader2,
   FileText,
   Image as ImageIcon,
-  Check
+  Check,
+  Archive
 } from 'lucide-react';
 
 interface AdminDashboardModuleProps {
   productos: Producto[];
-  onNavigateTab: (tab: 'catalog' | 'batch' | 'extractor' | 'badges' | 'users') => void;
+  onNavigateTab: (tab: 'catalog' | 'batch' | 'extractor' | 'badges' | 'sections' | 'users' | 'backup') => void;
 }
 
 export const AdminDashboardModule: React.FC<AdminDashboardModuleProps> = ({
@@ -85,16 +86,6 @@ export const AdminDashboardModule: React.FC<AdminDashboardModuleProps> = ({
     }
   };
 
-  const handleExportJSON = () => {
-    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(productos, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', `tiandy-catalogo-${new Date().toISOString().split('T')[0]}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-  };
-
   return (
     <div className="space-y-8 animate-in fade-in duration-200">
       {/* Saludo y Resumen Ejecutivo */}
@@ -114,11 +105,12 @@ export const AdminDashboardModule: React.FC<AdminDashboardModuleProps> = ({
 
         <div className="flex flex-wrap items-center gap-3">
           <button
-            onClick={handleExportJSON}
+            onClick={() => onNavigateTab('backup')}
             className="flex items-center gap-2 rounded-2xl bg-white px-4 py-2.5 text-xs font-bold text-emerald-900 hover:bg-emerald-50 active:scale-95 transition-all shadow-md"
+            title="Ir a Respaldos y Migración (.ZIP)"
           >
-            <FileSpreadsheet className="h-4 w-4 text-emerald-700" />
-            Exportar JSON
+            <Archive className="h-4 w-4 text-emerald-700" />
+            Respaldos (.ZIP)
           </button>
           <button
             onClick={() => onNavigateTab('catalog')}

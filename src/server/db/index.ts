@@ -11,8 +11,32 @@ if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir, { recursive: true });
 }
 
-export const db = new DatabaseSync(dbPath);
+export let db = new DatabaseSync(dbPath);
 db.exec('PRAGMA journal_mode = WAL');
+
+export function checkpointDatabase(): void {
+  try {
+    db.exec('PRAGMA wal_checkpoint(TRUNCATE)');
+  } catch (err) {
+    console.warn('[DB] Error en wal_checkpoint:', err);
+  }
+}
+
+export function closeDatabase(): void {
+  try {
+    db.close();
+  } catch (err) {
+    console.warn('[DB] Error al cerrar base de datos:', err);
+  }
+}
+
+export function reopenDatabase(): void {
+  try {
+    db.close();
+  } catch {}
+  db = new DatabaseSync(dbPath);
+  db.exec('PRAGMA journal_mode = WAL');
+}
 
 // Inicializar tablas
 db.exec(`

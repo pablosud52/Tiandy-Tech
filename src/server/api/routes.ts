@@ -30,6 +30,11 @@ import {
 } from '../services/storage-cleaner.js';
 import { executePublish, getLastPublishStatus } from '../services/publisher.js';
 import { getResolvedGlobalBadges, saveGlobalBadges } from '../services/badges-service.js';
+import { 
+  getBackupStorageStats, 
+  createBackupZip, 
+  restoreBackupFromBuffer 
+} from '../services/backup-service.js';
 import { Producto, TipoDispositivo, EstadoStock } from '../../shared/types.js';
 
 const uploadDir = path.resolve(process.cwd(), 'data/uploads');
@@ -63,6 +68,12 @@ const imageStorage = multer.diskStorage({
 const imageUpload = multer({ 
   storage: imageStorage,
   limits: { fileSize: 15 * 1024 * 1024 }
+});
+
+// Almacenamiento en memoria para archivo ZIP de respaldo (hasta 300 MB)
+const backupUpload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 300 * 1024 * 1024 }
 });
 
 export const apiRouter = Router();
@@ -555,6 +566,65 @@ apiRouter.post('/admin/publish', async (req, res) => {
     const result = await executePublish();
     res.json(result);
   } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ==========================================
+// SISTEMA DE RESPALDO Y MIGRACIÓN (ZIP / NAS)
+// ==========================================
+
+// 1. Obtener estadísticas de almacenamiento y base de datos
+apiRouter.get('/admin/backup/status', (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = (authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null) || (req.query.token as string);
+    if (!token || !validateSession(token)) {
+      return res.status(401).json({ success: false, error: 'No autorizado' });
+    }
+    const stats = getBackupStorageStats();
+    res.json({ success: true, data: stats });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 2. Exportar paquete completo (.ZIP) con base de datos SQLite consolidada, PDFs, imágenes y distintivos
+apiRouter.get('/admin/backup/export', (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = (authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null) || (req.query.token as string);
+    if (!token || !validateSession(token)) {
+      return res.status(401).json({ success: false, error: 'No autorizado' });
+    }
+    const { buffer, filename, stats } = createBackupZip();
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Length', buffer.length.toString());
+    res.send(buffer);
+  } catch (error: any) {
+    console.error('[BACKUP] Error al generar exportación ZIP:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 3. Restaurar respaldo completo desde archivo .ZIP
+apiRouter.post('/admin/backup/restore', backupUpload.single('backupFile'), async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+    if (!token || !validateSession(token)) {
+      return res.status(401).json({ success: false, error: 'No autorizado' });
+    }
+
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ success: false, error: 'No se recibió ningún archivo de respaldo.' });
+    }
+
+    const result = await restoreBackupFromBuffer(req.file.buffer);
+    res.json(result);
+  } catch (error: any) {
+    console.error('[BACKUP] Error en la restauración de respaldo:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
