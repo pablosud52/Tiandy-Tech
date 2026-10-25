@@ -188,20 +188,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <div className="flex items-start justify-between gap-2.5 mb-3">
             {/* Izquierda: Serie arriba y Modelo principal abajo */}
             <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between gap-2 mb-1">
-                {serie && serie.trim() && serie.trim().toLowerCase() !== 'general series' ? (
-                  <span className="inline-block rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-1.5 py-0.2 text-[9px] font-mono font-bold tracking-wider uppercase border border-slate-200 dark:border-slate-700">
+              <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                {serie && serie.trim() && serie.trim().toLowerCase() !== 'general series' && (
+                  <span className="inline-block rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-1.5 py-0.5 text-[9px] font-mono font-bold tracking-wider uppercase border border-slate-200 dark:border-slate-700">
                     {serie.trim()}
                   </span>
-                ) : <span />}
+                )}
 
                 {ambiente && (
                   <span
-                    className={`inline-block rounded px-1.5 py-0.2 text-[9px] font-mono font-bold tracking-wider uppercase border shadow-2xs ${
-                      ambiente === 'INTERIOR'
-                        ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/80'
-                        : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80'
-                    }`}
+                    className="inline-block rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-1.5 py-0.5 text-[9px] font-mono font-bold tracking-wider uppercase border border-slate-200 dark:border-slate-700"
                     title={ambiente === 'INTERIOR' ? 'Cámara de uso interior' : 'Cámara para intemperie / exterior'}
                   >
                     {ambiente}

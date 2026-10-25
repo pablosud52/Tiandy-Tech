@@ -121,11 +121,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 </h2>
                 {ambiente && (
                   <span
-                    className={`rounded-md px-2.5 py-0.5 text-xs font-mono font-bold tracking-wider uppercase border shadow-2xs ${
-                      ambiente === 'INTERIOR'
-                        ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/80'
-                        : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80'
-                    }`}
+                    className="rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-3.5 py-1 text-sm sm:text-base font-mono font-bold tracking-wider uppercase border border-slate-200 dark:border-slate-700 shadow-2xs"
                     title={ambiente === 'INTERIOR' ? 'Cámara de uso interior' : 'Cámara para intemperie / exterior'}
                   >
                     {ambiente}
@@ -295,11 +291,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       <span className="font-semibold text-slate-500 dark:text-slate-400">Ambiente:</span>
                       <span className="sm:col-span-2 font-medium text-slate-900 dark:text-white flex items-center gap-2">
                         <span
-                          className={`rounded px-2 py-0.5 text-xs font-mono font-bold tracking-wider uppercase border shadow-2xs ${
-                            ambiente === 'INTERIOR'
-                              ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/80'
-                              : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80'
-                          }`}
+                          className="rounded px-2 py-0.5 text-xs font-mono font-bold tracking-wider uppercase border bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700"
                         >
                           {ambiente}
                         </span>

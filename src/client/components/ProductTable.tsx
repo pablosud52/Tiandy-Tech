@@ -335,11 +335,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                           </span>
                           {prod.tipo_dispositivo === 'CAMARA' && specs.ambiente && (
                             <span
-                              className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold tracking-wider uppercase border shadow-2xs ${
-                                specs.ambiente === 'INTERIOR'
-                                  ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/80'
-                                  : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80'
-                              }`}
+                              className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider uppercase border bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700"
                               title={specs.ambiente === 'INTERIOR' ? 'Cámara de uso interior' : 'Cámara para intemperie / exterior'}
                             >
                               {specs.ambiente}

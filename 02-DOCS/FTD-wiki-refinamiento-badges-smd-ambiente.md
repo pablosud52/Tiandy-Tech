@@ -28,9 +28,9 @@ Mejorar visualmente el encabezado y las tarjetas de la Wiki Técnica, aplicar un
 - [x] Actualizar encabezado, separación SMD, chips y viñetas en `src/client/pages/WikiPage.tsx`.
 - [x] Rediseñar los SVGs de `public/data/badges/smd-1.svg`, `smd-2.svg` y `smd-3.svg` con contenedor grafito y tipografía blanca unificada.
 - [x] Añadir campo `ambiente` y lógica en `src/shared/helpers.ts` y `src/shared/types.ts`.
-- [x] Implementar chip en `src/client/components/ProductCard.tsx`.
-- [x] Implementar chip en `src/client/components/ProductTable.tsx`.
-- [x] Implementar badge de ambiente en la cabecera y tabla técnica de `src/client/components/ProductDetailModal.tsx`.
+- [x] Implementar chip en `src/client/components/ProductCard.tsx` (alineado junto a la serie con estilo gris estándar).
+- [x] Implementar chip en `src/client/components/ProductTable.tsx` (bajo formato con estilo gris estándar).
+- [x] Implementar badge de ambiente en la cabecera y tabla técnica de `src/client/components/ProductDetailModal.tsx` (50% más grande y con estilo gris estándar).
 - [x] Incorporar selector de ambiente en `src/client/admin/components/ProductEditForm.tsx`.
 - [x] Actualizar `public/data/productos.json` con `ambiente_instalacion` para los modelos correspondientes.
 - [x] Ejecutar `npm run build` y validar sin errores.
@@ -40,6 +40,7 @@ Mejorar visualmente el encabezado y las tarjetas de la Wiki Técnica, aplicar un
 - `npm run build` compiló limpiamente sin errores de TypeScript ni de bundler.
 - `productos.json` verificado: 2 cámaras con ambiente `INTERIOR` (`TC-C320N 1ANB-28` y `TC-C320N 1CNB-28`) y 36 con ambiente `EXTERIOR`.
 - SVGs de SMD (`SMD 1.0`, `SMD 2.0`, `SMD 3.0`) unificados con contenedor grafito oscuro (`#0f172a`), contorno verde Tiandy (`#00A859`) y texto completamente blanco (`#ffffff`).
-- Sincronización completa en `public/data/badges/`, `data/badges/` y `dist/client/data/badges/` con cache-busting activo.
-- Modal de detalle de producto (`ProductDetailModal.tsx`) muestra el badge `[EXTERIOR]` / `[INTERIOR]` junto al título del modelo y en el parámetro de ambiente en características clave.
-- Publicación a Cloudflare Pages ejecutada exitosamente (`deploymentUrl: https://f9056967.tiandy-tech.pages.dev`).
+- Chips de ambiente (INTERIOR / EXTERIOR) homogeneizados a la paleta neutra común (`bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700`).
+- Vista Ficha: el chip se ubica ahora inmediatamente junto al chip de serie `[AK SERIES]`.
+- Modal de producto: el chip en la zona de título incrementó su escala en un 50% (`text-sm sm:text-base px-3.5 py-1`).
+- Publicación a Cloudflare Pages ejecutada exitosamente (`deploymentUrl: https://6bc23955.tiandy-tech.pages.dev`).
