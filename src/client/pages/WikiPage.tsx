@@ -171,16 +171,12 @@ export const WikiPage: React.FC = () => {
       
       {/* Cabecera Limpia y Editorial */}
       <div className="border-b border-slate-200 dark:border-slate-800 pb-5 mb-8">
-        <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-mono text-xs uppercase tracking-wider mb-1.5">
-          <BookOpen className="h-4 w-4 text-tiandy-600 dark:text-tiandy-400" />
-          <span>Documentación Técnica & Ingeniería de Campo</span>
+        <div className="flex items-center gap-3">
+          <BookOpen className="h-7 w-7 sm:h-8 sm:w-8 text-tiandy-500 dark:text-tiandy-400 shrink-0" />
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+            Wiki Técnica Tiandy
+          </h1>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-          Wiki Técnica Tiandy
-        </h1>
-        <p className="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-3xl leading-relaxed">
-          Guía de referencia rápida sobre estándares internacionales (DORI, PoE, IP/IK), tecnologías de captura y algoritmos de inteligencia artificial.
-        </p>
       </div>
 
       {/* Contenedor Principal: Índice Flotante a la Izquierda + Contenido a la Derecha */}
@@ -332,7 +328,8 @@ export const WikiPage: React.FC = () => {
                   <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                           AK IPC
                         </span>
                         <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -344,13 +341,19 @@ export const WikiPage: React.FC = () => {
                       </p>
                     </div>
                     <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Monitoreo estándar día/noche, compresión eficiente S+265 y configuración rápida tipo plug &amp; play.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Monitoreo estándar día/noche, compresión eficiente S+265 y configuración rápida tipo plug &amp; play.</span>
+                        </div>
                       </div>
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Pequeños comercios, hogares y oficinas que requieren videovigilancia básica y efectiva.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Pequeños comercios, hogares y oficinas que requieren videovigilancia básica y efectiva.</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -359,7 +362,8 @@ export const WikiPage: React.FC = () => {
                   <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                           SK IPC
                         </span>
                         <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -371,13 +375,19 @@ export const WikiPage: React.FC = () => {
                       </p>
                     </div>
                     <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Mejor respuesta en baja luminosidad (compatible con Color Maker), analíticas inteligentes perimetrales (cruce de línea, intrusión) y carcasas más robustas.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Mejor respuesta en baja luminosidad (compatible con Color Maker), analíticas inteligentes perimetrales (cruce de línea, intrusión) y carcasas más robustas.</span>
+                        </div>
                       </div>
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Depósitos, tiendas de alta rotación, parkings y accesos principales de empresas.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Depósitos, tiendas de alta rotación, parkings y accesos principales de empresas.</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -386,7 +396,8 @@ export const WikiPage: React.FC = () => {
                   <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                           LK IPC
                         </span>
                         <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -398,13 +409,19 @@ export const WikiPage: React.FC = () => {
                       </p>
                     </div>
                     <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Sensores de alta sensibilidad (Polar Day), rango dinámico amplio (WDR real), analíticas de video avanzadas (VCA) con clasificación de personas/vehículos y protección climática severa.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Sensores de alta sensibilidad (Polar Day), rango dinámico amplio (WDR real), analíticas de video avanzadas (VCA) con clasificación de personas/vehículos y protección climática severa.</span>
+                        </div>
                       </div>
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Industrias, banca, predios logísticos, perímetros extensos y proyectos corporativos o públicos.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Industrias, banca, predios logísticos, perímetros extensos y proyectos corporativos o públicos.</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -413,7 +430,8 @@ export const WikiPage: React.FC = () => {
                   <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                           Tian
                         </span>
                         <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -425,13 +443,19 @@ export const WikiPage: React.FC = () => {
                       </p>
                     </div>
                     <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Conectividad Wi-Fi estable, audio bidireccional integrado y control directo desde la app EasyLive Plus.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Conectividad Wi-Fi estable, audio bidireccional integrado y control directo desde la app EasyLive Plus.</span>
+                        </div>
                       </div>
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Oficinas temporales, locales comerciales pequeños y viviendas sin infraestructura de cableado UTP preinstalada.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Oficinas temporales, locales comerciales pequeños y viviendas sin infraestructura de cableado UTP preinstalada.</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -440,7 +464,8 @@ export const WikiPage: React.FC = () => {
                   <div className="md:col-span-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                           Sunflower
                         </span>
                         <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -452,13 +477,19 @@ export const WikiPage: React.FC = () => {
                       </p>
                     </div>
                     <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Independencia total de red eléctrica y datos cableados, con gestión de bajo consumo para operar incluso en días nublados.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Independencia total de red eléctrica y datos cableados, con gestión de bajo consumo para operar incluso en días nublados.</span>
+                        </div>
                       </div>
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Zonas rurales, campos, obras en construcción, predios abiertos o puntos remotos sin red eléctrica.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Zonas rurales, campos, obras en construcción, predios abiertos o puntos remotos sin red eléctrica.</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -508,7 +539,8 @@ export const WikiPage: React.FC = () => {
                   <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                           AK NVR
                         </span>
                         <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -520,13 +552,19 @@ export const WikiPage: React.FC = () => {
                       </p>
                     </div>
                     <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Operación silenciosa, bajo consumo eléctrico y soporte de compresión S+265 para maximizar los días de grabación en discos SATA convencionales.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Operación silenciosa, bajo consumo eléctrico y soporte de compresión S+265 para maximizar los días de grabación en discos SATA convencionales.</span>
+                        </div>
                       </div>
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Residencias y pequeños comercios con sistemas de 4 a 8 cámaras.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Residencias y pequeños comercios con sistemas de 4 a 8 cámaras.</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -535,7 +573,8 @@ export const WikiPage: React.FC = () => {
                   <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                           SK NVR
                         </span>
                         <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -547,13 +586,19 @@ export const WikiPage: React.FC = () => {
                       </p>
                     </div>
                     <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Mayor tasa de bits de entrada/salida, soporte para múltiples discos duros y recepción fluida de eventos generados por cámaras inteligentes.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Mayor tasa de bits de entrada/salida, soporte para múltiples discos duros y recepción fluida de eventos generados por cámaras inteligentes.</span>
+                        </div>
                       </div>
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Sucursales, locales comerciales medianos y edificios corporativos con monitoreo permanente.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Sucursales, locales comerciales medianos y edificios corporativos con monitoreo permanente.</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -562,7 +607,8 @@ export const WikiPage: React.FC = () => {
                   <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                           Light AI NVR
                         </span>
                         <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -574,13 +620,19 @@ export const WikiPage: React.FC = () => {
                       </p>
                     </div>
                     <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Clasificación inteligente de personas y vehículos directamente desde el grabador, reduciendo falsas alarmas y agilizando la búsqueda forense sin obligar a cambiar todas las cámaras por modelos costosos.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Clasificación inteligente de personas y vehículos directamente desde el grabador, reduciendo falsas alarmas y agilizando la búsqueda forense sin obligar a cambiar todas las cámaras por modelos costosos.</span>
+                        </div>
                       </div>
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Obras de modernización o instalaciones existentes que necesitan análisis inteligente con presupuesto controlado.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Obras de modernización o instalaciones existentes que necesitan análisis inteligente con presupuesto controlado.</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -589,7 +641,8 @@ export const WikiPage: React.FC = () => {
                   <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                           LK NVR
                         </span>
                         <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -601,13 +654,19 @@ export const WikiPage: React.FC = () => {
                       </p>
                     </div>
                     <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Múltiples bahías de discos (soporte de arreglos RAID en modelos avanzados), decodificación multicanal en 4K y alto ancho de banda de red.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Múltiples bahías de discos (soporte de arreglos RAID en modelos avanzados), decodificación multicanal en 4K y alto ancho de banda de red.</span>
+                        </div>
                       </div>
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Centros de monitoreo, plantas industriales, hospitales y centros de distribución con decenas de cámaras concurrentes.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Centros de monitoreo, plantas industriales, hospitales y centros de distribución con decenas de cámaras concurrentes.</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -616,7 +675,8 @@ export const WikiPage: React.FC = () => {
                   <div className="md:col-span-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                           AI NVR
                         </span>
                         <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -628,13 +688,19 @@ export const WikiPage: React.FC = () => {
                       </p>
                     </div>
                     <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 space-y-1.5 text-xs">
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Reconocimiento facial, comparación de rostros con listas de control (listas negras/blancas), conteo de personas, lectura de matrículas (LPR) y búsqueda forense por múltiples atributos simultáneos.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Prestaciones clave: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Reconocimiento facial, comparación de rostros con listas de control (listas negras/blancas), conteo de personas, lectura de matrículas (LPR) y búsqueda forense por múltiples atributos simultáneos.</span>
+                        </div>
                       </div>
-                      <div>
-                        <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
-                        <span className="text-slate-600 dark:text-slate-400">Centros comerciales, terminales de transporte, estadios, campus universitarios y proyectos de seguridad urbana de alta densidad.</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div>
+                          <strong className="text-slate-800 dark:text-slate-200">Ideal para: </strong>
+                          <span className="text-slate-600 dark:text-slate-400">Centros comerciales, terminales de transporte, estadios, campus universitarios y proyectos de seguridad urbana de alta densidad.</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -668,7 +734,7 @@ export const WikiPage: React.FC = () => {
                     img.src = '/data/badges/smd-tight.png';
                   }}
                 />
-                <span>— Smart Motion Detection (Detección de Movimiento Inteligente)</span>
+                <span>– Smart Motion Detection (Detección de Movimiento Inteligente)</span>
               </h2>
               <div className="flex items-center gap-2 shrink-0">
                 <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500 hidden sm:inline">
@@ -696,7 +762,8 @@ export const WikiPage: React.FC = () => {
                   <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                     <div>
                       <div className="flex items-center justify-between mb-3">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                           SMD 1.0
                         </span>
                         <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
@@ -708,11 +775,11 @@ export const WikiPage: React.FC = () => {
                       </h3>
                       <ul className="mt-2 space-y-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                         <li className="flex items-start gap-1.5">
-                          <span className="text-slate-400 mt-1">•</span>
+                          <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
                           <span>Clasificación básica: humanos y vehículos a motor.</span>
                         </li>
                         <li className="flex items-start gap-1.5">
-                          <span className="text-slate-400 mt-1">•</span>
+                          <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
                           <span><strong>95%</strong> de reducción de falsos positivos (falsas alarmas &lt; 5%).</span>
                         </li>
                       </ul>
@@ -723,7 +790,8 @@ export const WikiPage: React.FC = () => {
                   <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                     <div>
                       <div className="flex items-center justify-between mb-3">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                           SMD 2.0
                         </span>
                         <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
@@ -735,15 +803,15 @@ export const WikiPage: React.FC = () => {
                       </h3>
                       <ul className="mt-2 space-y-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                         <li className="flex items-start gap-1.5">
-                          <span className="text-slate-400 mt-1">•</span>
+                          <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
                           <span>Mayor distancia focal y precisión mejorada en humanos y vehículos.</span>
                         </li>
                         <li className="flex items-start gap-1.5">
-                          <span className="text-slate-400 mt-1">•</span>
+                          <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
                           <span>Añade Cruce de línea y perímetro (Tripwire / Perimeter).</span>
                         </li>
                         <li className="flex items-start gap-1.5">
-                          <span className="text-slate-400 mt-1">•</span>
+                          <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
                           <span><strong>98%</strong> de efectividad (falsas alarmas &lt; 2%).</span>
                         </li>
                       </ul>
@@ -754,7 +822,8 @@ export const WikiPage: React.FC = () => {
                   <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                     <div>
                       <div className="flex items-center justify-between mb-3">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                           SMD 3.0
                         </span>
                         <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
@@ -766,19 +835,19 @@ export const WikiPage: React.FC = () => {
                       </h3>
                       <ul className="mt-2 space-y-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                         <li className="flex items-start gap-1.5">
-                          <span className="text-slate-400 mt-1">•</span>
+                          <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
                           <span>Suma vehículos no motorizados (bicicletas/motos) y mascotas (perros/gatos).</span>
                         </li>
                         <li className="flex items-start gap-1.5">
-                          <span className="text-slate-400 mt-1">•</span>
+                          <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
                           <span>Detección óptica temprana de fuego.</span>
                         </li>
                         <li className="flex items-start gap-1.5">
-                          <span className="text-slate-400 mt-1">•</span>
+                          <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
                           <span>Elimina casi la totalidad de disparos erróneos por animales.</span>
                         </li>
                         <li className="flex items-start gap-1.5">
-                          <span className="text-slate-400 mt-1">•</span>
+                          <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
                           <span><strong>99%</strong> de efectividad (falsas alarmas &lt; 1%).</span>
                         </li>
                       </ul>
@@ -1325,52 +1394,88 @@ export const WikiPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {/* Tripwire */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Tripwire</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Cruce de línea</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Tripwire
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Cruce de línea</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Detecta cuando una persona o vehículo atraviesa una línea virtual dibujada en la pantalla, configurando el sentido del cruce (bidireccional, solo entrada o solo salida).
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Detecta cuando una persona o vehículo atraviesa una línea virtual dibujada en la pantalla, configurando el sentido del cruce (bidireccional, solo entrada o solo salida).</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Muros perimetrales, accesos vehiculares, pasillos de sentido único y límites de propiedad donde el cruce esté prohibido.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Muros perimetrales, accesos vehiculares, pasillos de sentido único y límites de propiedad donde el cruce esté prohibido.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Perimeter Intrusion */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Perimeter Intrusion</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Intrusión perimetral</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Perimeter Intrusion
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Intrusión perimetral</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Monitorea un área cerrada en pantalla y dispara una alerta si una persona o vehículo entra o permanece dentro de esa zona delimitada.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Monitorea un área cerrada en pantalla y dispara una alerta si una persona o vehículo entra o permanece dentro de esa zona delimitada.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Zonas de acceso restringido, patios internos, predios cerrados y depósitos de mercadería durante la noche.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Zonas de acceso restringido, patios internos, predios cerrados y depósitos de mercadería durante la noche.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Double Tripwire */}
                 <div className="md:col-span-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Double Tripwire</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Doble cruce de línea</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Double Tripwire
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Doble cruce de línea</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Activa la alarma únicamente si un objetivo cruza dos líneas virtuales consecutivas en un orden y tiempo predefinidos.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Activa la alarma únicamente si un objetivo cruza dos líneas virtuales consecutivas en un orden y tiempo predefinidos.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Falsos perímetros, cruces de vías férreas, vías de alta velocidad y filtros de accesos para evitar falsas alarmas provocadas por personas que solo rozan un cerco.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Falsos perímetros, cruces de vías férreas, vías de alta velocidad y filtros de accesos para evitar falsas alarmas provocadas por personas que solo rozan un cerco.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1390,69 +1495,117 @@ export const WikiPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {/* Loitering */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Loitering</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Merodeo</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Loitering
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Merodeo</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Identifica cuando un individuo permanece o deambula dentro de un área específica durante más tiempo del límite fijado.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Identifica cuando un individuo permanece o deambula dentro de un área específica durante más tiempo del límite fijado.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Zonas de cajeros automáticos, veredas bancarias, entradas a condominios residenciales y paradas de transporte en horarios de bajo movimiento.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Zonas de cajeros automáticos, veredas bancarias, entradas a condominios residenciales y paradas de transporte en horarios de bajo movimiento.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Running */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Running</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Carrera (persona corriendo)</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Running
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Carrera (persona corriendo)</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Reconoce aceleraciones bruscas en la velocidad de desplazamiento de una persona, diferenciando el paso regular de una huida o persecución.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Reconoce aceleraciones bruscas en la velocidad de desplazamiento de una persona, diferenciando el paso regular de una huida o persecución.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Andenes de estaciones, pasillos escolares o universitarios, centros comerciales y perímetros industriales para detectar fugas o emergencias.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Andenes de estaciones, pasillos escolares o universitarios, centros comerciales y perímetros industriales para detectar fugas o emergencias.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Crowd Detection */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Crowd Detection</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección de aglomeraciones</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Crowd Detection
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de aglomeraciones</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Mide la densidad y concentración de personas en una zona delimitada, disparando una alerta si se supera el umbral previsto.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Mide la densidad y concentración de personas en una zona delimitada, disparando una alerta si se supera el umbral previsto.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Plazas, ingresos a eventos masivos, andenes de transporte público y accesos comerciales para control de aforo y prevención de incidentes.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Plazas, ingresos a eventos masivos, andenes de transporte público y accesos comerciales para control de aforo y prevención de incidentes.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Parking */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Parking</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Estacionamiento indebido</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Parking
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Estacionamiento indebido</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Detecta vehículos detenidos en áreas no autorizadas cuando superan el tiempo de tolerancia establecido.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Detecta vehículos detenidos en áreas no autorizadas cuando superan el tiempo de tolerancia establecido.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Dársenas de carga y descarga, carriles de emergencia, rampas de cocheras y accesos a hospitales.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Dársenas de carga y descarga, carriles de emergencia, rampas de cocheras y accesos a hospitales.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1472,69 +1625,117 @@ export const WikiPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {/* Object Abandoned */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Object Abandoned</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Objeto abandonado</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Object Abandoned
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Objeto abandonado</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Detecta si un elemento u objeto es depositado y desatendido en una zona delimitada durante un lapso de tiempo configurable.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Detecta si un elemento u objeto es depositado y desatendido en una zona delimitada durante un lapso de tiempo configurable.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Salas de espera, aeropuertos, terminales de buses, recepciones corporativas y salidas de emergencia para prevenir bloqueos o paquetes sospechosos.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Salas de espera, aeropuertos, terminales de buses, recepciones corporativas y salidas de emergencia para prevenir bloqueos o paquetes sospechosos.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Object Lost (Missing) */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Object Lost (Missing)</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Objeto removido (desaparecido)</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Object Lost (Missing)
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Objeto removido (desaparecido)</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Dispara un evento inmediato si un objeto predeterminado de la escena es retirado o desplazado de su ubicación original.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Dispara un evento inmediato si un objeto predeterminado de la escena es retirado o desplazado de su ubicación original.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Museos, galerías de arte, salas de servidores, exhibidores comerciales y áreas de herramientas o instrumental de alto valor.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Museos, galerías de arte, salas de servidores, exhibidores comerciales y áreas de herramientas o instrumental de alto valor.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Video Abnormal (Scene Change) */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Video Abnormal (Scene Change)</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Alteración de video (cambio de escena)</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Video Abnormal (Scene Change)
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Alteración de video (cambio de escena)</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Identifica si la cámara fue desenfocada, bloqueada con pintura o movida manualmente por actos vandálicos.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Identifica si la cámara fue desenfocada, bloqueada con pintura o movida manualmente por actos vandálicos.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Cámaras en vía pública al alcance de personas, garajes, túneles y perímetros vulnerables a sabotaje.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Cámaras en vía pública al alcance de personas, garajes, túneles y perímetros vulnerables a sabotaje.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Abnormal Audio Detection */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Abnormal Audio Detection</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección de audio anómalo</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Abnormal Audio Detection
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de audio anómalo</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Monitorea el entorno acústico a través de micrófono para alertar ante picos de decibeles o ruidos inusuales (gritos, impactos, disparos o rotura de cristales).
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Monitorea el entorno acústico a través de micrófono para alertar ante picos de decibeles o ruidos inusuales (gritos, impactos, disparos o rotura de cristales).</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Aulas, estacionamientos subterráneos, ventanillas de atención al público y entidades bancarias donde la escena queda fuera del ángulo visual.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Aulas, estacionamientos subterráneos, ventanillas de atención al público y entidades bancarias donde la escena queda fuera del ángulo visual.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1554,35 +1755,59 @@ export const WikiPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {/* People Counting */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">People Counting</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Conteo de personas</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        People Counting
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Conteo de personas</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Registra entradas y salidas de personas a través de una línea de control, generando estadísticas de afluencia y cálculo de ocupación neta en tiempo real.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Registra entradas y salidas de personas a través de una línea de control, generando estadísticas de afluencia y cálculo de ocupación neta en tiempo real.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Tiendas minoristas para calcular tasas de conversión comercial, recintos públicos y centros culturales con límite de aforo estricto.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Tiendas minoristas para calcular tasas de conversión comercial, recintos públicos y centros culturales con límite de aforo estricto.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Heat Map */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Heat Map</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Mapa de calor</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Heat Map
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Mapa de calor</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Muestra gráficamente por colores los puntos de mayor permanencia y flujo de personas durante lapsos determinados.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Muestra gráficamente por colores los puntos de mayor permanencia y flujo de personas durante lapsos determinados.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Supermercados y locales comerciales para evaluar el impacto de góndolas, promociones y diseñar la circulación de pasillos.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Supermercados y locales comerciales para evaluar el impacto de góndolas, promociones y diseñar la circulación de pasillos.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1602,69 +1827,117 @@ export const WikiPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {/* Helmet (Hardhat) Detection */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Helmet (Hardhat) Detection</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección de uso de casco</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Helmet (Hardhat) Detection
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de uso de casco</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Verifica que el personal porte el casco de seguridad obligatorio en la cabeza, generando una alarma inmediata ante operarios sin protección.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Verifica que el personal porte el casco de seguridad obligatorio en la cabeza, generando una alarma inmediata ante operarios sin protección.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Obras en construcción, fábricas, minería, plantas químicas y talleres industriales para auditoría de prevención de riesgos.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Obras en construcción, fábricas, minería, plantas químicas y talleres industriales para auditoría de prevención de riesgos.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* High-Visibility Vest Detection */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">High-Visibility Vest Detection</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección de chaleco reflectivo</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        High-Visibility Vest Detection
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de chaleco reflectivo</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Comprueba que operarios o visitas que ingresen a un área operativa peligrosa lleven puesto el chaleco o indumentaria reflectiva exigida.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Comprueba que operarios o visitas que ingresen a un área operativa peligrosa lleven puesto el chaleco o indumentaria reflectiva exigida.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Centros de distribución logística con autoelevadores, pistas aeroportuarias, obras viales y depósitos.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Centros de distribución logística con autoelevadores, pistas aeroportuarias, obras viales y depósitos.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* On-Duty Detection */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">On-Duty Detection</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección de abandono de puesto</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        On-Duty Detection
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de abandono de puesto</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Monitorea una estación de trabajo crítica y dispara una alerta si el operador responsable deja su puesto o se ausenta más tiempo del tolerado.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Monitorea una estación de trabajo crítica y dispara una alerta si el operador responsable deja su puesto o se ausenta más tiempo del tolerado.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Garitas de guardia, centros de monitoreo CCTV, cajas de cobro, recepciones y puestos de operación de maquinaria peligrosa.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Garitas de guardia, centros de monitoreo CCTV, cajas de cobro, recepciones y puestos de operación de maquinaria peligrosa.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Sleeping Detection */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Sleeping Detection</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección de somnolencia o sueño en puesto</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Sleeping Detection
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de somnolencia o sueño en puesto</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Identifica patrones posturales prolongados (cabeza apoyada sobre la mesa o inclinación anormal) que indiquen que el personal se durmió en su turno.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Identifica patrones posturales prolongados (cabeza apoyada sobre la mesa o inclinación anormal) que indiquen que el personal se durmió en su turno.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Garitas de seguridad perimetral nocturna, puestos de vigilancia física y salas de control de alarmas.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Garitas de seguridad perimetral nocturna, puestos de vigilancia física y salas de control de alarmas.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1684,52 +1957,88 @@ export const WikiPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {/* Face Recognition & Comparison */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Face Recognition &amp; Comparison</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Reconocimiento y comparación facial</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Face Recognition &amp; Comparison
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Reconocimiento y comparación facial</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Extrae la biometría del rostro y la compara contra bases de datos en tiempo real (listas blancas para acceso o listas negras para alerta).
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Extrae la biometría del rostro y la compara contra bases de datos en tiempo real (listas blancas para acceso o listas negras para alerta).</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Accesos de personal sin contacto, oficinas corporativas, zonas VIP, casinos y comercios para detección de infractores recurrentes.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Accesos de personal sin contacto, oficinas corporativas, zonas VIP, casinos y comercios para detección de infractores recurrentes.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Face Capture & Attribute Extraction */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Face Capture &amp; Attribute Extraction</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Captura de rostros y atributos</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Face Capture &amp; Attribute Extraction
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Captura de rostros y atributos</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Recorta la imagen facial y detecta atributos demográficos aproximados (rango de edad, género, uso de gafas o mascarilla).
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Recorta la imagen facial y detecta atributos demográficos aproximados (rango de edad, género, uso de gafas o mascarilla).</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Informes demográficos de clientes en retail y soporte para búsquedas forenses posteriores.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Informes demográficos de clientes en retail y soporte para búsquedas forenses posteriores.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Vehicle & Human Metadata */}
                 <div className="md:col-span-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Vehicle &amp; Human Metadata</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Metadatos estructurados de objetivos</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Vehicle &amp; Human Metadata
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Metadatos estructurados de objetivos</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Descompone el video en datos estructurados de personas (color de ropa superior e inferior, bolso, paraguas) y vehículos (tipo, color), permitiendo búsquedas por filtros en segundos.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Descompone el video en datos estructurados de personas (color de ropa superior e inferior, bolso, paraguas) y vehículos (tipo, color), permitiendo búsquedas por filtros en segundos.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Auditoría forense en NVRs AI y software Easy7 sobre grabaciones extensas sin necesidad de revisar horas de video continuo.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Auditoría forense en NVRs AI y software Easy7 sobre grabaciones extensas sin necesidad de revisar horas de video continuo.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1749,35 +2058,59 @@ export const WikiPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {/* ANPR / LPR */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">ANPR / LPR</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Lectura automática de matrículas</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        ANPR / LPR
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Lectura automática de matrículas</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Captura, lee y almacena caracteres alfanuméricos de matrículas vehiculares en tiempo real, contrastándolos con listas de acceso.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Captura, lee y almacena caracteres alfanuméricos de matrículas vehiculares en tiempo real, contrastándolos con listas de acceso.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Peajes, entradas a barrios cerrados, edificios residenciales y estacionamientos tarifados para apertura automática de barreras.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Peajes, entradas a barrios cerrados, edificios residenciales y estacionamientos tarifados para apertura automática de barreras.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Vehicle Counting & Flow */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Vehicle Counting &amp; Flow</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Conteo y sentido vehicular</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Vehicle Counting &amp; Flow
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Conteo y sentido vehicular</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Cuantifica el volumen de tránsito vehicular, clasifica tipos de vehículos y determina sentidos de circulación o giros prohibidos.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Cuantifica el volumen de tránsito vehicular, clasifica tipos de vehículos y determina sentidos de circulación o giros prohibidos.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Gestión de tráfico urbano, accesos a parques industriales y auditoría de capacidad en aparcamientos de varios niveles.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Gestión de tráfico urbano, accesos a parques industriales y auditoría de capacidad en aparcamientos de varios niveles.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1797,35 +2130,59 @@ export const WikiPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {/* Fire & Smoke Detection */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Fire &amp; Smoke Detection</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Detección visual de humo y fuego</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Fire &amp; Smoke Detection
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección visual de humo y fuego</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Identifica visualmente patrones de llamas o columnas de humo mediante procesamiento de imagen antes de que el calor alcance un detector tradicional.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Identifica visualmente patrones de llamas o columnas de humo mediante procesamiento de imagen antes de que el calor alcance un detector tradicional.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Naves industriales con techos altos, madereras, depósitos de reciclaje y predios abiertos donde no aplican detectores de humo estándar.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Naves industriales con techos altos, madereras, depósitos de reciclaje y predios abiertos donde no aplican detectores de humo estándar.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 {/* Thermal Early Warning */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">Thermal Early Warning</h4>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">/ Advertencia térmica temprana</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
+                        Thermal Early Warning
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Advertencia térmica temprana</span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      <strong>Qué hace:</strong> Monitorea por radiación infrarroja la temperatura de superficies o equipamiento eléctrico, alertando ante sobrecalentamientos antes de que se inicie fuego.
-                    </p>
+                    <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Qué hace: </strong>
+                        <span>Monitorea por radiación infrarroja la temperatura de superficies o equipamiento eléctrico, alertando ante sobrecalentamientos antes de que se inicie fuego.</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80 text-xs">
-                    <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
-                    <span className="text-slate-600 dark:text-slate-400">Tableros de media tensión, transformadores, subestaciones eléctricas y salas de racks de baterías.</span>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
+                      <div>
+                        <strong className="text-slate-800 dark:text-slate-200">Implementación: </strong>
+                        <span className="text-slate-600 dark:text-slate-400">Tableros de media tensión, transformadores, subestaciones eléctricas y salas de racks de baterías.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

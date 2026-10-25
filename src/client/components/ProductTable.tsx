@@ -1,7 +1,7 @@
 import React from 'react';
 import { Producto, BadgeGlobalConfig } from '../../shared/types.js';
 import { getProductSpecs, formatCurrency, parseModelAndSpec } from '../../shared/helpers.js';
-import { SellosGraficosOverlay, getProductSellos } from './Badges.js';
+import { SellosGraficosOverlay, getProductSellos, getProductSmdBadge } from './Badges.js';
 import { Check, Calculator, ArrowLeftRight, Cctv, Eye } from 'lucide-react';
 
 interface ProductTableProps {
@@ -186,15 +186,17 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                 return items;
               })();
 
+              const smdBadge = prod.tipo_dispositivo === 'CAMARA' ? getProductSmdBadge(prod, globalBadges) : null;
+
               const seen = new Set<string>();
               const uniqueBadges: string[] = [];
-              if (smdOrVca) {
+              if (smdOrVca && !smdOrVca.toUpperCase().startsWith('SMD')) {
                 seen.add(smdOrVca.toUpperCase());
                 uniqueBadges.push(smdOrVca);
               }
               (prod.badges_detectados || []).forEach((b: string) => {
                 const upper = b.toUpperCase().trim();
-                if (smdOrVca && upper.startsWith('SMD')) return;
+                if (upper.startsWith('SMD')) return;
                 if (!seen.has(upper)) {
                   seen.add(upper);
                   uniqueBadges.push(b);
@@ -327,14 +329,39 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                   ) : (
                     <>
                       <td className="py-2.5 px-2.5 font-mono">
-                        <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-tiandy-50 dark:bg-tiandy-950/60 text-tiandy-700 dark:text-tiandy-300 border border-tiandy-200/80 dark:border-tiandy-800/80 uppercase">
-                          {specs.formato || 'Cámara'}
-                        </span>
+                        <div className="flex flex-col gap-1 items-start">
+                          <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-tiandy-50 dark:bg-tiandy-950/60 text-tiandy-700 dark:text-tiandy-300 border border-tiandy-200/80 dark:border-tiandy-800/80 uppercase">
+                            {specs.formato || 'Cámara'}
+                          </span>
+                          {prod.tipo_dispositivo === 'CAMARA' && specs.ambiente && (
+                            <span
+                              className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold tracking-wider uppercase border shadow-2xs ${
+                                specs.ambiente === 'INTERIOR'
+                                  ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/80'
+                                  : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80'
+                              }`}
+                              title={specs.ambiente === 'INTERIOR' ? 'Cámara de uso interior' : 'Cámara para intemperie / exterior'}
+                            >
+                              {specs.ambiente}
+                            </span>
+                          )}
+                        </div>
                       </td>
 
+                      {/* Cámaras: Resolución */}
                       <td className="py-2.5 px-2.5 font-mono">
-                        <div className="font-bold text-slate-900 dark:text-slate-100 text-xs">
-                          {specs.resolucion || '—'}
+                        <div className="flex flex-col gap-1 items-start">
+                          <div className="font-bold text-slate-900 dark:text-slate-100 text-xs">
+                            {specs.resolucion || '—'}
+                          </div>
+                          {smdBadge && (
+                            <img
+                              src={smdBadge.imgUrl}
+                              alt={smdBadge.label}
+                              className="h-4 sm:h-4.5 w-auto max-w-[70px] object-contain select-none drop-shadow-2xs mt-0.5"
+                              title={smdBadge.label}
+                            />
+                          )}
                         </div>
                       </td>
 

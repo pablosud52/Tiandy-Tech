@@ -32,7 +32,8 @@ import {
   ChevronRight, 
   Plus, 
   Trash2, 
-  FileSpreadsheet
+  FileSpreadsheet,
+  Compass
 } from 'lucide-react';
 
 interface ProductEditFormProps {
@@ -902,6 +903,14 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
       delete finalDatosTecnicos.nvr;
     }
 
+    const camSpecsCurrent = (formData.datos_tecnicos as any)?.camara || {};
+    const resolvedAmbiente = formData.tipo_dispositivo === 'CAMARA' ? (
+      camSpecsCurrent.ambiente_instalacion ||
+      formData.ambiente_instalacion ||
+      ((formData.datos_tecnicos as any)?.ambiente_instalacion) ||
+      (finalModel.includes('TC-C320N') ? 'INTERIOR' : 'EXTERIOR')
+    ) : undefined;
+
     const toSave: Producto = {
       ...(formData as Producto),
       modelo: finalModel,
@@ -910,13 +919,28 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
       codigo_1: formData.codigo_1 ? formData.codigo_1.trim() : null,
       codigo_2: formData.codigo_2 ? formData.codigo_2.trim() : null,
       badge_nuevo: isNuevoActivo,
+      ambiente_instalacion: resolvedAmbiente,
       badges_detectados: updatedBadges,
-      datos_tecnicos: finalDatosTecnicos
+      datos_tecnicos: {
+        ...finalDatosTecnicos,
+        ...(formData.tipo_dispositivo === 'CAMARA' ? {
+          camara: {
+            ...(finalDatosTecnicos.camara || {}),
+            ambiente_instalacion: resolvedAmbiente || 'EXTERIOR'
+          }
+        } : {})
+      }
     };
     onSave(toSave);
   };
 
   const camSpecs = (formData.datos_tecnicos as any)?.camara || {};
+  const currentAmbiente = formData.tipo_dispositivo === 'CAMARA' ? (
+    camSpecs.ambiente_instalacion ||
+    formData.ambiente_instalacion ||
+    ((formData.datos_tecnicos as any)?.ambiente_instalacion) ||
+    (formData.modelo?.includes('TC-C320N') ? 'INTERIOR' : 'EXTERIOR')
+  ) : null;
   const nvrSpecs = (formData.datos_tecnicos as any)?.nvr || {};
   const switchSpecs = (formData.datos_tecnicos as any)?.switch || {};
 
@@ -2214,12 +2238,107 @@ export const ProductEditForm: React.FC<ProductEditFormProps> = ({
                   </div>
                 </div>
 
-                {/* 3. OTRAS ETIQUETAS DETECTADAS DEL PDF / PERSONALIZADAS */}
+                {/* 3. AMBIENTE DE INSTALACIÓN (INTERIOR / EXTERIOR) */}
+                {formData.tipo_dispositivo === 'CAMARA' && (
+                  <div className="space-y-3 pt-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                        <Compass className="h-4 w-4 text-emerald-600" />
+                        3. Ambiente de Instalación (Interior / Exterior)
+                      </h4>
+                      <span className="text-[10px] text-slate-400">
+                        Indicador en Modo Ficha y Tabla
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div
+                        onClick={() => {
+                          const currCam = (formData.datos_tecnicos as any)?.camara || {};
+                          setFormData({
+                            ...formData,
+                            ambiente_instalacion: 'EXTERIOR',
+                            datos_tecnicos: {
+                              ...formData.datos_tecnicos,
+                              camara: {
+                                ...currCam,
+                                ambiente_instalacion: 'EXTERIOR'
+                              }
+                            }
+                          });
+                        }}
+                        className={`cursor-pointer rounded-2xl p-3.5 border transition-all flex items-center justify-between ${
+                          currentAmbiente === 'EXTERIOR'
+                            ? 'border-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/40 dark:border-emerald-600 shadow-xs'
+                            : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 hover:border-slate-300'
+                        }`}
+                      >
+                        <div>
+                          <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                            <span>EXTERIOR</span>
+                            <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-mono font-bold">
+                              IP65 / IP66 / IP67
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-slate-400 mt-0.5">
+                            Cámara apta para intemperie, lluvia y polvo
+                          </p>
+                        </div>
+                        <div className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                          currentAmbiente === 'EXTERIOR' ? 'bg-emerald-600 text-white' : 'border border-slate-300 dark:border-slate-700'
+                        }`}>
+                          {currentAmbiente === 'EXTERIOR' && <Check className="w-3.5 h-3.5" />}
+                        </div>
+                      </div>
+
+                      <div
+                        onClick={() => {
+                          const currCam = (formData.datos_tecnicos as any)?.camara || {};
+                          setFormData({
+                            ...formData,
+                            ambiente_instalacion: 'INTERIOR',
+                            datos_tecnicos: {
+                              ...formData.datos_tecnicos,
+                              camara: {
+                                ...currCam,
+                                ambiente_instalacion: 'INTERIOR'
+                              }
+                            }
+                          });
+                        }}
+                        className={`cursor-pointer rounded-2xl p-3.5 border transition-all flex items-center justify-between ${
+                          currentAmbiente === 'INTERIOR'
+                            ? 'border-amber-500 bg-amber-50/60 dark:bg-amber-950/40 dark:border-amber-600 shadow-xs'
+                            : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 hover:border-slate-300'
+                        }`}
+                      >
+                        <div>
+                          <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                            <span>INTERIOR</span>
+                            <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 font-mono font-bold">
+                              Uso Cubierto
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-slate-400 mt-0.5">
+                            Carcasa plástica o sin sellado hermético
+                          </p>
+                        </div>
+                        <div className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                          currentAmbiente === 'INTERIOR' ? 'bg-amber-600 text-white' : 'border border-slate-300 dark:border-slate-700'
+                        }`}>
+                          {currentAmbiente === 'INTERIOR' && <Check className="w-3.5 h-3.5" />}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 4. OTRAS ETIQUETAS DETECTADAS DEL PDF / PERSONALIZADAS */}
                 <div className="space-y-3 pt-2">
                   <div className="flex items-center justify-between">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
                       <Layers className="h-4 w-4 text-emerald-600" />
-                      3. Otras Etiquetas Detectadas y Personalizadas
+                      4. Otras Etiquetas Detectadas y Personalizadas
                     </h4>
                     {(formData.badges_detectados && formData.badges_detectados.length > 0) && (
                       <button

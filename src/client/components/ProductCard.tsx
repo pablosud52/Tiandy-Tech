@@ -87,6 +87,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     return tipo_dispositivo;
   })();
 
+  // Ambiente de instalación (Interior / Exterior)
+  const ambiente = tipo_dispositivo === 'CAMARA' ? (() => {
+    if (cam?.ambiente_instalacion) return cam.ambiente_instalacion.toUpperCase();
+    if (producto.ambiente_instalacion) return producto.ambiente_instalacion.toUpperCase();
+    if ((datos_tecnicos as any)?.ambiente_instalacion) return (datos_tecnicos as any).ambiente_instalacion.toUpperCase();
+    if (modelo?.includes('TC-C320N')) return 'INTERIOR';
+    return 'EXTERIOR';
+  })() : null;
+
   // Sensor
   const sensorRaw = cp?.sensor || cam?.sensor_imagen;
   const sensor = sensorRaw ? sensorRaw.replace(/([0-9/.]+")([A-Za-z])/i, '$1 $2') : null;
@@ -179,13 +188,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <div className="flex items-start justify-between gap-2.5 mb-3">
             {/* Izquierda: Serie arriba y Modelo principal abajo */}
             <div className="min-w-0 flex-1">
-              {serie && serie.trim() && serie.trim().toLowerCase() !== 'general series' && (
-                <div className="mb-0.5">
+              <div className="flex items-center justify-between gap-2 mb-1">
+                {serie && serie.trim() && serie.trim().toLowerCase() !== 'general series' ? (
                   <span className="inline-block rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-1.5 py-0.2 text-[9px] font-mono font-bold tracking-wider uppercase border border-slate-200 dark:border-slate-700">
                     {serie.trim()}
                   </span>
-                </div>
-              )}
+                ) : <span />}
+
+                {ambiente && (
+                  <span
+                    className={`inline-block rounded px-1.5 py-0.2 text-[9px] font-mono font-bold tracking-wider uppercase border shadow-2xs ${
+                      ambiente === 'INTERIOR'
+                        ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/80'
+                        : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80'
+                    }`}
+                    title={ambiente === 'INTERIOR' ? 'Cámara de uso interior' : 'Cámara para intemperie / exterior'}
+                  >
+                    {ambiente}
+                  </span>
+                )}
+              </div>
               <h3 
                 onClick={() => onSelect(producto)}
                 className="text-base font-bold text-slate-900 dark:text-white hover:text-tiandy-600 dark:hover:text-tiandy-400 cursor-pointer transition-colors line-clamp-1 font-mono tracking-tight"

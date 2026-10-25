@@ -75,6 +75,15 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const cp: any = dt.caracteristicas_principales || {};
   const fullSpecs: Record<string, Record<string, string | null>> = dt.especificaciones_datasheet || {};
 
+  const cam = dt.camara;
+  const ambiente = producto.tipo_dispositivo === 'CAMARA' ? (() => {
+    if (cam?.ambiente_instalacion) return cam.ambiente_instalacion.toUpperCase();
+    if (producto.ambiente_instalacion) return producto.ambiente_instalacion.toUpperCase();
+    if (dt?.ambiente_instalacion) return dt.ambiente_instalacion.toUpperCase();
+    if (producto.modelo?.includes('TC-C320N')) return 'INTERIOR';
+    return 'EXTERIOR';
+  })() : null;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-slate-950/75 backdrop-blur-sm animate-in fade-in duration-200">
       <div
@@ -106,9 +115,23 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             </div>
 
             <div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono">
-                {baseModel}
-              </h2>
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono">
+                  {baseModel}
+                </h2>
+                {ambiente && (
+                  <span
+                    className={`rounded-md px-2.5 py-0.5 text-xs font-mono font-bold tracking-wider uppercase border shadow-2xs ${
+                      ambiente === 'INTERIOR'
+                        ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/80'
+                        : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80'
+                    }`}
+                    title={ambiente === 'INTERIOR' ? 'Cámara de uso interior' : 'Cámara para intemperie / exterior'}
+                  >
+                    {ambiente}
+                  </span>
+                )}
+              </div>
               {variantSpec && (
                 <span className="text-sm font-normal text-slate-500 dark:text-slate-400 block mt-0.5 font-mono">
                   {variantSpec}
@@ -265,6 +288,27 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       {cp.formato || specs.formato || '-'}
                     </span>
                   </div>
+
+                  {/* Ambiente de Instalación */}
+                  {ambiente && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 p-3 sm:px-5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                      <span className="font-semibold text-slate-500 dark:text-slate-400">Ambiente:</span>
+                      <span className="sm:col-span-2 font-medium text-slate-900 dark:text-white flex items-center gap-2">
+                        <span
+                          className={`rounded px-2 py-0.5 text-xs font-mono font-bold tracking-wider uppercase border shadow-2xs ${
+                            ambiente === 'INTERIOR'
+                              ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/80'
+                              : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80'
+                          }`}
+                        >
+                          {ambiente}
+                        </span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                          {ambiente === 'INTERIOR' ? 'Uso interior' : 'Exterior / Intemperie'}
+                        </span>
+                      </span>
+                    </div>
+                  )}
 
                   {/* 2. Carcasa */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 p-3 sm:px-5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">

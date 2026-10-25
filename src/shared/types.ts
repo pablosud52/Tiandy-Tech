@@ -43,6 +43,7 @@ export interface DatosCamara {
   altavoz_incorporado?: boolean;
   slot_sd?: boolean;
   proteccion_ip?: string;
+  ambiente_instalacion?: 'EXTERIOR' | 'INTERIOR' | string;
   codecs_video?: string;
   interfaces?: {
     audio_integrado?: 'Sin Audio' | 'Solo Micrófono' | 'Micrófono + Parlante' | string;
@@ -238,6 +239,7 @@ export interface Producto {
   galeria?: string[];
   datasheet_pdf?: string;
   badges_detectados?: string[];
+  ambiente_instalacion?: 'EXTERIOR' | 'INTERIOR' | string;
   datos_tecnicos: DatosTecnicos;
   created_at?: string;
   updated_at?: string;

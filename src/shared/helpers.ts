@@ -49,6 +49,14 @@ export function getProductSpecs(prod: Producto) {
     ranura_sd: isCam ? Boolean(cam.interfaces?.ranura_sd || dt.slot_sd || cam.slot_sd) : false,
     max_sd_gb: isCam ? (cam.interfaces?.ranura_sd || (cam.slot_sd ? '512 GB' : '')) : '',
     grado_proteccion: isCam ? (cam.fisico?.grado_ip || cam.proteccion_ip || dt.grado_proteccion || '') : '',
+    ambiente: isCam
+      ? (
+          cam.ambiente_instalacion ||
+          prod.ambiente_instalacion ||
+          dt.ambiente_instalacion ||
+          (prod.modelo?.includes('TC-C320N') ? 'INTERIOR' : 'EXTERIOR')
+        )
+      : '',
     antivandalico: isCam ? (dt.antivandalico || (cam.fisico?.grado_ip?.includes('IK') || cam.proteccion_ip?.includes('IK') ? 'IK10' : '')) : '',
     alimentacion: isCam
       ? (cam.alimentacion?.tipo || cam.alimentacion_tipo || (dt.caracteristicas_principales as any)?.alimentacion || dt.alimentacion || '')

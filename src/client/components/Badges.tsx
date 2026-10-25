@@ -11,6 +11,50 @@ export const DEFAULT_BADGE_SVGS: Record<string, string> = {
   VCA: '/data/badges/vca.svg',
 };
 
+export const withBadgeCacheBust = (url: string, id?: string): string => {
+  if (!url) return url;
+  if ((id && id.startsWith('SMD_')) || url.includes('smd-')) {
+    const clean = url.replace(/[?&]v=[^&]+/g, '');
+    const separator = clean.includes('?') ? '&' : '?';
+    return `${clean}${separator}v=20261025b`;
+  }
+  return url;
+};
+
+export function getProductSmdBadge(
+  prod: Producto,
+  globalBadges?: BadgeGlobalConfig[]
+): { id: string; version: string; imgUrl: string; label: string } | null {
+  const sellos = getProductSellos(prod, globalBadges);
+  const smdSello = sellos.find((s) => s.id && s.id.startsWith('SMD_'));
+  if (smdSello && smdSello.imagen_url) {
+    const version = smdSello.id === 'SMD_1' ? '1.0' : smdSello.id === 'SMD_2' ? '2.0' : '3.0';
+    return {
+      id: smdSello.id,
+      version,
+      imgUrl: withBadgeCacheBust(smdSello.imagen_url, smdSello.id),
+      label: smdSello.nombre || `SMD ${version}`
+    };
+  }
+
+  // Inferencia complementaria
+  const badgesDet = prod.badges_detectados || [];
+  const camAnaliticas = (prod.datos_tecnicos as any)?.camara?.analiticas_ia;
+  const versionSmd = camAnaliticas?.version_smd || '';
+
+  if (badgesDet.some((b: string) => /SMD\s*3/i.test(b)) || /3(\.0)?/i.test(versionSmd)) {
+    return { id: 'SMD_3', version: '3.0', imgUrl: withBadgeCacheBust(DEFAULT_BADGE_SVGS.SMD_3, 'SMD_3'), label: 'SMD 3.0' };
+  }
+  if (badgesDet.some((b: string) => /SMD\s*2/i.test(b)) || /2(\.0)?/i.test(versionSmd)) {
+    return { id: 'SMD_2', version: '2.0', imgUrl: withBadgeCacheBust(DEFAULT_BADGE_SVGS.SMD_2, 'SMD_2'), label: 'SMD 2.0' };
+  }
+  if (badgesDet.some((b: string) => /SMD\s*1/i.test(b)) || /1(\.0)?/i.test(versionSmd)) {
+    return { id: 'SMD_1', version: '1.0', imgUrl: withBadgeCacheBust(DEFAULT_BADGE_SVGS.SMD_1, 'SMD_1'), label: 'SMD 1.0' };
+  }
+
+  return null;
+}
+
 export function getProductSellos(
   producto: Partial<Producto>,
   globalBadges?: BadgeGlobalConfig[]
@@ -47,7 +91,8 @@ export function getProductSellos(
 
         // Si gb.imagen_url está vacía, usar el fallback svg oficial predeterminado (ej: smd-1.svg, vca.svg)
         const defaultImg = DEFAULT_BADGE_SVGS[gb.id] || '';
-        const finalImg = (gb.imagen_url && gb.imagen_url.trim() !== '') ? gb.imagen_url : defaultImg;
+        const rawFinalImg = (gb.imagen_url && gb.imagen_url.trim() !== '') ? gb.imagen_url : defaultImg;
+        const finalImg = withBadgeCacheBust(rawFinalImg, gb.id);
 
         return {
           id: gb.id,
@@ -69,7 +114,8 @@ export function getProductSellos(
     return existingSellos
       .map((s: any) => {
         if (!s) return null;
-        const img = (s.imagen_url && s.imagen_url.trim() !== '') ? s.imagen_url : (DEFAULT_BADGE_SVGS[s.id] || '');
+        const rawImg = (s.imagen_url && s.imagen_url.trim() !== '') ? s.imagen_url : (DEFAULT_BADGE_SVGS[s.id] || '');
+        const img = withBadgeCacheBust(rawImg, s.id);
         return { ...s, imagen_url: img || undefined };
       })
       .filter((s): s is SelloGraficoConfig => Boolean(s && s.activo && s.imagen_url && s.imagen_url.trim() !== ''));
