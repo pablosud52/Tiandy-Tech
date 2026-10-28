@@ -271,8 +271,11 @@ export function buildProductSearchCorpus(
       if (sectionKey) parts.push(sectionKey);
       if (sectionObj && typeof sectionObj === 'object') {
         for (const [k, v] of Object.entries(sectionObj as Record<string, any>)) {
-          if (k) parts.push(k);
-          if (v && typeof v === 'string') parts.push(v);
+          // Solo indexar si el valor no es nulo o vacío
+          if (v !== null && v !== undefined && v !== '' && v !== '-') {
+            if (k) parts.push(k);
+            if (typeof v === 'string') parts.push(v);
+          }
         }
       }
     }
@@ -281,8 +284,12 @@ export function buildProductSearchCorpus(
   // 4. Características principales estructuradas
   if (dt.caracteristicas_principales && typeof dt.caracteristicas_principales === 'object') {
     for (const [k, v] of Object.entries(dt.caracteristicas_principales as Record<string, any>)) {
-      if (k) parts.push(k);
-      if (v && typeof v === 'string') parts.push(v);
+      // Sanitización estricta: nunca indexar nombres de claves si el valor es null o false (evita falso positivo de SMD)
+      if (v !== null && v !== undefined && v !== '' && v !== false) {
+        if (k) parts.push(k);
+        if (typeof v === 'string') parts.push(v);
+        else if (Array.isArray(v)) parts.push(v.join(' '));
+      }
     }
   }
 
@@ -320,26 +327,69 @@ export function buildProductSearchCorpus(
     if (sw.velocidad_poe) parts.push(sw.velocidad_poe);
   }
 
-  // 6. Badges detectados y sellos gráficos
-  // REGLA ANTI-FALSOS POSITIVOS: Excluir explícitamente "nuevo", "modelo", "nuevo modelo"
-  if (Array.isArray(prod.badges_detectados)) {
-    for (const b of prod.badges_detectados) {
-      if (!b) continue;
-      const bLow = b.toLowerCase();
-      if (bLow.includes('nuevo') || bLow.includes('modelo')) continue;
-      parts.push(b);
-    }
+  // 6. Analíticas de Video VCA detectadas
+  const anas = prod.tipo_dispositivo === 'CAMARA' ? getProductAnalytics(prod) : [];
+  if (anas.length > 0) {
+    parts.push(...anas);
+    if (anas.includes('TRIPWIRE')) parts.push('tripwire', 'cruce de linea', 'line crossing');
+    if (anas.includes('PERIMETER')) parts.push('perimeter', 'intrusion perimetral', 'perimetro');
+    if (anas.includes('DOUBLE_TRIPWIRE')) parts.push('double tripwire', 'doble cruce');
+    if (anas.includes('LOITERING')) parts.push('loitering', 'merodeo');
+    if (anas.includes('RUNNING')) parts.push('running', 'carrera');
+    if (anas.includes('PARKING')) parts.push('parking', 'estacionamiento');
+    if (anas.includes('CROWD')) parts.push('crowd', 'aglomeraciones');
+    if (anas.includes('PEOPLE_COUNTING')) parts.push('people counting', 'conteo de personas');
+    if (anas.includes('HEAT_MAP')) parts.push('heat map', 'heatmap', 'mapa de calor');
+    if (anas.includes('SAFETY_HELMET')) parts.push('safety helmet', 'casco');
+    if (anas.includes('FACE_DETECTION')) parts.push('face detection', 'captura facial', 'rostro');
+    if (anas.includes('FACE_RECOGNITION')) parts.push('face recognition', 'reconocimiento facial');
+    if (anas.includes('ANPR_LPR')) parts.push('anpr', 'lpr', 'matriculas');
   }
 
-  if (Array.isArray(dt.sellos_graficos)) {
-    for (const s of dt.sellos_graficos) {
-      if (!s || !s.activo) continue;
-      if (s.id === 'NUEVO_MODELO') continue;
-      const sNameLow = (s.nombre || '').toLowerCase();
-      if (sNameLow.includes('nuevo') || sNameLow.includes('modelo')) continue;
-      parts.push(s.nombre);
-      parts.push(s.id);
-    }
+  // 7. Detección y Enriquecimiento de SMD (Tokens atómicos y búsqueda genérica)
+  const sellosGraficos: any[] = Array.isArray(dt.sellos_graficos) ? dt.sellos_graficos : [];
+  const bDet: string[] = Array.isArray(prod.badges_detectados) ? prod.badges_detectados : [];
+  const cpSmd: string | null = dt.caracteristicas_principales?.smd || null;
+  const camSmd: string | null = dt.camara?.analiticas_ia?.version_smd || null;
+
+  const s1 = sellosGraficos.find((s: any) => s && s.id === 'SMD_1');
+  const s2 = sellosGraficos.find((s: any) => s && s.id === 'SMD_2');
+  const s3 = sellosGraficos.find((s: any) => s && s.id === 'SMD_3');
+
+  const hasSmd1 = Boolean(s1?.activo) || bDet.some((b: string) => /SMD\s*1/i.test(b)) || (cpSmd ? /1(\.0)?/i.test(cpSmd) : false) || (camSmd ? /1(\.0)?/i.test(camSmd) : false) || anas.includes('SMD_1');
+  const hasSmd2 = Boolean(s2?.activo) || bDet.some((b: string) => /SMD\s*2/i.test(b)) || (cpSmd ? /2(\.0)?/i.test(cpSmd) : false) || (camSmd ? /2(\.0)?/i.test(camSmd) : false) || anas.includes('SMD_2');
+  const hasSmd3 = Boolean(s3?.activo) || bDet.some((b: string) => /SMD\s*3/i.test(b)) || (cpSmd ? /3(\.0)?/i.test(cpSmd) : false) || (camSmd ? /3(\.0)?/i.test(camSmd) : false) || anas.includes('SMD_3');
+
+  if (hasSmd1) {
+    parts.push('__smd_v1__', 'smd', 'smd 1.0', 'smd 1', 'smd1', 'smd1.0');
+  }
+  if (hasSmd2) {
+    parts.push('__smd_v2__', 'smd', 'smd 2.0', 'smd 2', 'smd2', 'smd2.0');
+  }
+  if (hasSmd3) {
+    parts.push('__smd_v3__', 'smd', 'smd 3.0', 'smd 3', 'smd3', 'smd3.0');
+  }
+
+  // 8. Badges detectados y sellos gráficos
+  // REGLA ANTI-FALSOS POSITIVOS: Excluir explícitamente "nuevo", "modelo", "nuevo modelo"
+  for (const b of bDet) {
+    if (!b) continue;
+    const bLow = b.toLowerCase();
+    if (bLow.includes('nuevo') || bLow.includes('modelo')) continue;
+    parts.push(b);
+    if (/colormaker/i.test(b)) parts.push('colormaker');
+    if (/polar\s*day/i.test(b)) parts.push('polarday');
+    if (/early\s*warning/i.test(b)) parts.push('earlywarning');
+    if (/dual\s*light/i.test(b)) parts.push('duallight');
+  }
+
+  for (const s of sellosGraficos) {
+    if (!s || !s.activo) continue;
+    if (s.id === 'NUEVO_MODELO') continue;
+    const sNameLow = (s.nombre || '').toLowerCase();
+    if (sNameLow.includes('nuevo') || sNameLow.includes('modelo')) continue;
+    parts.push(s.nombre);
+    parts.push(s.id);
   }
 
   if (Array.isArray(globalBadges) && globalBadges.length > 0) {
@@ -348,19 +398,17 @@ export function buildProductSearchCorpus(
       if (gb.id === 'NUEVO_MODELO') continue;
 
       let isActivo = false;
-      const fromProd = dt.sellos_graficos?.find((s: any) => s && s.id === gb.id);
+      const fromProd = sellosGraficos.find((s: any) => s && s.id === gb.id);
       if (fromProd !== undefined) {
         isActivo = Boolean(fromProd.activo);
       } else {
-        const bDet = prod.badges_detectados || [];
         const cam = (dt.camara || {}) as any;
-        const vSmd = cam?.analiticas_ia?.version_smd || '';
         const vcaF = cam?.analiticas_ia?.vca_funciones;
         if (gb.id === 'COLORMAKER' && bDet.some((b: string) => b.toUpperCase().includes('COLORMAKER'))) isActivo = true;
         if (gb.id === 'POLAR_DAY' && bDet.some((b: string) => b.toUpperCase().includes('POLAR'))) isActivo = true;
-        if (gb.id === 'SMD_1' && (bDet.some((b: string) => /SMD\s*1/i.test(b)) || /1(\.0)?/i.test(vSmd))) isActivo = true;
-        if (gb.id === 'SMD_2' && (bDet.some((b: string) => /SMD\s*2/i.test(b)) || /2(\.0)?/i.test(vSmd))) isActivo = true;
-        if (gb.id === 'SMD_3' && (bDet.some((b: string) => /SMD\s*3/i.test(b)) || /3(\.0)?/i.test(vSmd))) isActivo = true;
+        if (gb.id === 'SMD_1' && hasSmd1) isActivo = true;
+        if (gb.id === 'SMD_2' && hasSmd2) isActivo = true;
+        if (gb.id === 'SMD_3' && hasSmd3) isActivo = true;
         if (gb.id === 'VCA' && (bDet.some((b: string) => /VCA/i.test(b)) || (Array.isArray(vcaF) ? vcaF.length > 0 : Boolean(vcaF)))) isActivo = true;
         if (gb.id === 'DUAL_LIGHT' && bDet.some((b: string) => /DUAL/i.test(b))) isActivo = true;
         if (gb.id === 'PARLANTE_INCORPORADO' && bDet.some((b: string) => /PARLANTE|ALTAVOZ/i.test(b))) isActivo = true;
@@ -430,13 +478,13 @@ function matchSingleToken(token: string, corpus: string): boolean {
 
   // 6. SMD con o sin espacios (ej: "smd1", "smd2", "smd3")
   if (token === 'smd1' || token === 'smd1.0') {
-    return corpus.includes('smd 1') || corpus.includes('smd 1.0') || corpus.includes('smd1');
+    return corpus.includes('__smd_v1__') || corpus.includes('smd 1') || corpus.includes('smd 1.0') || corpus.includes('smd1');
   }
   if (token === 'smd2' || token === 'smd2.0') {
-    return corpus.includes('smd 2') || corpus.includes('smd 2.0') || corpus.includes('smd2');
+    return corpus.includes('__smd_v2__') || corpus.includes('smd 2') || corpus.includes('smd 2.0') || corpus.includes('smd2');
   }
   if (token === 'smd3' || token === 'smd3.0') {
-    return corpus.includes('smd 3') || corpus.includes('smd 3.0') || corpus.includes('smd3');
+    return corpus.includes('__smd_v3__') || corpus.includes('smd 3') || corpus.includes('smd 3.0') || corpus.includes('smd3');
   }
 
   return false;
@@ -455,7 +503,24 @@ export function matchesSearchQuery(
   const rawQuery = busqueda.trim();
   if (!rawQuery) return true;
 
-  const normalizedQuery = normalizeSearchText(rawQuery);
+  let normalizedQuery = normalizeSearchText(rawQuery);
+
+  // Preprocesar frases técnicas compuestas como tokens atómicos unificados
+  normalizedQuery = normalizedQuery
+    .replace(/\bsmd\s*1(\.0)?\b/gi, ' __smd_v1__ ')
+    .replace(/\bsmd\s*2(\.0)?\b/gi, ' __smd_v2__ ')
+    .replace(/\bsmd\s*3(\.0)?\b/gi, ' __smd_v3__ ')
+    .replace(/\bcolor\s+maker\b/gi, ' colormaker ')
+    .replace(/\bpolar\s+day\b/gi, ' polarday ')
+    .replace(/\bearly\s+warning\b/gi, ' earlywarning ')
+    .replace(/\bdual\s+light\b/gi, ' duallight ')
+    .replace(/\bcruce\s+de\s+linea\b/gi, ' tripwire ')
+    .replace(/\bline\s+crossing\b/gi, ' tripwire ')
+    .replace(/\bintrusion\s+perimetral\b/gi, ' perimeter ')
+    .replace(/\bdoble\s+cruce\b/gi, ' double_tripwire ')
+    .replace(/\bconteo\s+de\s+personas\b/gi, ' people_counting ')
+    .replace(/\bmapa\s+de\s+calor\b/gi, ' heat_map ');
+
   const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
   if (tokens.length === 0) return true;
 
@@ -463,4 +528,132 @@ export function matchesSearchQuery(
 
   return tokens.every((token) => matchSingleToken(token, corpus));
 }
+
+export interface AnaliticaItemConfig {
+  id: string;
+  categoria: 'SMD' | 'PERIMETRO' | 'COMPORTAMIENTO' | 'OBJETOS' | 'METRICAS' | 'EHS' | 'BIOMETRIA_TRAFICO';
+  categoriaLabel: string;
+  nombreEn: string;
+  nombreEs: string;
+}
+
+export const CATALOGO_ANALITICAS_VCA: AnaliticaItemConfig[] = [
+  // 1. Seguridad Perimetral y Control de Intrusión y Control de Intrusión
+  { id: 'TRIPWIRE', categoria: 'PERIMETRO', categoriaLabel: 'Seguridad Perimetral', nombreEn: 'Tripwire', nombreEs: 'Cruce de línea' },
+  { id: 'PERIMETER', categoria: 'PERIMETRO', categoriaLabel: 'Seguridad Perimetral', nombreEn: 'Perimeter Intrusion', nombreEs: 'Intrusión perimetral' },
+  { id: 'DOUBLE_TRIPWIRE', categoria: 'PERIMETRO', categoriaLabel: 'Seguridad Perimetral', nombreEn: 'Double Tripwire', nombreEs: 'Doble cruce de línea' },
+
+  // 3. Comportamiento y Orden Público
+  { id: 'LOITERING', categoria: 'COMPORTAMIENTO', categoriaLabel: 'Comportamiento y Orden', nombreEn: 'Loitering', nombreEs: 'Merodeo' },
+  { id: 'RUNNING', categoria: 'COMPORTAMIENTO', categoriaLabel: 'Comportamiento y Orden', nombreEn: 'Running', nombreEs: 'Carrera (persona corriendo)' },
+  { id: 'PARKING', categoria: 'COMPORTAMIENTO', categoriaLabel: 'Comportamiento y Orden', nombreEn: 'Parking', nombreEs: 'Estacionamiento indebido' },
+  { id: 'CROWD', categoria: 'COMPORTAMIENTO', categoriaLabel: 'Comportamiento y Orden', nombreEn: 'Crowd Detection', nombreEs: 'Detección de aglomeraciones' },
+
+  // 4. Vigilancia de Objetos y Protección del Dispositivo
+  { id: 'OBJECT_ABANDONED', categoria: 'OBJETOS', categoriaLabel: 'Objetos y Dispositivo', nombreEn: 'Object Abandoned', nombreEs: 'Objeto abandonado' },
+  { id: 'OBJECT_LOST', categoria: 'OBJETOS', categoriaLabel: 'Objetos y Dispositivo', nombreEn: 'Object Lost (Missing)', nombreEs: 'Objeto removido (desaparecido)' },
+  { id: 'VIDEO_ABNORMAL', categoria: 'OBJETOS', categoriaLabel: 'Objetos y Dispositivo', nombreEn: 'Video Abnormal', nombreEs: 'Alteración de video (cambio de escena)' },
+  { id: 'AUDIO_ABNORMAL', categoria: 'OBJETOS', categoriaLabel: 'Objetos y Dispositivo', nombreEn: 'Abnormal Audio Detection', nombreEs: 'Detección de audio anómalo' },
+
+  // 5. Inteligencia Comercial y Métricas de Negocio
+  { id: 'PEOPLE_COUNTING', categoria: 'METRICAS', categoriaLabel: 'Inteligencia Comercial', nombreEn: 'People Counting', nombreEs: 'Conteo de personas' },
+  { id: 'HEAT_MAP', categoria: 'METRICAS', categoriaLabel: 'Inteligencia Comercial', nombreEn: 'Heat Map', nombreEs: 'Mapa de calor' },
+
+  // 6. Seguridad Ocupacional (EHS) y Supervisión Laboral
+  { id: 'SAFETY_HELMET', categoria: 'EHS', categoriaLabel: 'Seguridad Laboral (EHS)', nombreEn: 'Helmet (Hardhat) Detection', nombreEs: 'Detección de uso de casco' },
+  { id: 'SAFETY_VEST', categoria: 'EHS', categoriaLabel: 'Seguridad Laboral (EHS)', nombreEn: 'High-Visibility Vest', nombreEs: 'Detección de chaleco reflectivo' },
+  { id: 'ON_DUTY', categoria: 'EHS', categoriaLabel: 'Seguridad Laboral (EHS)', nombreEn: 'On-Duty Detection', nombreEs: 'Detección de abandono de puesto' },
+  { id: 'SLEEPING', categoria: 'EHS', categoriaLabel: 'Seguridad Laboral (EHS)', nombreEn: 'Sleeping Detection', nombreEs: 'Detección de somnolencia' },
+
+  // 7. Biometría y Tránsito
+  { id: 'FACE_DETECTION', categoria: 'BIOMETRIA_TRAFICO', categoriaLabel: 'Biometría y Tránsito', nombreEn: 'Face Detection / Capture', nombreEs: 'Captura y atributos faciales' },
+  { id: 'FACE_RECOGNITION', categoria: 'BIOMETRIA_TRAFICO', categoriaLabel: 'Biometría y Tránsito', nombreEn: 'Face Recognition', nombreEs: 'Reconocimiento y comparación facial' },
+  { id: 'ANPR_LPR', categoria: 'BIOMETRIA_TRAFICO', categoriaLabel: 'Biometría y Tránsito', nombreEn: 'ANPR / LPR', nombreEs: 'Lectura de matrículas' }
+];
+
+export const CATALOGO_ANALITICAS_SMD_VCA = CATALOGO_ANALITICAS_VCA;
+
+/**
+ * Detecta y retorna el conjunto de identificadores de analíticas soportadas por una cámara.
+ * Examina tanto configuraciones manuales como características técnicas y datasheet parseado.
+ */
+export function getProductAnalytics(prod: Producto): string[] {
+  if (prod.tipo_dispositivo !== 'CAMARA') return [];
+  const dt: any = prod.datos_tecnicos || {};
+  const cp: any = dt.caracteristicas_principales || {};
+  const cam: any = dt.camara || {};
+  const badges: string[] = prod.badges_detectados || [];
+
+  // Configuración manual explícita desde el panel de control
+  if (Array.isArray(cam.analiticas_config) && cam.analiticas_config.length > 0) {
+    return cam.analiticas_config;
+  }
+
+  const textCorpus = (
+    JSON.stringify(dt.especificaciones_datasheet || {}) + ' ' +
+    (cp.vca || '') + ' ' +
+    (cp.smd || '') + ' ' +
+    (cam.analiticas_ia?.vca_funciones?.join(' ') || '') + ' ' +
+    badges.join(' ') + ' ' +
+    (prod.especificacion_completa || '') + ' ' +
+    (prod.subtipo || '')
+  ).toLowerCase();
+
+  const detected = new Set<string>();
+
+  // 1. SMD
+  const smdVal = cp.smd || cam.analiticas_ia?.version_smd || badges.find((b: string) => /SMD/i.test(b));
+  if (smdVal && /1\.0/i.test(smdVal)) {
+    detected.add('SMD_1');
+  } else if (textCorpus.includes('smart alarm(human and vehicle detection)')) {
+    detected.add('SMD_1');
+  }
+
+  if (smdVal && /2\.0/i.test(smdVal)) {
+    detected.add('SMD_2');
+  } else if (textCorpus.includes('smd 2.0') || textCorpus.includes('smd2.0')) {
+    detected.add('SMD_2');
+  }
+
+  if (smdVal && /3\.0/i.test(smdVal)) {
+    detected.add('SMD_3');
+  } else if (textCorpus.includes('smd 3.0') || textCorpus.includes('smd3.0')) {
+    detected.add('SMD_3');
+  }
+
+  // 2. VCA Perimetral
+  if (textCorpus.includes('tripwire')) detected.add('TRIPWIRE');
+  if (textCorpus.includes('perimeter')) detected.add('PERIMETER');
+  if (textCorpus.includes('double tripwire')) detected.add('DOUBLE_TRIPWIRE');
+
+  // 3. Comportamiento
+  if (textCorpus.includes('loitering')) detected.add('LOITERING');
+  if (textCorpus.includes('running')) detected.add('RUNNING');
+  if (textCorpus.includes('parking')) detected.add('PARKING');
+  if (textCorpus.includes('crowd') || textCorpus.includes('crowed')) detected.add('CROWD');
+
+  // 4. Objetos y Dispositivo
+  if (textCorpus.includes('abandon') || textCorpus.includes('abandoned')) detected.add('OBJECT_ABANDONED');
+  if (textCorpus.includes('lost') || textCorpus.includes('missing')) detected.add('OBJECT_LOST');
+  if (textCorpus.includes('video abnormal') || textCorpus.includes('scene change')) detected.add('VIDEO_ABNORMAL');
+  if (textCorpus.includes('audio abnormal')) detected.add('AUDIO_ABNORMAL');
+
+  // 5. Métricas Comerciales
+  if (textCorpus.includes('people counting') || textCorpus.includes('conteo de personas')) detected.add('PEOPLE_COUNTING');
+  if (textCorpus.includes('heatmap') || textCorpus.includes('heat map')) detected.add('HEAT_MAP');
+
+  // 6. Seguridad Laboral (EHS)
+  if (textCorpus.includes('helmet') || textCorpus.includes('hardhat')) detected.add('SAFETY_HELMET');
+  if (textCorpus.includes('vest') || textCorpus.includes('chaleco')) detected.add('SAFETY_VEST');
+  if (textCorpus.includes('on duty') || textCorpus.includes('on-duty')) detected.add('ON_DUTY');
+  if (textCorpus.includes('sleeping') || textCorpus.includes('somnolencia')) detected.add('SLEEPING');
+
+  // 7. Biometría y Tránsito
+  if (/\b(face\s*detection|face\s*capture|captura\s*facial)\b/i.test(textCorpus)) detected.add('FACE_DETECTION');
+  if (textCorpus.includes('face recognition') || textCorpus.includes('comparación facial')) detected.add('FACE_RECOGNITION');
+  if (textCorpus.includes('anpr') || textCorpus.includes('lpr')) detected.add('ANPR_LPR');
+
+  return Array.from(detected);
+}
+
 

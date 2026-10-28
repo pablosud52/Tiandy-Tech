@@ -66,7 +66,7 @@ const WIKI_TOPICS: WikiTopic[] = [
   },
   {
     id: 'vca',
-    title: 'VCA - Video Content Analytics (Analíticas de Video)',
+    title: 'VCA',
     shortDesc: 'Reglas algorítmicas avanzadas: Perímetro, comportamiento, biometría, EHS, retail y analítica vehicular.',
     badge: 'Deep Learning'
   }
@@ -1396,11 +1396,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Tripwire
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Cruce de línea</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Cruce de línea</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1425,11 +1425,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Perimeter Intrusion
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Intrusión perimetral</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Intrusión perimetral</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1454,11 +1454,11 @@ export const WikiPage: React.FC = () => {
                 <div className="md:col-span-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Double Tripwire
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Doble cruce de línea</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Doble cruce de línea</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1497,11 +1497,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Loitering
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Merodeo</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Merodeo</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1526,11 +1526,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Running
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Carrera (persona corriendo)</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Carrera (persona corriendo)</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1555,11 +1555,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Crowd Detection
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de aglomeraciones</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de aglomeraciones</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1584,11 +1584,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Parking
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Estacionamiento indebido</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Estacionamiento indebido</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1627,11 +1627,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Object Abandoned
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Objeto abandonado</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Objeto abandonado</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1656,11 +1656,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Object Lost (Missing)
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Objeto removido (desaparecido)</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Objeto removido (desaparecido)</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1685,11 +1685,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Video Abnormal (Scene Change)
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Alteración de video (cambio de escena)</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Alteración de video (cambio de escena)</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1714,11 +1714,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Abnormal Audio Detection
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de audio anómalo</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de audio anómalo</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1757,11 +1757,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         People Counting
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Conteo de personas</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Conteo de personas</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1786,11 +1786,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Heat Map
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Mapa de calor</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Mapa de calor</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1829,11 +1829,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Helmet (Hardhat) Detection
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de uso de casco</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de uso de casco</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1858,11 +1858,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         High-Visibility Vest Detection
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de chaleco reflectivo</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de chaleco reflectivo</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1887,11 +1887,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         On-Duty Detection
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de abandono de puesto</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de abandono de puesto</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1916,11 +1916,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Sleeping Detection
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de somnolencia o sueño en puesto</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección de somnolencia o sueño en puesto</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1959,11 +1959,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Face Recognition &amp; Comparison
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Reconocimiento y comparación facial</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Reconocimiento y comparación facial</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -1988,11 +1988,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Face Capture &amp; Attribute Extraction
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Captura de rostros y atributos</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Captura de rostros y atributos</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -2017,11 +2017,11 @@ export const WikiPage: React.FC = () => {
                 <div className="md:col-span-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Vehicle &amp; Human Metadata
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Metadatos estructurados de objetivos</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Metadatos estructurados de objetivos</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -2060,11 +2060,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         ANPR / LPR
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Lectura automática de matrículas</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Lectura automática de matrículas</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -2089,11 +2089,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Vehicle Counting &amp; Flow
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Conteo y sentido vehicular</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Conteo y sentido vehicular</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -2132,11 +2132,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Fire &amp; Smoke Detection
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección visual de humo y fuego</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Detección visual de humo y fuego</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>
@@ -2161,11 +2161,11 @@ export const WikiPage: React.FC = () => {
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40 p-4 flex flex-col justify-between space-y-3">
                   <div className="space-y-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs">
+                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80 border border-tiandy-500/50 text-slate-800 dark:text-slate-100 inline-flex items-center gap-1.5 shadow-2xs flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-tiandy-500 shrink-0" />
                         Thermal Early Warning
+                        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Advertencia térmica temprana</span>
                       </span>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">/ Advertencia térmica temprana</span>
                     </div>
                     <div className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       <span className="text-tiandy-500 font-bold shrink-0 mt-0.5">•</span>

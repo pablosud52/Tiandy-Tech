@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TipoDispositivo, FiltrosBusqueda } from '../../shared/types.js';
+import { CATALOGO_ANALITICAS_SMD_VCA } from '../../shared/helpers.js';
 import { Filter, X, ChevronDown, ChevronUp, RotateCcw, ShieldCheck, Video, Cpu, Server, Layers } from 'lucide-react';
 
 interface FilterSidebarProps {
@@ -10,6 +11,7 @@ interface FilterSidebarProps {
   conteoResultados: number;
   isOpenMobile: boolean;
   onCloseMobile: () => void;
+  conteoPorAnalitica?: Record<string, number>;
 }
 
 export const FilterSidebar: React.FC<FilterSidebarProps> = ({
@@ -19,13 +21,15 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   onReset,
   conteoResultados,
   isOpenMobile,
-  onCloseMobile
+  onCloseMobile,
+  conteoPorAnalitica
 }) => {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     serie: true,
     stock: true,
     formato: true,
     resolucion: true,
+    smd_vca: true,
     canales: true,
     puertos: true,
     tecnologia: true,
@@ -208,6 +212,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 )}
               </div>
 
+              
               {/* Tecnología Nocturna */}
               <div className="pt-3">
                 {renderSectionHeader('Visión Nocturna', 'tecnologia')}
@@ -294,6 +299,73 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   </div>
                 )}
               </div>
+{/* Analíticas VCA (Al final de Cámaras) */}
+              <div className="pt-3">
+                {renderSectionHeader('Analíticas VCA', 'smd_vca')}
+                {openSections.smd_vca && (
+                  <div className="mt-2 space-y-3">
+                    {Array.from(new Set(CATALOGO_ANALITICAS_SMD_VCA.map((i) => i.categoriaLabel))).map((catLabel) => {
+                      const items = CATALOGO_ANALITICAS_SMD_VCA.filter((i) => i.categoriaLabel === catLabel);
+                      return (
+                        <div key={catLabel} className="space-y-1">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-tiandy-600 dark:text-tiandy-400 px-1">
+                            {catLabel}
+                          </div>
+                          <div className="space-y-1">
+                            {items.map((item) => {
+                              const checked = filtros.smd_vca?.includes(item.id) || false;
+                              const count = conteoPorAnalitica?.[item.id] ?? 0;
+                              return (
+                                <label
+                                  key={item.id}
+                                  className={`flex items-start gap-2 py-1 px-1.5 rounded text-xs transition-colors cursor-pointer select-none ${
+                                    checked
+                                      ? 'bg-tiandy-50 dark:bg-tiandy-950/40 text-tiandy-900 dark:text-tiandy-100 font-medium'
+                                      : count === 0
+                                      ? 'opacity-40 text-slate-400 dark:text-slate-500'
+                                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                                  }`}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={checked}
+                                    onChange={() => handleCheckboxToggle('smd_vca', item.id)}
+                                    className="mt-0.5 rounded border-slate-300 text-tiandy-600 focus:ring-tiandy-500 dark:border-slate-700 dark:bg-slate-800"
+                                  />
+                                  <div className="flex-1 min-w-0">
+                                    {/* Renglón 1: Traducción / Función en Español en negrita + Conteo */}
+                                    <div className="flex items-center justify-between gap-1">
+                                      <span className="font-semibold text-xs text-slate-900 dark:text-slate-100 leading-snug">
+                                        {item.nombreEs}
+                                      </span>
+                                      <span
+                                        className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full shrink-0 ${
+                                          checked
+                                            ? 'bg-tiandy-600 text-white font-bold'
+                                            : count > 0
+                                            ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium'
+                                            : 'text-slate-400 dark:text-slate-600'
+                                        }`}
+                                      >
+                                        {count}
+                                      </span>
+                                    </div>
+                                    {/* Renglón 2: Nombre Técnico en Inglés en gris */}
+                                    <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
+                                      {item.nombreEn}
+                                    </div>
+                                  </div>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
             </>
           )}
 

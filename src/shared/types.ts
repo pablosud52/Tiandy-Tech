@@ -281,6 +281,7 @@ export interface FiltrosBusqueda {
   puertos_poe: string[];
   puertos_poe_nvr?: string[];
   interfaces_es?: string[];
+  smd_vca?: string[];
   microfono_incorporado: boolean;
   altavoz_incorporado: boolean;
   slot_sd: boolean;

@@ -21,7 +21,18 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       host: true,
       watch: {
-        ignored: ['**/data/**', '**/*.db*', '**/*.db-journal*', '**/.git/**']
+        ignored: [
+          '**/data/**',
+          '**/*.db*',
+          '**/*.db-journal*',
+          '**/.git/**',
+          '**/scratch/**',
+          '**/dist/**',
+          '**/02-DOCS/**',
+          '**/.system_generated/**',
+          '**/.gemini/**',
+          '**/.agents/**'
+        ]
       }
     },
     build: {

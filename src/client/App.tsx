@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Producto, TipoDispositivo, FiltrosBusqueda, ItemCotizacion, BadgeGlobalConfig } from '../shared/types.js';
-import { getProductSpecs, matchesSearchQuery } from '../shared/helpers.js';
+import { getProductSpecs, matchesSearchQuery, getProductAnalytics, CATALOGO_ANALITICAS_SMD_VCA } from '../shared/helpers.js';
 import { Navbar } from './components/Navbar.js';
 import { ProductCard } from './components/ProductCard.js';
 import { ProductTable } from './components/ProductTable.js';
@@ -155,6 +155,7 @@ export default function App() {
     estado_stock: [],
     formato: [],
     resolucion_mp: [],
+    smd_vca: [],
     badges: [],
     canales: [],
     bahias: [],
@@ -175,6 +176,7 @@ export default function App() {
       estado_stock: [],
       formato: [],
       resolucion_mp: [],
+      smd_vca: [],
       badges: [],
       canales: [],
       bahias: [],
@@ -492,6 +494,7 @@ export default function App() {
       estado_stock: [],
       formato: [],
       resolucion_mp: [],
+      smd_vca: [],
       badges: [],
       canales: [],
       bahias: [],
@@ -507,6 +510,27 @@ export default function App() {
     setBusqueda('');
     setBusquedaCodigo('');
   };
+
+    // Conteo de cámaras por cada analítica SMD / VCA
+  const conteoPorAnalitica = useMemo(() => {
+    if (activeTab !== 'CAMARA') return {};
+    const map: Record<string, number> = {};
+    CATALOGO_ANALITICAS_SMD_VCA.forEach((a) => {
+      map[a.id] = 0;
+    });
+    productos.forEach((prod) => {
+      if (prod.tipo_dispositivo === 'CAMARA') {
+        if (seccionesVisibles && seccionesVisibles[prod.tipo_dispositivo] === false) return;
+        const anas = getProductAnalytics(prod);
+        anas.forEach((id) => {
+          if (map[id] !== undefined) {
+            map[id] = (map[id] || 0) + 1;
+          }
+        });
+      }
+    });
+    return map;
+  }, [productos, activeTab, seccionesVisibles]);
 
   // Filtered Products
   const filteredProducts = useMemo(() => {
@@ -613,6 +637,15 @@ export default function App() {
       // 6. Resolución
       if (filtros.resolucion_mp && filtros.resolucion_mp.length > 0) {
         if (!filtros.resolucion_mp.some((r: string) => specs.resolucion.toUpperCase().includes(r.toUpperCase()))) {
+          return false;
+        }
+      }
+
+      
+      // 6.1 Analíticas VCA (Coincidencia AND: debe cumplir con todas las analíticas seleccionadas)
+      if (filtros.smd_vca && filtros.smd_vca.length > 0) {
+        const prodAnas = getProductAnalytics(prod);
+        if (!filtros.smd_vca.every((v: string) => prodAnas.includes(v))) {
           return false;
         }
       }
@@ -907,6 +940,7 @@ export default function App() {
                 onChange={setFiltros}
                 onReset={handleResetFilters}
                 conteoResultados={sortedProducts.length}
+                conteoPorAnalitica={conteoPorAnalitica}
                 isOpenMobile={isMobileFiltersOpen}
                 onCloseMobile={() => setIsMobileFiltersOpen(false)}
               />

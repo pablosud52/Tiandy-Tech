@@ -12,6 +12,15 @@ const app = express();
 const PORT = parseInt(process.env.PORT || '8090', 10);
 const isProd = process.env.NODE_ENV === 'production';
 
+// Blindaje contra caídas por sincronización de disco virtual en Google Drive (Windows)
+process.on('uncaughtException', (err: any) => {
+  if (err && (err.code === 'EINVAL' || err.code === 'EPERM' || err.syscall === 'lstat')) {
+    console.warn('[VFS Notice] Evento de lstat en Google Drive interceptado (el servidor sigue activo):', err.message);
+    return;
+  }
+  console.error('[FATAL] Uncaught Exception:', err);
+});
+
 // Middlewares
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -34,12 +43,31 @@ async function startServer() {
       server: {
         middlewareMode: true,
         watch: {
-          ignored: ['**/data/**', '**/*.db*', '**/*.db-journal*', '**/.git/**', '**/scratch/**', '**/dist/**', '**/02-DOCS/**']
+          ignored: [
+            '**/data/**',
+            '**/*.db*',
+            '**/*.db-journal*',
+            '**/.git/**',
+            '**/scratch/**',
+            '**/dist/**',
+            '**/02-DOCS/**',
+            '**/.system_generated/**',
+            '**/.gemini/**',
+            '**/.agents/**',
+            '**/*.log'
+          ]
         }
       },
       appType: 'spa',
       root: process.cwd()
     });
+
+    if (vite.watcher) {
+      vite.watcher.on('error', (err: any) => {
+        console.warn('[Vite Watcher Notice] Sincronización ignorada:', err?.message || err);
+      });
+    }
+
     app.use(vite.middlewares);
   } else {
     // Modo Producción: Servir bundle compilado en dist/client
