@@ -2951,7 +2951,6 @@
     "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C32XN 2ENA-28.pdf",
     "badges_detectados": [
-      "4K Ultra HD",
       "COLORMAKER",
       "SMD 1.0"
     ],
@@ -2973,7 +2972,8 @@
           "identificar": 4
         },
         "microfono_incorporado": true,
-        "altavoz_incorporado": false
+        "altavoz_incorporado": false,
+        "ambiente_instalacion": "EXTERIOR"
       },
       "caracteristicas_principales": {
         "formato": "Turret",
@@ -3199,7 +3199,7 @@
       ]
     },
     "created_at": "2026-10-15 02:07:17",
-    "updated_at": "2026-10-20 15:47:50",
+    "updated_at": "2026-10-27 23:40:06",
     "codigo_1": null,
     "codigo_2": null
   },
@@ -5895,7 +5895,8 @@
     "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C34XN 2ENA-28.pdf",
     "badges_detectados": [
-      "COLORMAKER"
+      "COLORMAKER",
+      "SMD 1.0"
     ],
     "datos_tecnicos": {
       "camara": {
@@ -5915,7 +5916,8 @@
           "identificar": 5.6
         },
         "microfono_incorporado": true,
-        "altavoz_incorporado": false
+        "altavoz_incorporado": false,
+        "ambiente_instalacion": "EXTERIOR"
       },
       "caracteristicas_principales": {
         "formato": "Turret",
@@ -6025,9 +6027,9 @@
           "imagen_url": "/data/images/Nuevo_Modelo-1792076913028-248226.png",
           "posicion": "top-left",
           "capa": "front",
-          "tamano": 100,
+          "tamano": 125,
           "anclaje": "esquina",
-          "opacidad": 1,
+          "opacidad": 0.7,
           "activo_global": true
         },
         {
@@ -6037,9 +6039,9 @@
           "imagen_url": "/data/images/color_maker-1792071501595-1723.png",
           "posicion": "bottom-right",
           "capa": "front",
-          "tamano": 130,
+          "tamano": 170,
           "anclaje": "esquina",
-          "opacidad": 1,
+          "opacidad": 0.85,
           "activo_global": true
         },
         {
@@ -6049,16 +6051,16 @@
           "imagen_url": "/data/images/Polar_day_v2-1792071561583-43243.png",
           "posicion": "bottom-right",
           "capa": "front",
-          "tamano": 130,
+          "tamano": 170,
           "anclaje": "esquina",
-          "opacidad": 1,
+          "opacidad": 0.85,
           "activo_global": true
         },
         {
           "id": "SMD_1",
           "nombre": "SMD 1.0",
-          "activo": false,
-          "imagen_url": "",
+          "activo": true,
+          "imagen_url": "/data/badges/smd-1.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -6070,7 +6072,7 @@
           "id": "SMD_2",
           "nombre": "SMD 2.0",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/smd-2.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -6082,7 +6084,7 @@
           "id": "SMD_3",
           "nombre": "SMD 3.0",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/smd-3.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -6094,7 +6096,7 @@
           "id": "VCA",
           "nombre": "VCA",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/vca.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -6141,7 +6143,7 @@
       ]
     },
     "created_at": "2026-10-12 03:48:27",
-    "updated_at": "2026-10-15 17:27:27",
+    "updated_at": "2026-10-27 23:43:10",
     "codigo_1": null,
     "codigo_2": null
   },
@@ -6975,6 +6977,7 @@
     "datasheet_pdf": "/data/docs/TC-C35WQ I5W-E-Y-4mm-V4.2.pdf",
     "badges_detectados": [
       "Early Warning",
+      "COLORMAKER",
       "SMD 2.0"
     ],
     "datos_tecnicos": {
@@ -6996,7 +6999,8 @@
         },
         "slot_sd": true,
         "microfono_incorporado": true,
-        "altavoz_incorporado": true
+        "altavoz_incorporado": true,
+        "ambiente_instalacion": "EXTERIOR"
       },
       "caracteristicas_principales": {
         "formato": "Bullet",
@@ -7118,7 +7122,7 @@
         {
           "id": "COLORMAKER",
           "nombre": "Color Maker",
-          "activo": false,
+          "activo": true,
           "imagen_url": "/data/images/color_maker_v3-1792190122422-613031.png",
           "posicion": "bottom-right",
           "capa": "front",
@@ -7143,7 +7147,7 @@
           "id": "SMD_1",
           "nombre": "SMD 1.0",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/smd-1.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -7155,7 +7159,7 @@
           "id": "SMD_2",
           "nombre": "SMD 2.0",
           "activo": true,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/smd-2.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -7167,7 +7171,7 @@
           "id": "SMD_3",
           "nombre": "SMD 3.0",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/smd-3.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -7179,7 +7183,7 @@
           "id": "VCA",
           "nombre": "VCA",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/vca.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -7226,7 +7230,7 @@
       ]
     },
     "created_at": "2026-10-12 03:49:15",
-    "updated_at": "2026-10-17 22:16:12",
+    "updated_at": "2026-10-27 23:58:14",
     "codigo_1": null,
     "codigo_2": null
   },
@@ -8065,8 +8069,7 @@
     "badges_detectados": [
       "Early Warning",
       "180° Panorámica",
-      "POLAR_DAY",
-      "SMD 2.0"
+      "POLAR_DAY"
     ],
     "datos_tecnicos": {
       "camara": {
@@ -8087,7 +8090,8 @@
         },
         "slot_sd": true,
         "microfono_incorporado": true,
-        "altavoz_incorporado": true
+        "altavoz_incorporado": true,
+        "ambiente_instalacion": "EXTERIOR"
       },
       "caracteristicas_principales": {
         "formato": "Bullet",
@@ -8240,7 +8244,7 @@
         {
           "id": "SMD_2",
           "nombre": "SMD 2.0",
-          "activo": true,
+          "activo": false,
           "imagen_url": "/data/badges/smd-2.svg",
           "posicion": "top-right",
           "capa": "front",
@@ -8312,7 +8316,7 @@
       ]
     },
     "created_at": "2026-10-12 03:57:16",
-    "updated_at": "2026-10-20 15:47:14",
+    "updated_at": "2026-10-27 23:49:38",
     "codigo_1": null,
     "codigo_2": null
   },
@@ -8334,7 +8338,8 @@
     "galeria": [],
     "datasheet_pdf": "/data/docs/TC-C38RN 2ANA-28.pdf",
     "badges_detectados": [
-      "COLORMAKER"
+      "COLORMAKER",
+      "SMD 1.0"
     ],
     "datos_tecnicos": {
       "camara": {
@@ -8354,7 +8359,8 @@
           "identificar": 5.6
         },
         "microfono_incorporado": true,
-        "altavoz_incorporado": false
+        "altavoz_incorporado": false,
+        "ambiente_instalacion": "EXTERIOR"
       },
       "caracteristicas_principales": {
         "formato": "Bullet",
@@ -8494,8 +8500,8 @@
         {
           "id": "SMD_1",
           "nombre": "SMD 1.0",
-          "activo": false,
-          "imagen_url": "",
+          "activo": true,
+          "imagen_url": "/data/badges/smd-1.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -8507,7 +8513,7 @@
           "id": "SMD_2",
           "nombre": "SMD 2.0",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/smd-2.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -8519,7 +8525,7 @@
           "id": "SMD_3",
           "nombre": "SMD 3.0",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/smd-3.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -8531,7 +8537,7 @@
           "id": "VCA",
           "nombre": "VCA",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/vca.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -8578,7 +8584,7 @@
       ]
     },
     "created_at": "2026-10-12 03:52:01",
-    "updated_at": "2026-10-17 22:46:43",
+    "updated_at": "2026-10-27 23:46:37",
     "codigo_1": null,
     "codigo_2": null
   },
@@ -8862,7 +8868,8 @@
     "galeria": [],
     "datasheet_pdf": "/data/docs/TC-H332A I2W-WIFI-Eu-4mm.pdf",
     "badges_detectados": [
-      "Wi-Fi"
+      "Wi-Fi",
+      "COLORMAKER"
     ],
     "datos_tecnicos": {
       "camara": {
@@ -8883,7 +8890,8 @@
         },
         "slot_sd": true,
         "microfono_incorporado": true,
-        "altavoz_incorporado": true
+        "altavoz_incorporado": true,
+        "ambiente_instalacion": "EXTERIOR"
       },
       "caracteristicas_principales": {
         "formato": "PT",
@@ -8990,21 +8998,21 @@
           "imagen_url": "/data/images/Nuevo_Modelo-1792076913028-248226.png",
           "posicion": "top-left",
           "capa": "front",
-          "tamano": 100,
+          "tamano": 125,
           "anclaje": "esquina",
-          "opacidad": 1,
+          "opacidad": 0.7,
           "activo_global": true
         },
         {
           "id": "COLORMAKER",
           "nombre": "Color Maker",
-          "activo": false,
+          "activo": true,
           "imagen_url": "/data/images/color_maker-1792071501595-1723.png",
           "posicion": "bottom-right",
           "capa": "front",
-          "tamano": 130,
+          "tamano": 170,
           "anclaje": "esquina",
-          "opacidad": 1,
+          "opacidad": 0.85,
           "activo_global": true
         },
         {
@@ -9014,16 +9022,16 @@
           "imagen_url": "/data/images/Polar_day_v2-1792071561583-43243.png",
           "posicion": "bottom-right",
           "capa": "front",
-          "tamano": 130,
+          "tamano": 170,
           "anclaje": "esquina",
-          "opacidad": 1,
+          "opacidad": 0.85,
           "activo_global": true
         },
         {
           "id": "SMD_1",
           "nombre": "SMD 1.0",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/smd-1.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -9035,7 +9043,7 @@
           "id": "SMD_2",
           "nombre": "SMD 2.0",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/smd-2.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -9047,7 +9055,7 @@
           "id": "SMD_3",
           "nombre": "SMD 3.0",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/smd-3.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -9059,7 +9067,7 @@
           "id": "VCA",
           "nombre": "VCA",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/vca.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -9106,7 +9114,7 @@
       ]
     },
     "created_at": "2026-10-12 03:57:17",
-    "updated_at": "2026-10-15 18:32:09",
+    "updated_at": "2026-10-27 23:54:12",
     "codigo_1": null,
     "codigo_2": null
   },
@@ -9663,7 +9671,8 @@
     "datasheet_pdf": "/data/docs/TC-H363N I5W-WIFI-Eu-4mm-V4.0.pdf",
     "badges_detectados": [
       "Early Warning",
-      "Wi-Fi"
+      "Wi-Fi",
+      "COLORMAKER"
     ],
     "datos_tecnicos": {
       "camara": {
@@ -9684,7 +9693,8 @@
         },
         "slot_sd": true,
         "microfono_incorporado": true,
-        "altavoz_incorporado": true
+        "altavoz_incorporado": true,
+        "ambiente_instalacion": "EXTERIOR"
       },
       "caracteristicas_principales": {
         "formato": "PT",
@@ -9798,21 +9808,21 @@
           "imagen_url": "/data/images/Nuevo_Modelo-1792076913028-248226.png",
           "posicion": "top-left",
           "capa": "front",
-          "tamano": 100,
+          "tamano": 125,
           "anclaje": "esquina",
-          "opacidad": 1,
+          "opacidad": 0.7,
           "activo_global": true
         },
         {
           "id": "COLORMAKER",
           "nombre": "Color Maker",
-          "activo": false,
+          "activo": true,
           "imagen_url": "/data/images/color_maker-1792071501595-1723.png",
           "posicion": "bottom-right",
           "capa": "front",
-          "tamano": 130,
+          "tamano": 170,
           "anclaje": "esquina",
-          "opacidad": 1,
+          "opacidad": 0.85,
           "activo_global": true
         },
         {
@@ -9822,16 +9832,16 @@
           "imagen_url": "/data/images/Polar_day_v2-1792071561583-43243.png",
           "posicion": "bottom-right",
           "capa": "front",
-          "tamano": 130,
+          "tamano": 170,
           "anclaje": "esquina",
-          "opacidad": 1,
+          "opacidad": 0.85,
           "activo_global": true
         },
         {
           "id": "SMD_1",
           "nombre": "SMD 1.0",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/smd-1.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -9843,7 +9853,7 @@
           "id": "SMD_2",
           "nombre": "SMD 2.0",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/smd-2.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -9855,7 +9865,7 @@
           "id": "SMD_3",
           "nombre": "SMD 3.0",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/smd-3.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -9867,7 +9877,7 @@
           "id": "VCA",
           "nombre": "VCA",
           "activo": false,
-          "imagen_url": "",
+          "imagen_url": "/data/badges/vca.svg",
           "posicion": "top-right",
           "capa": "front",
           "tamano": 100,
@@ -9914,7 +9924,7 @@
       ]
     },
     "created_at": "2026-10-15 02:20:17",
-    "updated_at": "2026-10-15 18:34:03",
+    "updated_at": "2026-10-27 23:58:53",
     "codigo_1": null,
     "codigo_2": null
   },
